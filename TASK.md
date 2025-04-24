@@ -6,25 +6,29 @@
 ## Sprint 1: Configuración del Proyecto (1-2 semanas) - INICIADO 13/04/2025
 
 ### Backend (Django + DRF)
-- [ ] Crear repositorio Git y estructura inicial del proyecto
-- [ ] Configurar entorno virtual de Python
-- [ ] Inicializar proyecto Django y configurar settings.py
-- [ ] Configurar conexión con PostgreSQL
-- [ ] Implementar Django Rest Framework
-- [ ] Configurar sistema de autenticación JWT
-- [ ] Configurar OAuth 2.0 para integración con Google:
+- [x] Crear repositorio Git y estructura inicial del proyecto
+- [x] Configurar entorno virtual de Python
+- [x] Inicializar proyecto Django y configurar settings.py
+- [x] Configurar conexión con PostgreSQL
+- [x] Implementar Django Rest Framework
+- [x] Configurar sistema de autenticación JWT
+- [x] Configurar OAuth 2.0 para integración con Google:
+  - [x] Obtener credenciales de Google Developer Console
+  - [x] Implementar django-allauth o social-auth-app-django
+  - [x] Configurar rutas de callback y redirección
+- [x] Crear estructura básica de aplicaciones Django:
+  - [x] `users` - Gestión de usuarios y autenticación
+  - [x] `courts` - Gestión de canchas
+  - [x] `bookings` - Sistema de reservas
+  - [x] `payments` - Procesamiento de pagos
+  - [x] `plans` - Planes mensuales
+  - [x] Implementar sistema de migraciones inicial
+  - [x] Configurar OAuth 2.0 para integración con Google:
   - [ ] Obtener credenciales de Google Developer Console
-  - [ ] Implementar django-allauth o social-auth-app-django
-  - [ ] Configurar rutas de callback y redirección
-- [ ] Crear estructura básica de aplicaciones Django:
-  - [ ] `users` - Gestión de usuarios y autenticación
-  - [ ] `courts` - Gestión de canchas
-  - [ ] `bookings` - Sistema de reservas
-  - [ ] `payments` - Procesamiento de pagos
-  - [ ] `plans` - Planes mensuales
-- [ ] Implementar sistema de migraciones inicial
-- [ ] Configurar permisos y grupos de usuarios
-- [ ] Crear Dockerfile y docker-compose.yml para desarrollo
+  - [x] Implementar django-allauth o social-auth-app-django
+  - [x] Configurar rutas de callback y redirección
+- [x] Configurar permisos y grupos de usuarios
+- [x] Crear Dockerfile y docker-compose.yml para desarrollo
 
 ### Frontend (React)
 - [ ] Inicializar proyecto React
@@ -43,7 +47,7 @@
 ### Modelado de Datos
 - [ ] Diseñar e implementar modelos para:
   - [ ] Usuario (extendiendo el modelo User de Django)
-  - [ ] Perfil Social (para almacenar información de cuentas vinculadas de Google)
+  - [x] Perfil Social (para almacenar información de cuentas vinculadas de Google)
   - [ ] Cancha (características, precios, disponibilidad)
   - [ ] Reserva (fechas, estado, pagos asociados)
   - [ ] Pago (monto, estado, método)
