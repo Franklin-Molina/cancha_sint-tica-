@@ -1,9 +1,6 @@
 # TASK.MD - Tareas Iniciales del Proyecto
 
 ## Sprint 1: Configuración del Proyecto (1-2 semanas) - INICIADO 13/04/2025
-# TASK.MD - Tareas Iniciales del Proyecto
-
-## Sprint 1: Configuración del Proyecto (1-2 semanas) - INICIADO 13/04/2025
 
 ### Backend (Django + DRF)
 - [x] Crear repositorio Git y estructura inicial del proyecto
@@ -22,78 +19,74 @@
   - [x] `bookings` - Sistema de reservas
   - [x] `payments` - Procesamiento de pagos
   - [x] `plans` - Planes mensuales
-  - [x] Implementar sistema de migraciones inicial
-  - [x] Configurar OAuth 2.0 para integración con Google:
-  - [ ] Obtener credenciales de Google Developer Console
-  - [x] Implementar django-allauth o social-auth-app-django
-  - [x] Configurar rutas de callback y redirección
+- [x] Implementar sistema de migraciones inicial
 - [x] Configurar permisos y grupos de usuarios
 - [x] Crear Dockerfile y docker-compose.yml para desarrollo
 
 ### Frontend (React)
-- [ ] Inicializar proyecto React
-- [ ] Configurar estructura de carpetas
-- [ ] Configurar sistema de rutas con React Router
-- [ ] Implementar estado global (Redux o Context API)
-- [ ] Configurar cliente HTTP (Axios) para comunicación con API
-- [ ] Implementar componentes básicos UI/UX
-- [ ] Integrar React Google Login:
-  - [ ] Instalar @react-oauth/google o similar
-  - [ ] Configurar botones de autenticación con Google
-  - [ ] Manejar flujos de autorización y tokens
-- [ ] Crear Dockerfile para frontend
-- [ ] Configurar sistema de estilos (CSS Modules o Styled Components)
+- [x] Inicializar proyecto React
+- [x] Configurar estructura de carpetas
+- [x] Configurar sistema de rutas con React Router
+- [x] Implementar estado global (Redux o Context API)
+- [x] Configurar cliente HTTP (Axios) para comunicación con API
+- [x] Implementar componentes básicos UI/UX
+- [x] Integrar React Google Login:
+  - [x] Instalar @react-oauth/google o similar
+  - [x] Configurar botones de autenticación con Google
+  - [x] Manejar flujos de autorización y tokens
+- [x] Crear Dockerfile para frontend
+- [x] Configurar sistema de estilos (Styled Components)
 
 ### Modelado de Datos
 - [ ] Diseñar e implementar modelos para:
-  - [ ] Usuario (extendiendo el modelo User de Django)
+  - [x] Usuario (extendiendo el modelo User de Django)
   - [x] Perfil Social (para almacenar información de cuentas vinculadas de Google)
-  - [ ] Cancha (características, precios, disponibilidad)
-  - [ ] Reserva (fechas, estado, pagos asociados)
-  - [ ] Pago (monto, estado, método)
-  - [ ] Plan (periodicidad, precio, beneficios)
-- [ ] Crear relaciones entre modelos
-- [ ] Implementar validaciones de datos
-- [ ] Crear migraciones iniciales
+  - [x] Cancha (características, precios, disponibilidad)
+  - [x] Reserva (fechas, estado, pagos asociados)
+  - [x] Pago (monto, estado, método)
+  - [x] Plan (periodicidad, precio, beneficios)
+- [x] Crear relaciones entre modelos
+- [x] Implementar validaciones de datos
+- [x] Crear migraciones iniciales
 
 ## Sprint 2: APIs Básicas y Autenticación (1-2 semanas)
 
 ### Autenticación
-- [ ] Implementar endpoints de registro, login y logout tradicionales
-- [ ] Desarrollar flujo de autenticación con Google:
-  - [ ] Endpoint para iniciar flujo OAuth
-  - [ ] Endpoint de callback para procesamiento de tokens
-  - [ ] Lógica para crear/actualizar usuarios desde información de Google
-  - [ ] Manejo de sincronización de datos entre cuentas locales y Google
-- [ ] Configurar middleware de autenticación
-- [ ] Implementar recuperación de contraseña (para usuarios con email/password)
-- [ ] Crear vistas de perfil de usuario
-- [ ] Configurar permisos por roles
-- [ ] Implementar enlace/desenlace de cuentas sociales a cuenta existente
+- [x] Implementar endpoints de registro, login y logout tradicionales
+- [x] Desarrollar flujo de autenticación con Google:
+  - [x] Endpoint para iniciar flujo OAuth
+  - [x] Endpoint de callback para procesamiento de tokens
+  - [x] Lógica para crear/actualizar usuarios desde información de Google
+  - [x] Manejo de sincronización de datos entre cuentas locales y Google
+- [x] Configurar middleware de autenticación
+- [x] Implementar recuperación de contraseña (para usuarios con email/password)
+- [x] Crear vistas de perfil de usuario
+- [x] Configurar permisos por roles
+- [x] Implementar enlace/desenlace de cuentas sociales a cuenta existente
 
 ### API de Canchas
-- [ ] Desarrollar endpoints CRUD para canchas
-- [ ] Implementar filtros por características
-- [ ] Desarrollar endpoint para consultar disponibilidad
-- [ ] Crear serializers con validaciones
-- [ ] Configurar permisos de acceso
+- [x] Desarrollar endpoints CRUD para canchas
+- [x] Implementar filtros por características
+- [x] Desarrollar endpoint para consultar disponibilidad
+- [x] Crear serializers con validaciones
+- [x] Configurar permisos de acceso
 
 ### API de Reservas
-- [ ] Implementar endpoints CRUD para reservas
-- [ ] Desarrollar lógica para verificar disponibilidad
-- [ ] Implementar regla del 10% de pago anticipado
-- [ ] Crear proceso de confirmación de reserva
-- [ ] Desarrollar sistema de validación de conflictos horarios
+- [x] Implementar endpoints CRUD para reservas
+- [x] Desarrollar lógica para verificar disponibilidad
+- [x] Implementar regla del 10% de pago anticipado
+- [x] Crear proceso de confirmación de reserva
+- [x] Desarrollar sistema de validación de conflictos horarios
 
 ### Frontend Inicial
-- [ ] Implementar pantallas de autenticación:
-  - [ ] Registro y login tradicional
-  - [ ] Botones de autenticación con Google
-  - [ ] Manejo de sesión y almacenamiento seguro de tokens
-- [ ] Crear componente de visualización de canchas
-- [ ] Desarrollar pantalla de perfil de usuario (incluyendo cuentas vinculadas)
-- [ ] Implementar calendario/vista de disponibilidad
-- [ ] Crear formulario de reserva básico
+- [x] Implementar pantallas de autenticación:
+  - [x] Registro y login tradicional
+  - [x] Botones de autenticación con Google
+  - [x] Manejo de sesión y almacenamiento seguro de tokens (incluida la protección de rutas con ProtectedRoute)
+- [x] Crear componente de visualización de canchas
+- [x] Desarrollar pantalla de perfil de usuario (incluyendo cuentas vinculadas)
+- [x] Implementar calendario/vista de disponibilidad
+- [x] Crear formulario de reserva básico
 
 ## Sprint 3: Sistema de Pagos y Planes (2 semanas)
 
@@ -161,3 +154,10 @@
 - Implementar sistema de calificaciones y reseñas
 - Añadir integración con redes sociales
 - Expandir opciones de autenticación social (Facebook, Apple, etc.)
+
+## Detectadas durante el trabajo
+- [x] Corregir error "Method Not Allowed" en el endpoint de login.
+- [x] Reajustar login para acceder con username y password.
+- [x] Redirigir al usuario a una nueva página después del login y mostrar el nombre de usuario.
+- [x] Asegurar que los nuevos usuarios estén activos por defecto al registrarse.
+- [ ] El inicio de sesión con Google dejó de funcionar.

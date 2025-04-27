@@ -1,0 +1,29 @@
+/* Estilos para la cabecera de la aplicación */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem; /* p-4 en Tailwind */
+  background-color: #1f2937; /* bg-gray-800 en Tailwind */
+  color: white; /* text-white en Tailwind */
+}
+
+.app-header-title {
+  font-size: 1.25rem; /* text-xl en Tailwind */
+  font-weight: bold; /* font-bold en Tailwind */
+}
+
+.app-nav a {
+  margin-left: 1rem; /* Espacio entre enlaces */
+  text-decoration: none; /* Eliminar subrayado por defecto */
+  color: white; /* Asegurar color blanco */
+}
+
+.app-nav a:first-child {
+    margin-left: 0; /* No aplicar margen al primer enlace */
+}
+
+
+.app-nav a:hover {
+  text-decoration: underline; /* hover:underline en Tailwind */
+}

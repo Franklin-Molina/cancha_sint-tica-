@@ -28,12 +28,18 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       # Agrega otras variables de entorno necesarias para Django
     depends_on:
       - db
 
   frontend:
-    build: ./frontend
+    build:
+        context: ./frontend
+        dockerfile: Dockerfile
+        args:
+          CACHE_INVALIDATOR: ${CACHE_INVALIDATOR:-$(date +%s)}
     command: npm start
     volumes:
       - ./frontend/:/app/

@@ -1,1 +1,21 @@
+# dependencias
+node_modules/
+
+# producción
+/build
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# entorno
 .env
+
+# editor
+.vscode/
+.idea/
+
+# caché
+.cache/
+__pycache__/

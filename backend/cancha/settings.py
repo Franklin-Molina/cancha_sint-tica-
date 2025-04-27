@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.sites', # Añadir la app sites
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken', # Añadir rest_framework.authtoken
+
+    # Añadir corsheaders
+    'corsheaders',
 
     # Apps de django-allauth
     'allauth',
@@ -54,6 +58,7 @@ INSTALLED_APPS = [
     'bookings',
     'payments',
     'plans',
+    'django_filters', # Añadir django_filters
 ]
 
 REST_FRAMEWORK = {
@@ -63,6 +68,8 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    # Añadir CorsMiddleware
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -93,6 +100,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cancha.wsgi.application'
 
+# Modelo de Usuario Personalizado
+AUTH_USER_MODEL = 'users.User'
+
 # Configuración de django-allauth
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -107,10 +117,18 @@ SITE_ID = 1 # django-allauth requiere un SITE_ID
 # Configuraciones adicionales de allauth (ajustar según necesidad)
 ACCOUNT_EMAIL_VERIFICATION = 'optional' # Puede ser 'mandatory', 'optional', o 'none'
 ACCOUNT_SIGNUP_FIELDS = ['email', 'password', 'first_name', 'last_name'] # Campos requeridos para el registro
-ACCOUNT_LOGIN_METHODS = {'email'} # Permite login con email
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None # Deshabilita la funcionalidad de username en allauth
+ACCOUNT_AUTHENTICATION_METHOD = 'username' # Usar username como método de autenticación principal
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username' # Especificar el campo de username del modelo de usuario
 LOGIN_REDIRECT_URL = '/' # URL a la que redirigir después del login
 LOGOUT_REDIRECT_URL = '/' # URL a la que redirigir después del logout
+
+# Configuración de dj-rest-auth para usar JWT y allauth
+REST_AUTH = {
+    'USE_JWT': True,
+}
+
+# Configuración de socialaccount para auto-registro
+SOCIALACCOUNT_AUTO_SIGNUP = True
 
 # Configuración del proveedor social (Google en este caso)
 SOCIALACCOUNT_PROVIDERS = {
@@ -189,3 +207,48 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configuración de Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'users': { # Añadir logger para la app users
+            'handlers': ['console'],
+            'level': 'DEBUG', # Usar DEBUG para ver logs más detallados
+            'propagate': False,
+        },
+    },
+}
+
+# Configuración de Simple JWT para usar username como campo de autenticación
+SIMPLE_JWT = {
+    "USERNAME_FIELD": "username",
+}
+
+# Configuración de CORS para permitir solicitudes desde el frontend durante el desarrollo
+CORS_ALLOW_ALL_ORIGINS = True # Deshabilitar para especificar orígenes permitidos
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", # Permitir solicitudes desde el frontend de React
+]
+
+CORS_ALLOW_CREDENTIALS = True # Permitir que las solicitudes incluyan credenciales
+
+# Configuración de CSRF para confiar en el origen del frontend
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]

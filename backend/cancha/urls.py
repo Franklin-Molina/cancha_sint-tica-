@@ -20,6 +20,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from users import views as users_views # Importar vistas de la app users
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,8 +29,8 @@ urlpatterns = [
     path('api/bookings/', include('bookings.urls')),
     path('api/payments/', include('payments.urls')),
     path('api/plans/', include('plans.urls')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # URLs de django-allauth
     path('accounts/', include('allauth.urls')),
+    # URL para obtener la cookie CSRF
+    path('api/csrf/', users_views.get_csrf_token, name='csrf_token'),
 ]
