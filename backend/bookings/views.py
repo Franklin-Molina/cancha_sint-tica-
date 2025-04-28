@@ -1,9 +1,9 @@
 from rest_framework import generics, status # Importar status
 from rest_framework.views import APIView # Importar APIView
 from rest_framework.response import Response # Importar Response
-from rest_framework.permissions import IsAuthenticated # Importar IsAuthenticated
-from rest_framework.decorators import action # Importar action
-from rest_framework import viewsets # Importar viewsets
+from rest_framework.permissions import IsAuthenticated, IsAdminUser # Importar IsAuthenticated y IsAdminUser
+from rest_framework.decorators import action
+from rest_framework import viewsets
 from .models import Booking
 from .serializers import BookingSerializer # Importar BookingSerializer
 from payments.models import Payment # Importar el modelo Payment
@@ -53,7 +53,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     """
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [IsAuthenticated] # Solo usuarios autenticados pueden acceder
+    permission_classes = [IsAdminUser] # Cambiado a IsAdminUser para restringir acceso al dashboard
 
     def perform_create(self, serializer):
         # Guardar la instancia de la reserva primero para obtener un PK

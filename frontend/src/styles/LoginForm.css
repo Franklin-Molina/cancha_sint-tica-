@@ -1,0 +1,99 @@
+/* --- Estilos Refinados para un Login Profesional --- */
+.login-container {
+  background-color: #ffffff;
+  padding: 48px 36px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  width: 340px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+.login-container:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 42px rgba(0,0,0,0.25);
+}
+
+.login-container h2 {
+  text-align: center;
+  margin: 0 0 25px 0;
+  color: #333333;
+  font-weight: 600;
+  font-size: 26px;
+}
+
+.error {
+  min-height: 1.5em;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #e74c3c;
+  text-align: center;
+  line-height: 1.5em;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 4px rgba(102, 126, 234, 0.5);
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background: #667eea;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+button:hover {
+  background: #556cd6;
+  transform: translateY(-2px);
+}
+
+/* --- Media Query para Responsive --- */
+@media (max-width: 480px) {
+  .login-container {
+    width: 90%; /* Ocupa más ancho en pantallas pequeñas */
+    padding: 30px 20px; /* Reduce el padding */
+    margin: 20px auto; /* Añade margen vertical */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Sombra ligeramente menor */
+  }
+
+  .login-container h2 {
+    font-size: 22px; /* Reduce tamaño del título */
+  }
+
+  input[type="text"],
+  input[type="password"],
+  button {
+    padding: 12px 14px; /* Ajusta padding de inputs y botón */
+    font-size: 14px; /* Ajusta tamaño de fuente */
+  }
+
+  button {
+    font-size: 15px;
+  }
+}

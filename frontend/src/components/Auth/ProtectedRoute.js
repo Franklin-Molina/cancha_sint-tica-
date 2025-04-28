@@ -27,9 +27,14 @@ const ProtectedRoute = ({ children }) => {
   // Verificar si la ruta actual es la de registro de administrador
   const isAdminRegisterRoute = location.pathname === '/admin/register';
 
-  // Si es la ruta de administrador y el usuario no es staff (asumiendo que is_staff indica admin)
-  if (isAdminRegisterRoute && (!user || !user.is_staff)) {
+  // Verificar si la ruta actual es una ruta de administrador (registro de admin o cualquier ruta del dashboard)
+  const isAdminRoute = isAdminRegisterRoute || location.pathname.startsWith('/dashboard');
+
+  // Si es una ruta de administrador y el usuario no es staff (asumiendo que is_staff indica admin)
+  if (isAdminRoute && (!user || !user.is_staff)) {
     // Redirigir a una página diferente, por ejemplo, la página de inicio o una página de error
+    // Podríamos añadir un mensaje de error o redirigir a una página de "Acceso Denegado"
+    console.warn(`Acceso denegado a ruta de administrador: ${location.pathname}. Usuario no es staff.`);
     return <Navigate to="/" replace />; // Redirigir a la página de inicio
   }
 

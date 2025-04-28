@@ -20,3 +20,13 @@ class Court(models.Model):
         """
         if self.price is not None and self.price < 0:
             raise ValidationError({'price': 'El precio no puede ser negativo.'})
+
+class CourtImage(models.Model):
+    """
+    Modelo para representar una imagen asociada a una cancha.
+    """
+    court = models.ForeignKey(Court, related_name='images', on_delete=models.CASCADE) # Relación con el modelo Court
+    image = models.ImageField(upload_to='courts/images/') # Campo para la imagen
+
+    def __str__(self):
+        return f"Image for {self.court.name}"

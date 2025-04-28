@@ -1,0 +1,64 @@
+/* Estilos específicos para la página de detalle de cancha */
+
+/* Ajustar el tamaño de las imágenes en la galería de detalle */
+.gallery-detail {
+    /* Sobrescribir la plantilla de columnas para hacer las imágenes más grandes */
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); /* Ejemplo: mínimo 200px por columna */
+    gap: 15px; /* Aumentar el espacio entre imágenes si se desea */
+}
+
+/* Puedes añadir otros estilos específicos para la página de detalle aquí */
+
+/* Estilos para el modal de imagen */
+.modal-overlay {
+    position: fixed; /* Posición fija para cubrir toda la ventana */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegurar que esté por encima de otros elementos */
+}
+
+.modal-content {
+    position: relative; /* Para posicionar el botón de cerrar */
+    max-width: 90%; /* Ancho máximo del contenido del modal */
+    max-height: 90%; /* Altura máxima del contenido del modal */
+    background-color: white; /* Fondo blanco para el contenido */
+    padding: 20px;
+    border-radius: 8px;
+    overflow: auto; /* Añadir scroll si la imagen es muy grande */
+}
+
+.modal-image {
+    display: block; /* Eliminar espacio extra debajo de la imagen */
+    max-width: 100%; /* Asegurar que la imagen no se desborde del contenedor */
+    max-height: 80vh; /* Altura máxima de la imagen (ejemplo) */
+    object-fit: contain; /* Asegurar que la imagen se ajuste sin cortarse */
+    margin: 0 auto; /* Centrar la imagen horizontalmente */
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001; /* Asegurar que esté por encima de la imagen */
+}
+
+.modal-close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}

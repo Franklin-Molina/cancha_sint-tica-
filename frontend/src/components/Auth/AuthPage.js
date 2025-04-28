@@ -80,13 +80,13 @@ function AuthPage() {
       //const formData = new FormData();
       //formData.append('username', username);
       //formData.append('password', password);
-     
-      const data = { username, password }; 
-      
+
+      const data = { username, password };
+
      // await api.post('/users/login/', data);
-     
+
       console.log("datos para back",data)
-      
+
       // Usar la instancia 'api' para enviar la solicitud de login tradicional
       const response = await api.post('/users/login/', data);
 

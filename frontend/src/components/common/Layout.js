@@ -1,21 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react'; // Importar useState
 import Header from './Header'; // Importar el componente Header
+import AuthPage from '../Auth/AuthPage'; // Importar AuthPage
 
 /**
  * Componente de layout básico.
- * Proporciona una estructura común para las páginas.
+ * Proporciona una estructura común para las páginas y maneja el modal de autenticación.
  * @param {object} props - Las props del componente.
  * @param {React.ReactNode} props.children - El contenido a renderizar dentro del layout.
  * @returns {JSX.Element} El elemento JSX del layout.
  */
 function Layout({ children }) {
+  const [showAuthModal, setShowAuthModal] = useState(false); // Estado para controlar la visibilidad del modal
+
+  // Función para abrir el modal de autenticación
+  const openAuthModal = () => {
+    setShowAuthModal(true);
+  };
+
+  // Función para cerrar el modal de autenticación
+  const closeAuthModal = () => {
+    setShowAuthModal(false);
+  };
+
   return (
     <div>
-      <Header /> {/* Incluir el componente Header */}
+      {/* Pasar la función openAuthModal al Header */}
+      <Header openAuthModal={openAuthModal} />
       <div className="container mx-auto p-4">
         {children}
       </div>
       {/* Aquí se podría añadir un componente Footer si es necesario */}
+
+      {/* Modal de Autenticación */}
+      {showAuthModal && (
+        <div className="modal-overlay" onClick={closeAuthModal}> {/* Overlay del modal */}
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px', padding: '2rem' }}> {/* Contenido del modal */}
+            <button className="modal-close-btn" onClick={closeAuthModal}>✕</button> {/* Botón para cerrar */}
+            <AuthPage /> {/* Contenido de la página de autenticación */}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

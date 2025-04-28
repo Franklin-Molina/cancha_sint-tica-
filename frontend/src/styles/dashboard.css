@@ -1,0 +1,527 @@
+/* Variables CSS del dashboard */
+:root {
+    --primary-color: #4a89dc;
+    --secondary-color: #3bafda;
+    --success-color: #8cc152;
+    --warning-color: #f6bb42;
+    --danger-color: #da4453;
+    --sidebar-bg: #2a3042;
+    --sidebar-color: #b6c2e4;
+    --header-bg: #ffffff;
+    --body-bg: #f5f5f9;
+}
+
+/* Estilos generales del body para el dashboard */
+body {
+    background-color: var(--body-bg);
+    /* display: flex; - Esto lo manejaremos en DashboardLayout */
+}
+
+/* Estilos de la cabecera del dashboard */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: var(--header-bg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin-bottom: 20px; /* Añadir un margen inferior */
+}
+
+.dashboard-search-box {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f7;
+    border-radius: 50px;
+    padding: 8px 15px;
+    width: 300px;
+}
+
+.dashboard-search-box input {
+    border: none;
+    background: none;
+    outline: none;
+    padding: 5px;
+    width: 100%;
+}
+
+.dashboard-search-box i {
+    color: #888;
+    margin-right: 10px;
+}
+
+.dashboard-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-header-icon {
+    position: relative;
+    margin-left: 20px;
+    font-size: 18px;
+    color: #555;
+    cursor: pointer;
+}
+
+.dashboard-notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--danger-color);
+    color: white;
+    font-size: 10px;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dashboard-user-profile {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+    cursor: pointer;
+}
+
+.dashboard-user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.dashboard-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-user-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.dashboard-user-role {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Estilos del contenido del dashboard */
+.dashboard-page-content {
+    padding: 20px 30px;
+}
+
+.dashboard-page-title {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .dashboard-search-box {
+        width: 200px; /* Ajustar ancho en pantallas medianas */
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-header {
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-search-box {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .dashboard-header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .dashboard-page-content {
+        padding: 15px;
+    }
+}
+
+/* Dashboard Stats */
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    width: calc(25% - 20px);
+    min-width: 220px;
+    margin-bottom: 15px;
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.stat-title {
+    font-weight: 600;
+    color: #666;
+    font-size: 14px;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: white;
+}
+
+.icon-revenue {
+    background-color: var(--primary-color);
+}
+
+.icon-users {
+    background-color: var(--success-color);
+}
+
+.icon-orders {
+    background-color: var(--warning-color);
+}
+
+.icon-growth {
+    background-color: var(--secondary-color);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.stat-change {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+}
+
+.stat-up {
+    color: var(--success-color);
+    margin-right: 5px;
+}
+
+.stat-down {
+    color: var(--danger-color);
+    margin-right: 5px;
+}
+
+/* Charts & Widgets */
+.widgets-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.widget {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.widget-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.widget-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+}
+
+.widget-actions i {
+    cursor: pointer;
+    margin-left: 10px;
+    color: #999;
+}
+
+.widget-content {
+    padding: 20px;
+}
+
+.widget-lg {
+    width: 65%;
+    min-width: 400px;
+}
+
+.widget-sm {
+    width: 32%;
+    min-width: 300px;
+}
+
+/* Chart */
+.chart-container {
+    height: 300px;
+    position: relative;
+}
+
+/* Table */
+.recent-orders {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.recent-orders th {
+    text-align: left;
+    padding: 12px 10px;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #eee;
+}
+
+.recent-orders td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-completed {
+    background-color: rgba(140, 193, 82, 0.2);
+    color: var(--success-color);
+}
+
+.status-pending {
+    background-color: rgba(246, 187, 66, 0.2);
+    color: var(--warning-color);
+}
+
+.status-canceled {
+    background-color: rgba(218, 68, 83, 0.2);
+    color: var(--danger-color);
+}
+
+/* Activity */
+.activity-item {
+    display: flex;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.activity-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    margin-right: 15px;
+    font-size: 14px;
+}
+
+.activity-icon-info {
+    background-color: var(--secondary-color);
+}
+
+.activity-icon-success {
+    background-color: var(--success-color);
+}
+
+.activity-icon-warning {
+    background-color: var(--warning-color);
+}
+
+.activity-line {
+    position: absolute;
+    left: 18px;
+    top: 36px;
+    bottom: -20px;
+    width: 2px;
+    background-color: #eee;
+    z-index: -1;
+}
+
+.activity-item:last-child .activity-line {
+    display: none;
+}
+
+/* SVG Chart Styles */
+.svg-chart {
+    width: 100%;
+    height: 100%;
+}
+
+.chart-bar {
+    transition: all 0.3s ease;
+}
+
+.chart-bar:hover {
+    opacity: 0.8;
+}
+
+.chart-line {
+    fill: none;
+    stroke: var(--primary-color);
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.chart-point {
+    fill: white;
+    stroke: var(--primary-color);
+    stroke-width: 2;
+}
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 100;
+}
+
+/* Progress Bar */
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background-color: #f0f0f7;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.8s ease;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #888;
+}
+
+/* Estilos de la galería de imágenes (adaptados de img.html) */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Ajustar para ser más flexible */
+    gap: 10px;
+}
+
+.image-container {
+    position: relative;
+    aspect-ratio: 1/1;
+    background-color: #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    border: none;
+    z-index: 2; /* Asegurar que esté por encima del overlay */
+}
+
+.add-photo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #eee; /* Color de fondo más claro */
+    color: #333; /* Color de texto más oscuro */
+    border-radius: 8px;
+    cursor: pointer;
+    height: 100%;
+    border: 2px dashed #ccc; /* Borde punteado */
+}
+
+.add-photo:hover {
+    background-color: #ddd;
+    border-color: #bbb;
+}
+
+.add-photo-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.add-photo-text {
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Dark overlay for the image preview */
+.dark-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    z-index: 1; /* Asegurar que esté por encima de la imagen pero debajo del botón cerrar */
+}
+
+/* File input styling (hidden) */
+/* Aunque el ID puede variar, esta regla es útil si se usa un input oculto */
+input[type="file"] {
+    display: none;
+}

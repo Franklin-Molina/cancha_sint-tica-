@@ -36,12 +36,26 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      setUser(response.data);
+      const userData = response.data;
+      setUser(userData);
       setIsAuthenticated(true);
+
+      // Redirigir después de obtener la información del usuario
+      if (userData.is_staff) {
+          navigate('/dashboard'); // Redirigir a administradores al dashboard
+      } else {
+          navigate('/profile'); // Redirigir a usuarios normales al perfil
+      }
+
     } catch (error) {
       console.error('Error al obtener información del usuario:', error);
       // Si hay un error (ej. token inválido o expirado), cerrar sesión
-      logout();
+      // Usar navigate('/auth') aquí si queremos que los errores de fetchUser redirijan al login
+      logout(); // logout ya redirige al home, ajustar si se necesita redirigir al login en caso de error de fetch
+    } finally {
+        // Asegurar que loading se establezca en false después de intentar obtener el usuario
+        // Esto es importante para evitar que la app se quede en estado de carga si fetchUser falla
+        // setLoading(false); // Esto se maneja en el useEffect principal
     }
   };
 
@@ -51,9 +65,9 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
     console.log("Tokens guardados en localStorage:", accessToken, refreshToken);
-    // setIsAuthenticated(true); // Se establecerá en fetchUser si el token es válido
+    // La redirección se manejará dentro de fetchUser después de obtener los datos del usuario
     fetchUser(); // Obtener información del usuario después del login
-    navigate('/profile'); // Redirigir al usuario a la página de perfil después del login
+    // Eliminar redirección aquí
   };
 
   // Función para cerrar sesión
@@ -62,8 +76,12 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('refreshToken');
     setIsAuthenticated(false);
     setUser(null);
-    navigate('/auth'); // Redirigir al usuario a la página de login
-  };
+
+    // Redirigir con un pequeño retraso
+    setTimeout(() => {
+        navigate('/'); // Redirigiendo al usuario a inicio(home)
+    }, 100); // 100 ms de espera antes de redirigir
+}
 
   // Función para iniciar sesión con Google a través del backend
   const loginWithGoogle = async (googleResponse) => {

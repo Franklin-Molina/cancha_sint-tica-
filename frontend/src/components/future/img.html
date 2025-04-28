@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestor de Imágenes</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 14px;
+    }
+    
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    
+    .image-container {
+      position: relative;
+      aspect-ratio: 1/1;
+      background-color: #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .image-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      border: none;
+    }
+    
+    .add-photo {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #444;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      height: 100%;
+    }
+    
+    .add-photo-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .add-photo-text {
+      font-size: 14px;
+      text-align: center;
+    }
+
+    /* Dark overlay for the image preview */
+    .dark-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+    /* File input styling (hidden) */
+    #file-input {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>Fotos - <span id="photo-count">0</span>/5 - Puedes agregar un máximo de 5 fotos.</div>
+    </div>
+    
+    <div class="gallery">
+      <!-- Add Photo Button (initially the only element) -->
+      <label for="file-input" class="image-container">
+        <div class="add-photo">
+          <div class="add-photo-icon">📷</div>
+          <div class="add-photo-text">Agregar foto</div>
+        </div>
+        <input type="file" id="file-input" accept="image/*" multiple>
+      </label>
+    </div>
+  </div>
+
+  <script>
+    // Functionality to handle image upload and deletion
+    document.addEventListener('DOMContentLoaded', function() {
+      const fileInput = document.getElementById('file-input');
+      const photoCount = document.getElementById('photo-count');
+      const gallery = document.querySelector('.gallery');
+      const addPhotoContainer = document.querySelector('.add-photo').parentElement;
+      
+      // Handle file selection
+      fileInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        const currentCount = parseInt(photoCount.textContent);
+        
+        // Check if we can add more photos
+        if (currentCount + files.length <= 5) {
+          for (let i = 0; i < files.length && currentCount + i < 5; i++) {
+            const file = files[i];
+            
+            if (file.type.startsWith('image/')) {
+              const reader = new FileReader();
+              reader.onload = function(event) {
+                // Create new image container
+                const newImageContainer = document.createElement('div');
+                newImageContainer.className = 'image-container';
+                
+                // Create image element
+                const newImage = document.createElement('img');
+                newImage.src = event.target.result;
+                newImage.className = 'image-preview';
+                newImage.alt = 'Imagen subida';
+                
+                // Create overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'dark-overlay';
+                
+                // Create close button
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'close-btn';
+                closeBtn.textContent = '✕';
+                closeBtn.addEventListener('click', removeImage);
+                
+                // Append elements
+                newImageContainer.appendChild(newImage);
+                newImageContainer.appendChild(overlay);
+                newImageContainer.appendChild(closeBtn);
+                
+                // Insert before the add photo button
+                gallery.insertBefore(newImageContainer, addPhotoContainer);
+                
+                // Update counter
+                photoCount.textContent = (parseInt(photoCount.textContent) + 1).toString();
+                
+                // Hide add photo button if we reached the limit
+                if (parseInt(photoCount.textContent) >= 5) {
+                  addPhotoContainer.style.display = 'none';
+                }
+              };
+              reader.readAsDataURL(file);
+            }
+          }
+        } else {
+          alert('Solo puedes subir un máximo de 5 fotos.');
+        }
+        
+        // Reset file input
+        fileInput.value = '';
+      });
+      
+      function removeImage(e) {
+        const container = e.target.parentElement;
+        container.remove();
+        
+        // Update counter
+        const newCount = parseInt(photoCount.textContent) - 1;
+        photoCount.textContent = newCount.toString();
+        
+        // Show add photo button if it was hidden
+        if (addPhotoContainer.style.display === 'none') {
+          addPhotoContainer.style.display = 'block';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

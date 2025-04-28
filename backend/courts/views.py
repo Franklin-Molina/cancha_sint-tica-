@@ -1,20 +1,20 @@
-from rest_framework import generics, status # Importar status
-from rest_framework.views import APIView # Importar APIView
-from rest_framework.response import Response # Importar Response
-from rest_framework.permissions import AllowAny, IsAdminUser # Importar clases de permisos
-import django_filters.rest_framework # Importar el backend de filtro
-from .models import Court
-from bookings.models import Booking # Importar el modelo Booking
-from .serializers import CourtSerializer
-from .filters import CourtFilter # Importar el filtro
-from datetime import datetime # Importar datetime
+from rest_framework import generics, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAdminUser
+import django_filters.rest_framework
+from .models import Court, CourtImage # Importar CourtImage
+from bookings.models import Booking
+from .serializers import CourtSerializer, CourtImageSerializer # Importar CourtImageSerializer
+from .filters import CourtFilter
+from datetime import datetime
 
 class CourtList(generics.ListCreateAPIView):
     queryset = Court.objects.all()
     serializer_class = CourtSerializer
-    filter_backends = [django_filters.rest_framework.DjangoFilterBackend] # Añadir backend de filtro
-    filterset_class = CourtFilter # Especificar la clase de filtro
-    permission_classes = [IsAdminUser] # Por defecto, solo administradores pueden crear
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_class = CourtFilter
+    permission_classes = [IsAdminUser]
 
     def get_permissions(self):
         """
@@ -24,11 +24,21 @@ class CourtList(generics.ListCreateAPIView):
             return [AllowAny()]
         return super().get_permissions()
 
+    def perform_create(self, serializer):
+        """
+        Guarda la instancia de la cancha y maneja la subida de imágenes asociadas.
+        """
+        court = serializer.save() # Guarda la instancia de la cancha
+
+        # Manejar la subida de imágenes
+        images_data = self.request.FILES.getlist('images') # Obtener la lista de archivos subidos con el nombre 'images'
+        for image_file in images_data:
+            CourtImage.objects.create(court=court, image=image_file) # Crear una instancia de CourtImage por cada archivo
 
 class CourtDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Court.objects.all()
     serializer_class = CourtSerializer
-    permission_classes = [IsAdminUser] # Por defecto, solo administradores pueden actualizar/eliminar
+    permission_classes = [IsAdminUser]
 
     def get_permissions(self):
         """
@@ -43,7 +53,7 @@ class CourtAvailabilityView(APIView):
     """
     Vista para consultar la disponibilidad de las canchas en un rango de tiempo.
     """
-    permission_classes = [AllowAny] # Permitir a cualquier usuario consultar disponibilidad
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         start_time_str = request.query_params.get('start_time')

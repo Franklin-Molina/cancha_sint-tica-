@@ -11,19 +11,60 @@
 .app-header-title {
   font-size: 1.25rem; /* text-xl en Tailwind */
   font-weight: bold; /* font-bold en Tailwind */
+  text-decoration: none;
+
+
+}
+
+.app-nav {
+  display: flex; /* Usar flexbox para alinear elementos horizontalmente */
+  align-items: center; /* Alinear elementos verticalmente en el centro */
+}
+
+.app-nav > * { /* Aplicar margen a todos los hijos directos de app-nav */
+  margin-left: 1rem; /* Espacio entre elementos */
+}
+
+.app-nav > *:first-child { /* No aplicar margen al primer hijo directo */
+    margin-left: 0;
 }
 
 .app-nav a {
-  margin-left: 1rem; /* Espacio entre enlaces */
   text-decoration: none; /* Eliminar subrayado por defecto */
   color: white; /* Asegurar color blanco */
-}
-
-.app-nav a:first-child {
-    margin-left: 0; /* No aplicar margen al primer enlace */
 }
 
 
 .app-nav a:hover {
   text-decoration: underline; /* hover:underline en Tailwind */
 }
+
+/* Quitar subrayado del enlace del título */
+.app-header-title a {
+    text-decoration: none;
+    color: inherit; /* Heredar el color del padre (blanco) */
+}
+
+a {
+  text-decoration: none;
+  color: inherit; /* Para que no se ponga azul automáticamente */
+}
+.app-nav a {
+  text-decoration: none;
+  color: inherit;
+}
+
+nav{
+  text-decoration: none;
+  color: inherit;
+}
+.app-nav a, 
+.app-nav a:visited, 
+.app-nav a:hover, 
+.app-nav a:active {
+  text-decoration: none;
+  color: inherit;
+}
+
+
+/* Boton */

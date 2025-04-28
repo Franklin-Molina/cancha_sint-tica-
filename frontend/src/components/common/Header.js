@@ -3,16 +3,19 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/Header.css'; // Importar el archivo CSS
 
-function Header() {
+function Header({ openAuthModal }) { // Recibir openAuthModal como prop
   const { isAuthenticated } = useAuth();
 
   return (
     <header className="app-header">
-      <div className="app-header-title">Mi Aplicación</div> {/* Puedes reemplazar esto con el logo o nombre de la app */}
+      <Link to="/"> {/* Envolver el título con Link a la página de inicio */}
+        <div className="app-header-title">Inicio</div> {/* Puedes reemplazar esto con el logo o nombre de la app */}
+      </Link>
       <nav className="app-nav">
         {!isAuthenticated && (
           <>
-            <Link to="/auth">Iniciar Sesión</Link>
+            {/* Usar un div con onClick para abrir el modal */}
+            <div onClick={openAuthModal} style={{ cursor: 'pointer' }}>Iniciar Sesión</div>
             <Link to="/register">Registrar</Link>
           </>
         )}
