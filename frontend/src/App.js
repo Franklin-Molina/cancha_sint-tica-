@@ -20,10 +20,6 @@ import DashboardProfilePage from './pages/DashboardProfilePage'; // Importar Das
 function App() {
   return (
     <Routes>
-      {/* Rutas sin layout (ej. autenticación) */}
-      <Route path="/auth" element={<AuthPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-
       {/* Rutas con layout principal */}
       <Route
         path="/"
@@ -33,6 +29,24 @@ function App() {
           </Layout>
         }
       />
+      {/* Rutas de autenticación y registro con layout principal */}
+      <Route
+        path="/auth"
+        element={
+          <Layout> {/* Envolver con Layout */}
+            <AuthPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <Layout> {/* Envolver con Layout */}
+            <RegisterPage />
+          </Layout>
+        }
+      />
+
       {/* Ruta de detalle de cancha (accesible para cualquier usuario) */}
       <Route
         path="/courts/:courtId"
@@ -40,16 +54,6 @@ function App() {
           <Layout> {/* Usar el layout principal */}
             <CourtDetailPage />
           </Layout>
-        }
-      />
-      <Route
-        path="/courts"
-        element={
-          <ProtectedRoute> {/* Mantener ProtectedRoute para rutas protegidas */}
-            <Layout> {/* Envolver con Layout */}
-              <CourtListPage />
-            </Layout>
-          </ProtectedRoute>
         }
       />
       <Route
@@ -72,18 +76,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-      {/* La ruta de registro de admin podría usar el layout principal o uno específico, por ahora la dejo con el principal */}
-       <Route
-        path="/admin/register"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <AdminRegisterPage />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
-
       {/* Rutas del Dashboard (protegidas y con DashboardLayout) */}
       <Route
         path="/dashboard"
@@ -101,6 +93,8 @@ function App() {
         <Route path="reservas" element={<DashboardBookingsPage />} />
         {/* Sub-ruta para Perfil en el Dashboard */}
         <Route path="perfil" element={<DashboardProfilePage />} />
+        {/* Sub-ruta para Registrar Admin */}
+        <Route path="admin/register" element={<AdminRegisterPage />} />
         {/* TODO: Añadir sub-rutas para las otras secciones del dashboard */}
       </Route>
 

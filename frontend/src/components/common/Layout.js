@@ -14,11 +14,13 @@ function Layout({ children }) {
 
   // Función para abrir el modal de autenticación
   const openAuthModal = () => {
+    console.log('Abriendo modal de autenticación');
     setShowAuthModal(true);
   };
 
   // Función para cerrar el modal de autenticación
   const closeAuthModal = () => {
+    console.log('Cerrando modal de autenticación');
     setShowAuthModal(false);
   };
 
@@ -35,7 +37,6 @@ function Layout({ children }) {
       {showAuthModal && (
         <div className="modal-overlay" onClick={closeAuthModal}> {/* Overlay del modal */}
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px', padding: '2rem' }}> {/* Contenido del modal */}
-            <button className="modal-close-btn" onClick={closeAuthModal}>✕</button> {/* Botón para cerrar */}
             <AuthPage /> {/* Contenido de la página de autenticación */}
           </div>
         </div>

@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import '../../styles/Header.css'; // Importar el archivo CSS
 
 function Header({ openAuthModal }) { // Recibir openAuthModal como prop
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth(); // Obtener user del contexto
 
   return (
     <header className="app-header">
@@ -24,6 +24,10 @@ function Header({ openAuthModal }) { // Recibir openAuthModal como prop
             {/* Aquí se podrían añadir enlaces de navegación para usuarios autenticados */}
             <Link to="/courts">Canchas</Link>
             <Link to="/profile">Perfil</Link>
+            {/* Mostrar enlace al dashboard solo si el usuario es admin */}
+            {user && user.is_staff && (
+              <Link to="/dashboard">Dashboard</Link>
+            )}
             {/* TODO: Añadir botón de cerrar sesión */}
           </>
         )}

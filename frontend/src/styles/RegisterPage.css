@@ -1,0 +1,112 @@
+:root {
+  --primary-color: #667eea;
+  --primary-hover: #556cd6;
+  --text-dark: #2d3748;
+  --error-color: #e53e3e;
+  --box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.register-container {
+  background-color: #ffffff;
+  padding: 28px 32px;
+  border-radius: 16px;
+  box-shadow: var(--box-shadow);
+  width: 100%;
+  max-width: 700px;
+  transition: all 0.3s ease;
+}
+
+.register-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+}
+
+.register-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.register-container .error {
+  min-height: 1.5em;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--error-color);
+  text-align: center;
+}
+
+.register-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.register-container .form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.register-container .form-group {
+  flex: 1;
+}
+
+.register-container .form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+}
+
+.register-container .form-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 6px rgba(102, 126, 234, 0.5);
+  outline: none;
+}
+
+.register-container .submit-button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.register-container .submit-button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.register-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* min-height: 100vh; /* Centra verticalmente en el viewport */ 
+  box-sizing: border-box; /* Incluye padding y borde en el tamaño total */
+  padding-top: 35px; /* Ajustar para centrar verticalmente considerando el header */
+  min-height: calc(100vh - 60px); /* Asegura que el contenedor ocupe el espacio restante */
+}
+
+
+@media (max-width: 640px) {
+  .register-container .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Estilo para eliminar el scroll solo en la página de registro */
+body.no-scroll {
+  overflow: hidden !important; /* Usar !important para asegurar que se aplique */
+  margin: 0;
+  padding: 0;
+}

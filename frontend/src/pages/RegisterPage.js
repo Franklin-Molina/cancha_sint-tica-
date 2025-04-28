@@ -1,8 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Importar axios
+import '../styles/LoginForm.css'; // Importar estilos del formulario de login
+import '../styles/RegisterPage.css'; // Importar estilos de la página de registro
 
 function RegisterPage() {
+  useEffect(() => {
+    // Agregar clase al body cuando el componente se monta
+    document.body.classList.add('no-scroll');
+
+    // Limpiar: eliminar clase del body cuando el componente se desmonta
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, []); // El array vacío asegura que el efecto se ejecute solo una vez al montar y desmontar
+
   const [username, setUsername] = useState(''); // Estado para el nombre de usuario
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,9 +52,9 @@ function RegisterPage() {
   };
 
   return (
-    <div>
-      <h1>Página de Registro</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Mostrar errores */}
+    <div className="login-container"> {/* Usar la misma clase de contenedor que el login */}
+      <h2>Página de Registro</h2> {/* Usar h2 para el título */}
+      {error && <p className="error">{error}</p>} {/* Usar la clase error para mostrar errores */}
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username">Nombre de Usuario:</label> {/* Campo para nombre de usuario */}

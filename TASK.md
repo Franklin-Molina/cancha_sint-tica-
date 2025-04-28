@@ -151,6 +151,7 @@
 - Implementar sistema de reportes y estadísticas
 - Desarrollar funcionalidades avanzadas de búsqueda
 - Crear aplicación móvil o PWA
+- [ ] Modificar el estilo de la página de registro de acuerdo a `/components/future/register.html` - 28/04/2025
 - Implementar sistema de calificaciones y reseñas
 - Añadir integración con redes sociales
 - Expandir opciones de autenticación social (Facebook, Apple, etc.)

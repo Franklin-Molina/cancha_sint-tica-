@@ -24,3 +24,8 @@ except User.DoesNotExist:
 from django.contrib.auth import get_user_model
 User = get_user_model()
 admin_user = User.objects.create_superuser('admin', 'admin@admin.com', 'admin123')
+
+
+
+write to file 
+replace file

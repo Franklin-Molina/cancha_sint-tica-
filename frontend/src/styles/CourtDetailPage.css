@@ -23,15 +23,7 @@
     z-index: 1000; /* Asegurar que esté por encima de otros elementos */
 }
 
-.modal-content {
-    position: relative; /* Para posicionar el botón de cerrar */
-    max-width: 90%; /* Ancho máximo del contenido del modal */
-    max-height: 90%; /* Altura máxima del contenido del modal */
-    background-color: white; /* Fondo blanco para el contenido */
-    padding: 20px;
-    border-radius: 8px;
-    overflow: auto; /* Añadir scroll si la imagen es muy grande */
-}
+
 
 .modal-image {
     display: block; /* Eliminar espacio extra debajo de la imagen */

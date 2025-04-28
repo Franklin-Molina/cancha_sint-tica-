@@ -20,12 +20,23 @@ function DashboardLayout() {
             <h2>Cancha Admin</h2> {/* Título del dashboard */}
         </div>
         <div className="dashboard-sidebar-menu">
+            <Link to="/" className="dashboard-menu-item">
+                <i className="fas fa-home"></i> {/* Icono de ejemplo para Home */}
+                <span>Inicio</span>
+            </Link>
+
             <Link to="/dashboard" className="dashboard-menu-item active">
                 <i className="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </Link>
 
             <div className="dashboard-menu-title">Gestión</div>
+
+            {/* Nuevo enlace para el registro de administradores */}
+            <Link to="/dashboard/admin/register" className="dashboard-menu-item">
+                <i className="fas fa-user-plus"></i> {/* Icono de ejemplo para añadir usuario */}
+                <span>Registrar Admin</span>
+            </Link>
 
             <Link to="/dashboard/reservas" className="dashboard-menu-item">
                 <i className="fas fa-calendar-check"></i> {/* Icono de ejemplo */}
