@@ -3,9 +3,11 @@
 ## Visión General
 Desarrollar una plataforma completa para la gestión de canchas sintéticas que permita a los usuarios ver disponibilidad, realizar reservaciones, gestionar sus planes mensuales y realizar pagos en línea. El sistema tendrá una arquitectura moderna con separación de backend y frontend.
 
-## Alcance del Proyecto
-
+# Entono virtual
+   - Tienes que verificar si el entorno virtual esta activado
+   - Si el entorno virtual no esta actidado, lo debes activar luego realizar cualquier tipo de procedimiendo
 ### Funcionalidades Principales
+
 1. **Gestión de Canchas**
    - Registro y administración de diferentes canchas
    - Configuración de características específicas por cancha
@@ -64,12 +66,12 @@ Desarrollar una plataforma completa para la gestión de canchas sintéticas que 
 - **WebSockets**: Para actualizaciones en tiempo real (opcional)
 - **OAuth 2.0**: Para autenticación con Google
 
-### Infraestructura
+<!-- ### Infraestructura
 - **Despliegue**: Docker + Docker Compose
 - **CI/CD**: GitHub Actions o GitLab CI
 - **Hosting**: AWS, Digital Ocean, o similar
 - **Almacenamiento**: S3 o similar para archivos estáticos
-
+ -->
 ## Consideraciones de Seguridad
 - Implementación de HTTPS
 - Protección contra ataques CSRF y XSS

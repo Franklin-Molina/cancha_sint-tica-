@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Importar axios
-import '../styles/LoginForm.css'; // Importar estilos del formulario de login
 import '../styles/RegisterPage.css'; // Importar estilos de la página de registro
 
 function RegisterPage() {
@@ -19,6 +18,9 @@ function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState(''); // Estado para el nombre
+  const [lastName, setLastName] = useState(''); // Estado para el apellido
+  const [age, setAge] = useState(''); // Estado para la edad
   const [error, setError] = useState(''); // Estado para manejar errores
   const navigate = useNavigate();
 
@@ -32,12 +34,22 @@ function RegisterPage() {
       return;
     }
 
+    // Validar que todos los campos requeridos estén llenos
+    if (!username || !email || !password || !confirmPassword || !firstName || !lastName || !age) {
+      setError('Por favor completa todos los campos.');
+      return;
+    }
+
+
     try {
       // Realizar la llamada a la API de backend para registrar al usuario
       const response = await axios.post('http://localhost:8000/api/users/register/', { // Usar la URL correcta del endpoint de registro
         username, // Incluir nombre de usuario
         email,
         password,
+        first_name: firstName, // Incluir nombre
+        last_name: lastName, // Incluir apellido
+        age: age, // Incluir edad
       });
 
       console.log('Registro exitoso:', response.data);
@@ -52,51 +64,100 @@ function RegisterPage() {
   };
 
   return (
-    <div className="login-container"> {/* Usar la misma clase de contenedor que el login */}
-      <h2>Página de Registro</h2> {/* Usar h2 para el título */}
-      {error && <p className="error">{error}</p>} {/* Usar la clase error para mostrar errores */}
+    <div className="register-container"> {/* Usar la clase register-container */}
+      <h2>Registro de Usuario</h2> {/* Usar h2 para el título */}
+      {error && <div className="error">{error}</div>} {/* Usar la clase error para mostrar errores */}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">Nombre de Usuario:</label> {/* Campo para nombre de usuario */}
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
+        <div className="form-row">
+          <div className="form-group">
+            <input
+              type="text"
+              id="username"
+              className="form-input"
+              placeholder="Usuario"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="email"
+              id="email"
+              className="form-input"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+
+        <div className="form-row">
+          <div className="form-group">
+            <input
+              type="text"
+              id="nombre"
+              className="form-input"
+              placeholder="Nombre"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="text"
+              id="apellido"
+              className="form-input"
+              placeholder="Apellido"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="password">Contraseña:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+
+        <div className="form-row">
+          <div className="form-group">
+            <input
+              type="number"
+              id="edad"
+              className="form-input"
+              placeholder="Edad"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="password"
+              id="password"
+              className="form-input"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="confirmPassword">Confirmar Contraseña:</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
+
+        <div className="form-row">
+          <div className="form-group">
+            <input
+              type="password"
+              id="confirmPassword"
+              className="form-input"
+              placeholder="Confirmar Contraseña"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
         </div>
-        <button type="submit">Registrarse</button>
+
+        <button type="submit" className="submit-button">Registrar</button>
       </form>
     </div>
   );

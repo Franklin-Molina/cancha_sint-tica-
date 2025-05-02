@@ -88,9 +88,32 @@
 - [x] Implementar calendario/vista de disponibilidad
 - [x] Crear formulario de reserva básico
 
-## Sprint 3: Sistema de Pagos y Planes (2 semanas)
+## Sprint 3: 
 
-### API de Pagos
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ### API de Pagos
 - [ ] Investigar e integrar pasarelas de pago (PSE y tarjetas)
 - [ ] Implementar endpoints para procesar pagos
 - [ ] Desarrollar sistema de webhooks para confirmaciones
@@ -145,7 +168,7 @@
 - [ ] Configurar servidor web (Nginx)
 - [ ] Realizar pruebas de carga y rendimiento
 - [ ] Implementar sistema de monitoreo básico
-- [ ] Configurar dominios para redirecciones OAuth
+- [ ] Configurar dominios para redirecciones OAuth -->
 
 ## Próximos Pasos
 - Implementar sistema de reportes y estadísticas
@@ -161,4 +184,4 @@
 - [x] Reajustar login para acceder con username y password.
 - [x] Redirigir al usuario a una nueva página después del login y mostrar el nombre de usuario.
 - [x] Asegurar que los nuevos usuarios estén activos por defecto al registrarse.
-- [ ] El inicio de sesión con Google dejó de funcionar.
+

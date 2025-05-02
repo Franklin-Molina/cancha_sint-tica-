@@ -1,7 +1,8 @@
 # GUÍA DE DESARROLLO DEL PROYECTO
 siempre hablame en español y los comentarios que hagas en el codigo tambien son en español
 # No usar && para combinar multiples comandos, usar ;
-# Cada nueva instalacion se colocara en el archivo requirements.txt ya sea de banckend o frontend
+# Guarda cada Dependencias e instalaciones
+- Cada nueva instalacion o dependencia almacenala en el archivo requirements.txt
 
 ## 1. 🔄 Conciencia y contexto del proyecto
 - **Siempre lee 'PLANNING.md'** al comienzo de una nueva conversación para comprender la arquitectura, los objetivos, el estilo y las limitaciones del proyecto.
