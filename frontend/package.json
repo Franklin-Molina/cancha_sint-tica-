@@ -6,8 +6,10 @@
     "start": "react-scripts start"
   },
   "dependencies": {
+    "@babel/runtime": "^7.27.1",
     "@react-oauth/google": "^0.12.1",
     "axios": "^1.9.0",
+    "braces": "^3.0.3",
     "date-fns": "^4.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -27,5 +29,17 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "postcss": "^8.5.3",
+    "resolve-url-loader": "^5.0.0"
+  },
+  "overrides": {
+    "resolve-url-loader": {
+      "postcss": "^8.4.32"
+    },
+    "nth-check": "^2.0.1"
   }
+  
 }
+
