@@ -257,5 +257,7 @@ CORS_ALLOW_CREDENTIALS = True # Permitir que las solicitudes incluyan credencial
 
 # Configuración de CSRF para confiar en el origen del frontend
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
+ 
+    "http://localhost:5173",
+    #   "http://localhost:3000",
 ]

@@ -1,32 +1,30 @@
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer 
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User # Importar el modelo User
+from .models import User
+import logging
+import re
+
+logger = logging.getLogger(__name__)
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    # Definir explícitamente los campos esperados
+    # Campos esperados
     username = serializers.CharField(required=True)
-    password = serializers.CharField(write_only=True, required=True) # write_only=True para que no se incluya en la respuesta
+    password = serializers.CharField(write_only=True, required=True)
 
     def validate(self, attrs):
-        # Acceder a los datos validados
         username = attrs.get('username')
         password = attrs.get('password')
-
-        # Imprimir los atributos recibidos para depuración
-        import logging
-        logger = logging.getLogger(__name__)
-
-        import logging
-        logger = logging.getLogger(__name__)
 
         logger.debug(f"Atributos recibidos en el serializador: {attrs}")
         logger.debug(f"Intentando autenticar usuario: {username}")
 
-        # La validación de campos requeridos ya la maneja DRF con required=True
-        # Solo necesitamos validar las credenciales si ambos campos están presentes
-        # Obtener el usuario por username
-        # Verificar la contraseña usando authenticate
+        # Verificación para evitar que se pasen tokens JWT como credenciales
+        jwt_pattern = re.compile(r'^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$')
+        if jwt_pattern.match(username) or jwt_pattern.match(password):
+            logger.debug("Se detectó un token JWT enviado como username o password.")
+            raise serializers.ValidationError("Formato inválido para usuario o contraseña.", code="invalid_format")
+
         try:
             user = authenticate(username=username, password=password)
             logger.debug(f"Resultado de authenticate: {user}")
@@ -35,33 +33,23 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 logger.debug("Autenticación fallida: usuario no encontrado o credenciales inválidas.")
                 raise serializers.ValidationError("Credenciales inválidas", code="authorization")
 
-            logger.debug(f"Usuario autenticado: {user.username}, is_active: {user.is_active}")
-
-            # Asegurarse de que el usuario esté activo
             if not user.is_active:
                 logger.debug(f"Autenticación fallida: usuario {user.username} inactivo.")
                 raise serializers.ValidationError("La cuenta de usuario está inactiva.", code="authorization")
+
+            logger.debug(f"Usuario autenticado: {user.username}, is_active: {user.is_active}")
 
         except Exception as e:
             logger.error(f"Error durante la autenticación: {e}", exc_info=True)
             raise serializers.ValidationError("Error interno durante la autenticación.", code="internal_error")
 
-        # Opcional: Imprimir validadores de contraseña (para depuración avanzada si es necesario)
-        # from django.contrib.auth.password_validation import get_password_validators
-        # logger.debug(f"Validadores de contraseña: {get_password_validators()}")
-
-        # Si la autenticación es exitosa, podemos proceder a obtener los tokens
-        # La clase base TokenObtainPairSerializer espera que el usuario autenticado
-        # esté disponible en self.user. Lo asignamos aquí.
+        # Asignar el usuario autenticado para que la clase base genere los tokens
         self.user = user
-
-        # Llamar a la validación de la clase base para obtener los tokens
-        # Pasar los attrs originales que contienen username y password
         data = super().validate(attrs)
 
-        # Añadir información adicional del usuario a la respuesta
-        data["email"] = user.email # Mantener email en la respuesta si es necesario
+        # Añadir datos adicionales al payload de respuesta si es necesario
+        data["email"] = user.email
         data["user_id"] = user.id
-        data["username"] = user.username # Añadir username a la respuesta
-        #data["password"] = user.password
+        data["username"] = user.username
+
         return data
