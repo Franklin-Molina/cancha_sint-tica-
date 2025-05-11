@@ -6,3 +6,9 @@
 
 - [x] Aplicar Clean Architecture en el frontend
 - [x] Corregir error de doble autenticación con tokens JWT (05/07/2025)
+- [x] Aplicar Clean Architecture en el backend (11/05/2025)
+  - [x] Refactorizar aplicación `courts` (10/05/2025)
+  - [x] Refactorizar aplicación `users` (10/05/2025)
+  - [x] Refactorizar aplicación `bookings` (10/05/2025)
+  - [x] Refactorizar aplicación `payments` (10/05/2025)
+  - [x] Refactorizar aplicación `plans` (11/05/2025)

@@ -1,110 +1,110 @@
-from rest_framework import generics, status # Importar status
-from rest_framework.views import APIView # Importar APIView
-from rest_framework.response import Response # Importar Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser # Importar IsAuthenticated y IsAdminUser
+from rest_framework import status, views, viewsets # Importar views
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import action
-from rest_framework import viewsets
+from asgiref.sync import async_to_sync # Importar async_to_sync
+
 from .models import Booking
-from .serializers import BookingSerializer # Importar BookingSerializer
-from payments.models import Payment # Importar el modelo Payment
-from datetime import timedelta # Importar timedelta
-from decimal import Decimal # Importar Decimal para cálculos precisos
+from .serializers import BookingSerializer
+# Quitar importaciones no usadas directamente por la vista si la lógica se mueve
+# from payments.models import Payment
+# from datetime import timedelta
+# from decimal import Decimal
 
-# Mantener BookingList si se necesita una vista separada para listar/crear
-# class BookingList(generics.ListCreateAPIView):
-#     queryset = Booking.objects.all()
-#     serializer_class = BookingSerializer
-#     permission_classes = [IsAuthenticated] # Solo usuarios autenticados pueden listar/crear
-
-#     def perform_create(self, serializer):
-#         # Guardar la instancia de la reserva primero para obtener un PK
-#         instance = serializer.save(user=self.request.user) # Asignar el usuario autenticado
-
-#         # Calcular la duración de la reserva en horas (o la unidad de tiempo relevante)
-#         duration = (instance.end_time - instance.start_time).total_seconds() / 3600 # Duración en horas
-
-#         # Asumir que el precio de la cancha es por hora. Ajustar si es por otro período.
-#         # Si el precio es por reserva completa, usar instance.court.price directamente.
-#         # Por ahora, asumiré que el precio es por hora y la reserva es por horas completas o fracciones.
-#         # Si las reservas son por bloques de tiempo fijos (ej: 1 hora), el cálculo sería diferente.
-#         # Para simplificar, asumiré que el precio es por hora y calculo el costo total.
-#         costo_total = instance.court.price * Decimal(str(duration))
-
-#         # Calcular el monto del pago anticipado (10%)
-#         monto_anticipo = costo_total * Decimal('0.10')
-
-#         # Crear un objeto Payment asociado a la reserva
-#         payment = Payment.objects.create(
-#             user=self.request.user,
-#             booking=instance,
-#             amount=monto_anticipo,
-#             status='pending', # Estado inicial pendiente
-#             method='anticipo' # Método indicando que es el anticipo
-#         )
-
-#         # Asociar el pago a la instancia de la reserva
-#         instance.payment = payment
-#         instance.save()
+# Importar casos de uso y repositorio
+from .infrastructure.repositories.django_booking_repository import DjangoBookingRepository
+from .application.use_cases.create_booking import CreateBookingUseCase
+from .application.use_cases.get_booking_list import GetBookingListUseCase
+from .application.use_cases.get_booking_details import GetBookingDetailsUseCase
+from .application.use_cases.update_booking_status import UpdateBookingStatusUseCase
 
 
-class BookingViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet para el modelo Booking, proporcionando operaciones CRUD y acciones personalizadas.
-    """
-    queryset = Booking.objects.all()
-    serializer_class = BookingSerializer
-    permission_classes = [IsAdminUser] # Cambiado a IsAdminUser para restringir acceso al dashboard
+class BookingViewSet(viewsets.ViewSet): # Cambiar a viewsets.ViewSet para definir acciones manualmente
+    permission_classes = [IsAuthenticated] # Por defecto, solo usuarios autenticados
 
-    def perform_create(self, serializer):
-        # Guardar la instancia de la reserva primero para obtener un PK
-        instance = serializer.save(user=self.request.user) # Asignar el usuario autenticado
+    def get_permissions(self):
+        # Permitir a administradores realizar cualquier acción
+        if self.request.user and self.request.user.is_staff:
+            return [IsAdminUser()]
+        # Usuarios autenticados pueden listar sus reservas, crear, ver detalles y confirmar/cancelar las suyas
+        if self.action in ['list', 'create', 'retrieve', 'confirm', 'cancel']: # 'cancel' se manejará con update_status
+            return [IsAuthenticated()]
+        return super().get_permissions()
 
-        # Calcular la duración de la reserva en horas (o la unidad de tiempo relevante)
-        duration = (instance.end_time - instance.start_time).total_seconds() / 3600 # Duración en horas
+    def list(self, request):
+        booking_repository = DjangoBookingRepository()
+        get_booking_list_use_case = GetBookingListUseCase(booking_repository)
+        
+        # Si no es admin, filtrar por usuario autenticado
+        user_filter = request.user if not request.user.is_staff else None
+        filters = request.query_params.dict() # Para otros filtros como status
 
-        # Asumir que el precio de la cancha es por hora. Ajustar si es por otro período.
-        # Si el precio es por reserva completa, usar instance.court.price directamente.
-        # Por ahora, asumiré que el precio es por hora y la reserva es por horas completas o fracciones.
-        # Si las reservas son por bloques de tiempo fijos (ej: 1 hora), el cálculo sería diferente.
-        # Para simplificar, asumiré que el precio es por hora y calculo el costo total.
-        costo_total = instance.court.price * Decimal(str(duration))
+        bookings = async_to_sync(get_booking_list_use_case.execute)(user=user_filter, filters=filters)
+        serializer = BookingSerializer(bookings, many=True, context={'request': request})
+        return Response(serializer.data)
 
-        # Calcular el monto del pago anticipado (10%)
-        monto_anticipo = costo_total * Decimal('0.10')
-
-        # Crear un objeto Payment asociado a la reserva
-        payment = Payment.objects.create(
-            user=self.request.user,
-            booking=instance,
-            amount=monto_anticipo,
-            status='pending', # Estado inicial pendiente
-            method='anticipo' # Método indicando que es el anticipo
-        )
-
-        # Asociar el pago a la instancia de la reserva
-        instance.payment = payment
-        instance.save()
-
-
-    @action(detail=True, methods=['post'])
-    def confirm(self, request, pk=None):
-        """
-        Confirma una reserva pendiente.
-        """
-        try:
-            booking = self.get_object()
-        except Booking.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        # Verificar permisos: solo el propietario de la reserva o un administrador pueden confirmar
-        if booking.user != request.user and not request.user.is_staff:
-             return Response({"detail": "No tienes permiso para confirmar esta reserva."}, status=status.HTTP_403_FORBIDDEN)
-
-
-        if booking.status == 'pending':
-            booking.status = 'confirmed'
-            booking.save()
-            serializer = self.get_serializer(booking)
+    def retrieve(self, request, pk=None):
+        booking_repository = DjangoBookingRepository()
+        get_booking_details_use_case = GetBookingDetailsUseCase(booking_repository)
+        
+        user_filter = request.user if not request.user.is_staff else None
+        booking = async_to_sync(get_booking_details_use_case.execute)(booking_id=pk, user=user_filter)
+        
+        if booking:
+            serializer = BookingSerializer(booking, context={'request': request})
             return Response(serializer.data)
-        else:
-            return Response({"detail": "La reserva no está pendiente y no puede ser confirmada."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def create(self, request):
+        booking_repository = DjangoBookingRepository()
+        create_booking_use_case = CreateBookingUseCase(booking_repository)
+        
+        serializer = BookingSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            # El repositorio/caso de uso ahora maneja la lógica de creación de pago y asignación de usuario
+            booking_data = serializer.validated_data 
+            try:
+                booking = async_to_sync(create_booking_use_case.execute)(booking_data, user=request.user)
+                response_serializer = BookingSerializer(booking, context={'request': request})
+                return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+            except ValueError as e: # Capturar errores de validación del caso de uso/repositorio
+                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({"error": "Error interno al crear la reserva."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # La actualización completa (PUT) de una reserva podría no ser común,
+    # usualmente se actualiza el estado (ej. cancelar).
+    # Si se necesita, se puede implementar de forma similar a create/retrieve.
+
+    @action(detail=True, methods=['post'], url_path='update-status')
+    def update_booking_status(self, request, pk=None):
+        booking_repository = DjangoBookingRepository()
+        update_status_use_case = UpdateBookingStatusUseCase(booking_repository)
+        
+        new_status = request.data.get('status')
+        if not new_status:
+            return Response({"error": "El campo 'status' es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_filter = request.user if not request.user.is_staff else None
+        
+        try:
+            booking = async_to_sync(update_status_use_case.execute)(
+                booking_id=pk, 
+                status=new_status, 
+                user=user_filter
+            )
+            if booking:
+                serializer = BookingSerializer(booking, context={'request': request})
+                return Response(serializer.data)
+            # Si el caso de uso devuelve None, significa que no se encontró la reserva o no hay permiso
+            return Response({"detail": "Reserva no encontrada o no tienes permiso para modificarla."}, status=status.HTTP_404_NOT_FOUND)
+        except ValueError as e: # Errores de validación del caso de uso/repositorio
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": "Error interno al actualizar el estado de la reserva."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # La acción 'confirm' se puede manejar a través de 'update_booking_status'
+    # enviando 'status': 'CONFIRMED'.
+    # Si se necesita una lógica más específica para confirmar, se puede mantener.
+    # Por ahora, la eliminaremos para simplificar y usar update_booking_status.

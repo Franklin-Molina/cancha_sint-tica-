@@ -28,3 +28,22 @@ frontend/src/
 ├── styles/
 ├── utils/                      (Utilidades generales que no pertenecen a una capa específica, como helpers)
 └── index.jsx                   (Punto de entrada de la aplicación)
+
+
+backend/courts/
+├── domain/
+│   ├── entities/  (Opcional, si se usan clases separadas de los modelos Django)
+│   └── repositories/
+│       └── court_repository.py  (Interfaz ICourtRepository)
+├── application/
+│   └── use_cases/
+│       └── get_court_details.py (UseCase GetCourtDetailsUseCase)
+├── infrastructure/
+│   └── repositories/
+│       └── django_court_repository.py (Implementación de ICourtRepository usando ORM Django)
+├── api/  (O Presentation)
+│   ├── views.py
+│   └── serializers.py
+├── models.py (Entidades del Dominio)
+├── urls.py
+└── ... (otros archivos de la aplicación Django)

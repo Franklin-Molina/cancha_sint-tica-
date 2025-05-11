@@ -20,10 +20,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name', 'edad', 'is_staff', 'groups')  # Incluir is_staff y groups
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name', 'edad', 'role', 'is_staff', 'groups')  # Incluir role, is_staff y groups
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True},
+            'role': {'required': False}, # Hacer role opcional ya que tiene default en el modelo
             'email': {'required': True},
             'edad': {'required': True}
         }
@@ -33,23 +34,23 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"password": "Password fields didn't match."})
         return data
 
-    def create(self, validated_data):
-        validated_data.pop('password2')
-        password = validated_data.pop('password')
-        is_staff = validated_data.pop('is_staff', False)  # Obtener is_staff o usar False por defecto
-        groups = validated_data.pop('groups', [])  # Obtener groups o usar una lista vacía por defecto
+    # Eliminar el método create, ya que la creación se maneja en el repositorio
+    # def create(self, validated_data):
+    #     validated_data.pop('password2')
+    #     password = validated_data.pop('password')
+    #     is_staff = validated_data.pop('is_staff', False)
+    #     groups = validated_data.pop('groups', [])
 
-        user = User.objects.create(**validated_data)
-        user.set_password(password)
-        user.is_active = True
-        user.is_staff = is_staff  # Establecer is_staff
-        user.save()
+    #     user = User.objects.create(**validated_data)
+    #     user.set_password(password)
+    #     user.is_active = True
+    #     user.is_staff = is_staff
+    #     user.save()
 
-        # Asignar el usuario a los grupos especificados
-        for group in groups:
-            user.groups.add(group)
+    #     for group in groups:
+    #         user.groups.add(group)
 
-        return user
+    #     return user
 
 class AdminRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})

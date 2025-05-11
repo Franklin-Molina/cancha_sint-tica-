@@ -5,8 +5,8 @@ from .views import BookingViewSet # Importar BookingViewSet
 # Crear una instancia del router
 router = DefaultRouter()
 
-# Registrar el ViewSet con el router
-router.register(r'bookings', BookingViewSet)
+# Registrar el ViewSet con el router y especificar basename
+router.register(r'bookings', BookingViewSet, basename='booking')
 
 # Las URLs generadas por el router se incluyen en urlpatterns
 urlpatterns = [
