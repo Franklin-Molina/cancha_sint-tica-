@@ -6,7 +6,7 @@ from .models import User, PerfilSocial
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'is_staff', 'edad')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'role', 'is_staff', 'is_active', 'edad') # Añadir is_active
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
@@ -58,10 +58,11 @@ class AdminRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name', 'edad', 'is_staff', 'is_superuser', 'groups', 'user_permissions')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name', 'edad', 'role', 'is_staff', 'is_superuser', 'groups', 'user_permissions') # Añadir role
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True},
+            'role': {'required': False, 'default': 'admin'}, # Hacer role opcional con default 'admin'
             'email': {'required': True},
             'edad': {'required': True},
             'is_staff': {'default': True},
@@ -78,18 +79,28 @@ class AdminRegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password2')
         password = validated_data.pop('password')
-        user = User.objects.create(**validated_data)
-        user.set_password(password)
-        user.is_active = True
-        user.is_staff = True
-        user.is_superuser = True
-        user.save()
+        
+        # El rol se tomará de validated_data (con default 'admin' si no se envía)
+        # o se puede forzar aquí si es necesario.
+        # role = validated_data.get('role', 'admin') # Asegurar que sea 'admin' si no se especifica
+        # validated_data['role'] = role
 
-        # Asignar todos los permisos al administrador
-        permission = Permission.objects.all()
-        user.user_permissions.set(permission)
-        user.save()
+        # is_staff e is_superuser se manejan en el repositorio basado en el rol.
+        # No es necesario establecerlos aquí si el repositorio lo hace.
+        # Sin embargo, si este serializador se usa directamente (sin el caso de uso/repositorio),
+        # necesitaría manejar la lógica de is_staff/is_superuser aquí.
+        # Por ahora, asumimos que la vista usa el caso de uso.
 
+        user = User.objects.create_user(**validated_data) # Usar create_user para hashear contraseña
+        # La lógica de is_staff, is_superuser y grupos se maneja en DjangoUserRepository.create
+        
+        # Si se quiere que este serializador asigne todos los permisos (para adminglobal),
+        # esa lógica podría ir aquí, pero es mejor que esté en el repositorio o caso de uso.
+        # if user.role == 'adminglobal':
+        #     permission = Permission.objects.all()
+        #     user.user_permissions.set(permission)
+        #     user.save()
+            
         return user
 
 class PerfilSocialSerializer(serializers.ModelSerializer):

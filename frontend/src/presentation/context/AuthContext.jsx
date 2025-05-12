@@ -48,10 +48,12 @@ export const AuthProvider = ({ children }) => {
         setUser(authenticatedUser);
         setIsAuthenticated(true);
 
-        // Redirigir después de obtener la información del usuario
-        if (authenticatedUser.is_staff) {
-            navigate('/dashboard'); // Redirigir a administradores al dashboard
-        } else {
+        // Redirigir después de obtener la información del usuario según el rol
+        if (authenticatedUser.role === 'adminglobal') {
+            navigate('/adminglobal'); // Redirigir a adminglobal a su dashboard
+        } else if (authenticatedUser.is_staff) { // Para role='admin' u otros staff
+            navigate('/dashboard'); // Redirigir a administradores de cancha al dashboard
+        } else { // Para role='cliente'
             navigate('/profile'); // Redirigir a usuarios normales al perfil
         }
 
@@ -84,8 +86,27 @@ export const AuthProvider = ({ children }) => {
       await fetchUser(); // fetchUser ahora maneja la redirección después de obtener el usuario
 
     } catch (error) {
-      console.error('Error en el inicio de sesión:', error);
-      // Relanzar el error para que el componente de UI que llamó a login lo maneje (ej. muestre un mensaje de error)
+      console.error('Error en el inicio de sesión (AuthContext):', error);
+      if (error.response && error.response.data) {
+        // Loguear el string exacto de la respuesta de error
+        console.log('Raw error response data string (AuthContext):', JSON.stringify(error.response.data));
+        let errorMessage = null;
+
+        if (error.response.data.detail) {
+          errorMessage = error.response.data.detail;
+        } else if (Array.isArray(error.response.data.non_field_errors) && error.response.data.non_field_errors.length > 0) {
+          errorMessage = error.response.data.non_field_errors[0];
+        }
+        
+        if (errorMessage && errorMessage.toLowerCase().includes("cuenta de usuario está inactiva")) {
+          alert("Tu cuenta está suspendida. Por favor, contacta al administrador.");
+          return; 
+        } else if (errorMessage) {
+          // Si hay un mensaje de error pero no es el de cuenta inactiva, relanzar con ese mensaje.
+          throw new Error(errorMessage);
+        }
+      }
+      // Relanzar otros errores o si no hay un mensaje de error claro del backend
       throw error;
     }
   };

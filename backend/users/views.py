@@ -22,6 +22,9 @@ from .infrastructure.repositories.django_user_repository import DjangoUserReposi
 from .application.use_cases.register_user import RegisterUserUseCase
 from .application.use_cases.get_user_profile import GetUserProfileUseCase
 from .application.use_cases.update_user_profile import UpdateUserProfileUseCase
+from .application.use_cases.get_user_list import GetUserListUseCase # Nuevo
+from .application.use_cases.update_user_status import UpdateUserStatusUseCase # Nuevo
+from .application.use_cases.delete_user import DeleteUserUseCase # Nuevo
 # Nota: Los casos de uso para login/logout/google se manejan en el frontend
 # y los endpoints de JWT/dj-rest-auth manejan la autenticación en el backend.
 
@@ -113,10 +116,16 @@ class PermissionViewSet(viewsets.ModelViewSet):
     queryset = Permission.objects.all()
     permission_classes = [IsAdminUser]
 
+from .services import crear_grupo_administradores, crear_grupo_clientes, crear_grupo_gestores_cancha # Importar todas
+
 @receiver(post_migrate)
 def create_groups_and_permissions(sender, **kwargs):
-    if sender.name == 'users':
+    if sender.name == 'users': # Asegurarse de que se ejecute solo para la app 'users'
+        print("Ejecutando create_groups_and_permissions para la app 'users'...")
         crear_grupo_administradores()
+        crear_grupo_clientes()
+        crear_grupo_gestores_cancha()
+        print("Grupos creados/actualizados.")
 
 class LoginView(TokenObtainPairView):
     permission_classes = [permissions.AllowAny]
@@ -147,8 +156,9 @@ class AdminRegisterView(views.APIView): # Cambiar a APIView
         serializer = AdminRegisterSerializer(data=request.data)
         if serializer.is_valid():
             user_data = serializer.validated_data
-            # Asegurarse de que el usuario creado sea staff
-            user_data['is_staff'] = True 
+            # Asegurarse de que el usuario creado sea staff y activo
+            user_data['is_staff'] = True
+            user_data['is_active'] = True # Establecer explícitamente como activo
             try:
                 # Envolver la llamada asíncrona con async_to_sync
                 user = async_to_sync(register_user_use_case.execute)(user_data)
@@ -166,3 +176,65 @@ def get_csrf_token(request):
     El middleware de CSRF se encargará de establecer la cookie.
     """
     return JsonResponse({'detail': 'CSRF cookie set'})
+
+class AdminManagementViewSet(viewsets.ViewSet):
+    """
+    ViewSet para que adminglobal gestione usuarios con role='admin'.
+    """
+    permission_classes = [IsAdminUser] # Solo superusuarios (adminglobal)
+
+    def _is_adminglobal(self, user):
+        return user.is_authenticated and user.is_superuser and user.role == 'adminglobal'
+
+    def list(self, request): # Listar admins de cancha
+        if not self._is_adminglobal(request.user):
+            return Response({"detail": "No tienes permiso para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+        user_repository = DjangoUserRepository()
+        get_user_list_use_case = GetUserListUseCase(user_repository)
+        
+        admins = async_to_sync(get_user_list_use_case.execute)(filters={'role': 'admin'})
+        serializer = UserSerializer(admins, many=True)
+        return Response(serializer.data)
+
+    # La creación de admins se maneja a través de AdminRegisterView, 
+    # que ya está protegida por IsAdminUser.
+    # Si se quiere una lógica diferente para adminglobal creando admins, se puede añadir aquí.
+
+    @action(detail=True, methods=['patch'])
+    def suspend(self, request, pk=None): # Suspender admin
+        if not self._is_adminglobal(request.user):
+            return Response({"detail": "No tienes permiso para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+        user_repository = DjangoUserRepository()
+        update_user_status_use_case = UpdateUserStatusUseCase(user_repository)
+        
+        user = async_to_sync(update_user_status_use_case.execute)(user_id=pk, is_active=False)
+        if user:
+            return Response({"detail": f"Usuario admin {user.username} suspendido."}, status=status.HTTP_200_OK)
+        return Response({"detail": "Usuario admin no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['patch'])
+    def reactivate(self, request, pk=None): # Reactivar admin
+        if not self._is_adminglobal(request.user):
+            return Response({"detail": "No tienes permiso para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+            
+        user_repository = DjangoUserRepository()
+        update_user_status_use_case = UpdateUserStatusUseCase(user_repository)
+
+        user = async_to_sync(update_user_status_use_case.execute)(user_id=pk, is_active=True)
+        if user:
+            return Response({"detail": f"Usuario admin {user.username} reactivado."}, status=status.HTTP_200_OK)
+        return Response({"detail": "Usuario admin no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    def destroy(self, request, pk=None): # Eliminar admin
+        if not self._is_adminglobal(request.user):
+            return Response({"detail": "No tienes permiso para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+        user_repository = DjangoUserRepository()
+        delete_user_use_case = DeleteUserUseCase(user_repository)
+
+        success = async_to_sync(delete_user_use_case.execute)(user_id=pk)
+        if success:
+            return Response({"detail": "Usuario admin eliminado."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "Usuario admin no encontrado."}, status=status.HTTP_404_NOT_FOUND)

@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import RegisterView, UserViewSet, GroupViewSet, PermissionViewSet, GoogleLogin, AdminRegisterView
+from .views import RegisterView, UserViewSet, GroupViewSet, PermissionViewSet, GoogleLogin, AdminRegisterView, AdminManagementViewSet # Añadir AdminManagementViewSet
 from rest_framework import routers
 from .models import User
 from django.urls import path
@@ -13,14 +13,20 @@ router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'groups', GroupViewSet)
 router.register(r'permissions', PermissionViewSet)
+router.register(r'manage-admins', AdminManagementViewSet, basename='manage-admin') # Registrar AdminManagementViewSet
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
-    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'), # Restaurar vista personalizada
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'), # Usar la vista personalizada
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('google/', GoogleLogin.as_view(), name='google_login'),
-    path('admin/register/', AdminRegisterView.as_view(), name='admin_register'), # Nueva URL para el registro de administradores
+    
+    # La ruta admin/register/ ya existe y usa AdminRegisterView.
+    # Esta vista permite crear usuarios con is_staff=True, que podrían ser 'admin' o 'adminglobal'.
+    # La lógica en el repositorio DjangoUserRepository asigna is_superuser=True si role='adminglobal'.
+    path('admin/register/', AdminRegisterView.as_view(), name='admin_register'), 
+
     path('', include(router.urls)),
-   
 ]
+# Las rutas para listar, suspender, reactivar y eliminar admins de cancha
+# ahora están manejadas por AdminManagementViewSet y registradas en el router.

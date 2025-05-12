@@ -8,11 +8,11 @@ class User(AbstractUser):
     Modelo de usuario personalizado.
     """
     ROLE_CHOICES = [
-        ('admin', 'Administrador'),
+        ('adminglobal', 'Administrador Global'),
+        ('admin', 'Administrador de Cancha'),
         ('cliente', 'Cliente'),
-        # Añadir otros roles según sea necesario
     ]
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='cliente') # Añadir campo role
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='cliente')
     edad = models.IntegerField(null=True, blank=True)
     is_staff = models.BooleanField(default=False)
  

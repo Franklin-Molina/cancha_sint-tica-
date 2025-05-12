@@ -29,16 +29,22 @@ export class AuthenticatedUser {
    * @param {string} [data.first_name] - El nombre del usuario.
    * @param {string} [data.last_name] - El apellido del usuario.
    * @param {number} [data.edad] - La edad del usuario.
+   * @param {string} [data.role] - El rol del usuario (ej. 'cliente', 'admin', 'adminglobal').
+   * @param {boolean} [data.is_active] - Indica si el usuario está activo.
    * @param {object[]} [data.social_profiles] - Perfiles sociales vinculados.
    */
-  constructor({ id, username, email, is_staff, first_name, last_name, edad, social_profiles }) {
-    if (id === undefined || !username || !email || is_staff === undefined) {
-      throw new Error('AuthenticatedUser entity requires id, username, email, and is_staff.');
+  constructor({ id, username, email, is_staff, is_active, first_name, last_name, edad, role, social_profiles }) {
+    // Role podría no ser obligatorio si no todos los usuarios lo tienen o si se añade después
+    // is_active también podría ser opcional si no siempre se envía, aunque es un campo estándar de User.
+    if (id === undefined || !username || !email || is_staff === undefined || is_active === undefined) {
+      throw new Error('AuthenticatedUser entity requires id, username, email, is_staff, and is_active.');
     }
     this.id = id;
     this.username = username;
     this.email = email;
     this.is_staff = is_staff;
+    this.is_active = is_active; // Añadir is_active
+    this.role = role; 
     this.first_name = first_name;
     this.last_name = last_name;
     this.edad = edad;

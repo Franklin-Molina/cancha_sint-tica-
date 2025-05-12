@@ -44,6 +44,20 @@ class IUserRepository(ABC):
         Actualiza un usuario existente.
         """
         pass
+
+    @abstractmethod
+    async def get_all(self, filters: Optional[Dict[str, Any]] = None) -> List[User]:
+        """
+        Obtiene una lista de todos los usuarios, con filtros opcionales (ej. por rol).
+        """
+        pass
+
+    @abstractmethod
+    async def delete(self, user_id: int) -> bool:
+        """
+        Elimina un usuario existente. Devuelve True si se eliminó, False en caso contrario.
+        """
+        pass
     
     # La lógica de login/autenticación se maneja a través de IAuthRepository
     # y los endpoints de JWT/dj-rest-auth.

@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict, Any
 from django.contrib.auth.hashers import make_password # Para hashear contraseñas
 from asgiref.sync import sync_to_async
+from django.contrib.auth.models import Group # Importar Group
 from ...models import User # Modelo de Django User (backend/users/models.py)
 from ...domain.repositories.user_repository import IUserRepository # Interfaz del Dominio
 
@@ -48,8 +49,28 @@ class DjangoUserRepository(IUserRepository):
         
         # Eliminar la asignación del campo 'role' ya que no está en el modelo User
         # user_data.pop('role', None) # Asegurarse de que 'role' no se pase si no está en el modelo
+        
+        # Obtener el rol de user_data o usar el default del modelo si no se proporciona
+        role = user_data.get('role', User._meta.get_field('role').get_default())
 
-        user = User.objects.create_user(**user_data) # Usar create_user para manejar el hasheo de contraseña
+        # Crear el usuario
+        user = User.objects.create_user(**user_data)
+
+        # Asignar propiedades y grupos según el rol
+        if role == 'adminglobal':
+            user.is_staff = True
+            user.is_superuser = True
+        elif role == 'admin':
+            user.is_staff = True
+            try:
+                gestores_cancha_group = Group.objects.get(name='Gestores de Cancha')
+                user.groups.add(gestores_cancha_group)
+            except Group.DoesNotExist:
+                # Manejar el caso en que el grupo no exista (debería crearse con crear_grupo.py)
+                print("Advertencia: El grupo 'Gestores de Cancha' no existe. El usuario admin no se añadió al grupo.")
+        # Para 'cliente', is_staff y is_superuser son False por defecto.
+
+        user.save() # Guardar los cambios de is_staff, is_superuser y grupos
         return user
 
     @sync_to_async
@@ -68,3 +89,23 @@ class DjangoUserRepository(IUserRepository):
         
         user.save()
         return user
+
+    @sync_to_async
+    def get_all(self, filters: Optional[Dict[str, Any]] = None) -> List[User]:
+        queryset = User.objects.all()
+        if filters:
+            # Aplicar filtros si se proporcionan
+            # Ejemplo: filtrar por rol
+            if 'role' in filters:
+                queryset = queryset.filter(role=filters['role'])
+            # Añadir más filtros según sea necesario
+        return list(queryset)
+
+    @sync_to_async
+    def delete(self, user_id: int) -> bool:
+        try:
+            user = User.objects.get(pk=user_id)
+            user.delete()
+            return True
+        except User.DoesNotExist:
+            return False

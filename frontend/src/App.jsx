@@ -15,6 +15,7 @@ import DashboardCourtsPage from './presentation/pages/DashboardCourtsPage.jsx';
 import CourtDetailPage from './presentation/pages/CourtDetailPage.jsx';
 import DashboardBookingsPage from './presentation/pages/DashboardBookingsPage.jsx';
 import DashboardProfilePage from './presentation/pages/DashboardProfilePage.jsx';
+import AdminGlobalDashboardPage from './presentation/pages/AdminGlobalDashboardPage.jsx'; // Nueva página
 
 function App() {
   return (
@@ -84,8 +85,30 @@ function App() {
           <Route path="canchas" element={<DashboardCourtsPage />} />
           <Route path="reservas" element={<DashboardBookingsPage />} />
           <Route path="perfil" element={<DashboardProfilePage />} />
-          <Route path="admin/register" element={<AdminRegisterPage />} />
+          {/* <Route path="admin/register" element={<AdminRegisterPage />} /> */} {/* AdminRegisterPage podría ser parte del dashboard adminglobal */}
         </Route>
+        <Route
+          path="/adminglobal"
+          element={
+            <ProtectedRoute> {/* Proteger esta ruta */}
+              <Layout> {/* O un Layout específico para adminglobal */}
+                <AdminGlobalDashboardPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        {/* La ruta para registrar admins de cancha podría estar dentro de AdminGlobalDashboardPage */}
+        {/* o ser una subruta de /adminglobal */}
+        <Route 
+          path="/adminglobal/register-admin" 
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AdminRegisterPage />
+              </Layout>
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
     
   );
