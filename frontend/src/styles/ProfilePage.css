@@ -138,11 +138,15 @@
 }
 
 /* Estilos para el formulario de edición de perfil */
-.profile-card form .form-group {
+.profile-form {
+    padding: 20px;
+}
+
+.profile-form .form-group {
     margin-bottom: 15px;
 }
 
-.profile-card form label {
+.profile-form label {
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
@@ -150,48 +154,65 @@
     font-size: 15px;
 }
 
-/* Reutilizar .form-input de AdminGlobalDashboard.css si es posible, o definir aquí si es diferente */
-/* .profile-card form .form-input { ... } */
+.profile-form input[type="text"],
+.profile-form input[type="email"],
+.profile-form input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
 
-.form-actions {
+.profile-form .form-actions {
     margin-top: 25px;
     display: flex;
     justify-content: flex-end;
     gap: 10px;
 }
 
-/* Reutilizar .action-button y .button-cancel de AdminGlobalDashboard.css */
-
-.button-save {
-    background-color: #4a89dc; /* Usar color primario */
-    color: white;
-}
-
-.button-save:hover {
-    background-color: #3bafda; /* Usar color secundario o un tono más oscuro */
-}
-
-.button-save:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-.edit-section {
-    margin-top: 20px;
-    text-align: right;
-}
-
-.button-edit {
-    background-color: #f6bb42; /* Usar color de advertencia o un color neutro */
-    color: white;
-    padding: 8px 15px;
+.profile-form .form-actions button {
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
-.button-edit:hover {
-    background-color: #e0a830;
+.profile-form .form-actions button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+}
+
+.profile-form .form-actions button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.profile-form .form-actions button[type="button"] {
+    background-color: #6c757d;
+    color: white;
+}
+
+.profile-form .form-actions button[type="button"]:hover {
+    background-color: #545b62;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.alert.error-alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert.success-alert {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
 }

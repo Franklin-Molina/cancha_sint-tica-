@@ -214,23 +214,6 @@ class AdminManagementViewSet(viewsets.ViewSet):
             return Response({"detail": f"Usuario admin {user.username} suspendido."}, status=status.HTTP_200_OK)
         return Response({"detail": "Usuario admin no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-from rest_framework.generics import RetrieveUpdateAPIView # Importar RetrieveUpdateAPIView
-from .serializers import UserProfileUpdateSerializer # Importar el nuevo serializador
-
-class UserProfileUpdateView(RetrieveUpdateAPIView):
-    """
-    Vista para obtener y actualizar el perfil del usuario autenticado.
-    """
-    serializer_class = UserProfileUpdateSerializer
-    permission_classes = [IsAuthenticated] # Solo usuarios autenticados
-    queryset = User.objects.all() # Necesario para RetrieveUpdateAPIView, pero get_object lo sobrescribe
-
-    def get_object(self):
-        """
-        Retorna el usuario autenticado para operaciones de detalle y actualización.
-        """
-        return self.request.user
-
     @action(detail=True, methods=['patch'])
     def reactivate(self, request, pk=None): # Reactivar admin
         if not self._is_adminglobal(request.user):
@@ -255,3 +238,20 @@ class UserProfileUpdateView(RetrieveUpdateAPIView):
         if success:
             return Response({"detail": "Usuario admin eliminado."}, status=status.HTTP_204_NO_CONTENT)
         return Response({"detail": "Usuario admin no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+from rest_framework.generics import RetrieveUpdateAPIView # Importar RetrieveUpdateAPIView
+from .serializers import UserProfileUpdateSerializer # Importar el nuevo serializador
+
+class UserProfileUpdateView(RetrieveUpdateAPIView):
+    """
+    Vista para obtener y actualizar el perfil del usuario autenticado.
+    """
+    serializer_class = UserProfileUpdateSerializer
+    permission_classes = [IsAuthenticated] # Solo usuarios autenticados
+    queryset = User.objects.all() # Necesario para RetrieveUpdateAPIView, pero get_object lo sobrescribe
+
+    def get_object(self):
+        """
+        Retorna el usuario autenticado para operaciones de detalle y actualización.
+        """
+        return self.request.user
