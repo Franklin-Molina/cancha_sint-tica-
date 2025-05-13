@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
-import { useAuth } from '../../context/AuthContext.jsx'; // Importar useAuth
-import api from '../../../infrastructure/api/api.js'; // Importar la instancia de axios configurada
+
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { CreateAdminUserUseCase } from '../../../application/use-cases/create-admin-user.js'; // Importar el caso de uso
+import { ApiUserRepository } from '../../../infrastructure/repositories/api-user-repository.js'; // Importar el repositorio
+// import api from '../../../infrastructure/api/api.js'; // Mantener la importación de api si se usa en otro lugar, si no, eliminar
+import '../../../styles/AdminRegisterPage.css'; // Importar los estilos específicos de este componente desde la nueva ubicación
 
 /**
  * Página de registro de administradores.
@@ -23,6 +26,10 @@ function AdminRegisterPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Instanciar el repositorio y el caso de uso
+  const userRepository = new ApiUserRepository();
+  const createAdminUserUseCase = new CreateAdminUserUseCase(userRepository);
+
   const handleRegistration = async (e) => {
     e.preventDefault();
 
@@ -32,27 +39,45 @@ function AdminRegisterPage() {
     }
 
     try {
-      // Ajusta la URL si es necesario
-      const response = await api.post('/users/admin/register/', {
-        username, // Incluir username
+      // Preparar los datos para el caso de uso
+      const userData = {
+        username,
         email,
         password,
-        password2: confirmPassword, // Incluir confirmPassword como password2
-        first_name: firstName, // Incluir first_name
-        last_name: lastName, // Incluir last_name
-        edad: age, // Incluir edad
-      });
+        password2: confirmPassword,
+        first_name: firstName,
+        last_name: lastName,
+        edad: age,
+      };
 
-      console.log('Registro de administrador exitoso:', response.data);
+      // Ejecutar el caso de uso
+      const newUser = await createAdminUserUseCase.execute(userData);
+
+      console.log('Registro de administrador exitoso:', newUser); // Usar newUser en lugar de response.data
       setSuccess('Registro de administrador exitoso.');
       setError(''); // Limpiar errores previos
+
+      // Limpiar el formulario después del registro exitoso
+      setUsername('');
+      setFirstName('');
+      setLastName('');
+      setAge('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+
+      // Ocultar el mensaje de éxito después de 3 segundos
+      setTimeout(() => {
+        setSuccess('');
+      }, 3000); // 3000 milisegundos = 3 segundos
 
     } catch (error) {
       console.error('Error en el registro de administrador:', error);
       if (error.response && error.response.data) {
         // Mostrar errores de validación del backend
         const backendErrors = error.response.data;
-        let errorMessage = 'Error en el registro de administrador: ';
+
+        let errorMessage = 'Error en el registro de administrador: '; // Corregido el error tipográfico
         for (const field in backendErrors) {
           if (backendErrors.hasOwnProperty(field)) {
             const errorValue = backendErrors[field];
@@ -71,121 +96,115 @@ function AdminRegisterPage() {
     }
   };
 
+  // Aplicar estructura y clases de RegisterPage.css
+  // Nota: AdminRegisterPage ahora se renderiza dentro del layout de AdminGlobalDashboardPage,
+  // por lo que register-page-container podría no ser necesario o necesitar ajustes.
+  // Por ahora, mantendremos una estructura similar a RegisterPage.
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">Registro de Administrador</h1>
+    // Usar la nueva clase para el contenedor del formulario
+      <div className="admin-register-form-container"> 
+        <h2>Registro de Administrador de Cancha</h2>
+        {/* Mostrar alerta de éxito o mensaje de error */}
+        <div className="messages">
+          {error && <div className="alert error-alert">{error}</div>}
+          {success && <div className="alert success-alert">{success}</div>}
+        </div>
+        <form onSubmit={handleRegistration}>
+          <div className="form-row">
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-input"
+                id="username"
+                placeholder="Nombre de Usuario"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="email"
+                className="form-input"
+                id="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+          </div>
 
-      <form onSubmit={handleRegistration} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
-         <div className="mb-4"> {/* Añadir campo username */}
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-            Nombre de Usuario
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="username"
-            type="text"
-            placeholder="Nombre de Usuario"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-            Email
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-shadow-outline"
-            id="email"
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-         <div className="mb-4"> {/* Añadir campo first_name */}
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">
-            Nombre
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="firstName"
-            type="text"
-            placeholder="Nombre"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-          />
-        </div>
-         <div className="mb-4"> {/* Añadir campo last_name */}
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">
-            Apellido
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="lastName"
-            type="text"
-            placeholder="Apellido"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
-        </div>
-         <div className="mb-4"> {/* Añadir campo edad */}
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="age">
-            Edad
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="age"
-            type="number"
-            placeholder="Edad"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-            Contraseña
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            id="password"
-            type="password"
-            placeholder="******************"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-         <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
-            Confirmar Contraseña
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            id="confirmPassword"
-            type="password"
-            placeholder="******************"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>} {/* Mostrar error */}
-        {success && <p className="text-green-500 text-xs italic mb-4">{success}</p>} {/* Mostrar mensaje de éxito */}
-        <div className="flex items-center justify-between">
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="submit"
-          >
-            Registrar Administrador
-          </button>
-        </div>
-      </form>
-    </div>
+          <div className="form-row">
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-input"
+                id="firstName"
+                placeholder="Nombre"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-input"
+                id="lastName"
+                placeholder="Apellido"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <input
+                type="number"
+                className="form-input"
+                id="age"
+                placeholder="Edad"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="password"
+                className="form-input"
+                id="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <input
+              type="password"
+              className="form-input"
+              id="confirmPassword"
+              placeholder="Confirmar Contraseña"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <button type="submit" className="submit-button">
+              Registrar Administrador
+            </button>
+          </div>
+        </form>
+      </div>
+    // </div>
   );
 }
 

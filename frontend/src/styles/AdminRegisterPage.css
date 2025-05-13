@@ -1,0 +1,117 @@
+/* Estilos para el contenedor del formulario de registro de administrador */
+.admin-register-form-container {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 28px 32px;
+    border-radius: 8px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    width: 100%; /* Ocupar todo el ancho disponible en el content area */
+    /* max-width: 700px; */ /* Eliminar o ajustar max-width */
+    margin: 0 auto; /* Centrar si se usa un max-width menor al 100% */
+}
+
+.admin-register-form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-dark, #2d3748); /* Usar variable si está definida, sino fallback */
+    font-size: 22px; /* Ligeramente más pequeño para encajar en dashboard */
+    font-weight: 600;
+}
+
+.admin-register-form-container .error {
+    min-height: 1.5em;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: var(--danger-color);
+    text-align: center;
+}
+.admin-register-form-container .success {
+    min-height: 1.5em;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: green;
+    text-align: center;
+}
+
+.admin-register-form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.admin-register-form-container .form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.admin-register-form-container .form-group {
+    flex: 1;
+}
+
+.admin-register-form-container .form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box;
+}
+
+.admin-register-form-container .form-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 6px rgba(102, 126, 234, 0.5);
+    outline: none;
+}
+
+.admin-register-form-container .submit-button {
+  
+    padding: 10px 20px; /* Ajustar padding */
+    background-color: green;
+    border: none;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    align-self: flex-start; /* Alinear botón a la izquierda si es necesario */
+}
+
+.admin-register-form-container .submit-button:hover {
+    background-color: rgb(72, 235, 57);  /*var(--primary-hover, #556cd6);  Usar variable si está definida, sino fallback */
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) { /* Ajustar breakpoint si es necesario */
+    .admin-register-form-container .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Estilos para Alertas */
+.messages {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.alert {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.error-alert {
+    background-color: rgba(218, 68, 83, 0.2); /* Usar color de peligro con transparencia */
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.success-alert {
+    background-color: rgba(140, 193, 82, 0.2); /* Usar color de éxito con transparencia */
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}

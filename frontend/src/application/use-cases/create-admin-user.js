@@ -1,25 +1,33 @@
-import { IUserRepository } from '../../domain/repositories/user-repository.js';
+// frontend/src/application/use-cases/create-admin-user.js
 
 /**
- * Caso de uso para crear un nuevo usuario admin de cancha en el frontend.
+ * Caso de Uso para registrar un nuevo usuario administrador.
+ * Permite registrar un nuevo usuario con rol de administrador.
  */
 export class CreateAdminUserUseCase {
   /**
-   * @param {IUserRepository} userRepository - Una implementación del repositorio de usuarios.
+   * @param {UserRepository} userRepository - El repositorio de usuarios a utilizar.
    */
   constructor(userRepository) {
-    if (!(userRepository instanceof IUserRepository)) {
-      throw new Error('userRepository must be an instance of IUserRepository');
-    }
     this.userRepository = userRepository;
   }
 
   /**
-   * Ejecuta el caso de uso para crear un usuario admin.
-   * @param {object} userData - Datos del usuario a crear.
-   * @returns {Promise<object>} Una promesa que resuelve con el objeto del usuario creado.
+   * Ejecuta el caso de uso para registrar un nuevo usuario administrador.
+   * @param {object} userData - Los datos del usuario administrador a registrar.
+   * @returns {Promise<User>} Una promesa que resuelve con el usuario administrador registrado.
+   * @throws {Error} Si ocurre un error durante el registro.
    */
   async execute(userData) {
-    return this.userRepository.createAdminUser(userData);
+    try {
+      // Aquí podrías añadir lógica de negocio adicional si fuera necesario
+      // antes de llamar al repositorio.
+
+      const newUser = await this.userRepository.createAdminUser(userData);
+      return newUser;
+    } catch (error) {
+      console.error("Error in CreateAdminUserUseCase:", error);
+      throw error; // Propagar el error para que la capa de presentación lo maneje
+    }
   }
 }

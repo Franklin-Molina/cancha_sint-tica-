@@ -15,7 +15,8 @@ import DashboardCourtsPage from './presentation/pages/DashboardCourtsPage.jsx';
 import CourtDetailPage from './presentation/pages/CourtDetailPage.jsx';
 import DashboardBookingsPage from './presentation/pages/DashboardBookingsPage.jsx';
 import DashboardProfilePage from './presentation/pages/DashboardProfilePage.jsx';
-import AdminGlobalDashboardPage from './presentation/pages/AdminGlobalDashboardPage.jsx'; // Nueva página
+import AdminGlobalDashboardPage from './presentation/pages/AdminGlobalDashboardPage.jsx';
+import ManageAdminsTable from './presentation/components/AdminGlobalDashboard/ManageAdminsTable.jsx'; // Nuevo componente
 
 function App() {
   return (
@@ -90,25 +91,31 @@ function App() {
         <Route
           path="/adminglobal"
           element={
-            <ProtectedRoute> {/* Proteger esta ruta */}
-              <Layout> {/* O un Layout específico para adminglobal */}
-                <AdminGlobalDashboardPage />
-              </Layout>
+            <ProtectedRoute>
+              <AdminGlobalDashboardPage /> {/* Este es ahora el layout */}
             </ProtectedRoute>
           }
-        />
-        {/* La ruta para registrar admins de cancha podría estar dentro de AdminGlobalDashboardPage */}
-        {/* o ser una subruta de /adminglobal */}
+        >
+          {/* Ruta índice para el dashboard adminglobal, podría ser un resumen o la gestión de admins */}
+          <Route index element={<ManageAdminsTable />} /> {/* Mostrar tabla de admins por defecto */}
+          <Route path="manage-admins" element={<ManageAdminsTable />} />
+          <Route path="profile" element={<ProfilePage />} /> {/* Perfil dentro del layout adminglobal */}
+          <Route path="register-admin" element={<AdminRegisterPage />} /> {/* Registrar admin dentro del layout adminglobal */}
+        </Route>
+        
+        {/* La ruta /adminglobal/register-admin ahora es anidada y no necesita su propia definición aquí con Layout */}
+        {/* 
         <Route 
           path="/adminglobal/register-admin" 
           element={
             <ProtectedRoute>
-              <Layout>
+              <Layout> 
                 <AdminRegisterPage />
               </Layout>
             </ProtectedRoute>
           } 
-        />
+        /> 
+        */}
       </Routes>
     
   );

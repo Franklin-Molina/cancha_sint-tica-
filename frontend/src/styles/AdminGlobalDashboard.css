@@ -1,0 +1,460 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --primary-color: #4a89dc;
+    --secondary-color: #3bafda;
+    --success-color: #8cc152;
+    --warning-color: #f6bb42;
+    --danger-color: #da4453;
+    --sidebar-bg: #2a3042;
+    --sidebar-color: #b6c2e4;
+    --header-bg: #ffffff;
+    --body-bg: #f5f5f9;
+}
+
+/* Body styles for dashboard context, might need to be applied to a wrapper div in React */
+/* body {
+    background-color: var(--body-bg);
+    display: flex; 
+} */
+
+.admin-global-dashboard-layout {
+    background-color: var(--body-bg);
+    display: flex;
+    min-height: 100vh; /* Ensure layout takes full height */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-color);
+    position: fixed; /* Fixed position */
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    z-index: 1000; /* Ensure sidebar is on top */
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h2 {
+    color: white;
+    font-size: 20px;
+}
+
+.sidebar-menu {
+    padding: 10px 0;
+}
+
+.menu-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--sidebar-color); /* Ensure text color is set */
+    text-decoration: none; /* Remove underline from links */
+}
+
+.menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-item.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-left: 4px solid var(--primary-color);
+    color: white; /* Brighter color for active item */
+}
+
+.menu-item i {
+    margin-right: 15px;
+    font-size: 16px;
+    width: 20px; /* Ensure icons align */
+    text-align: center;
+}
+
+.menu-title {
+    padding: 8px 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px; /* Account for fixed sidebar */
+    width: calc(100% - 250px);
+    transition: all 0.3s ease;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: end; /* Cambiado a flex-start */
+    align-items: center;
+    padding: 15px 30px;
+    background-color: var(--header-bg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky; /* Sticky header */
+    top: 0;
+    z-index: 999; /* Below sidebar but above content */
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f7;
+    border-radius: 50px;
+    padding: 8px 15px;
+    width: 300px;
+}
+
+.search-box input {
+    border: none;
+    background: none;
+    outline: none;
+    padding: 5px;
+    width: 100%;
+}
+
+.search-box i {
+    color: #888;
+    margin-right: 10px;
+}
+
+.header-right {
+    display: flex;
+    align-items: flex-start;
+}
+
+.header-icon {
+    position: relative;
+    margin-left: 20px;
+    font-size: 18px;
+    color: #555;
+    cursor: pointer;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--danger-color);
+    color: white;
+    font-size: 10px;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+    cursor: pointer;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-role {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Content */
+.content {
+    padding: 20px 30px;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Table Styles (adapted from .recent-orders) */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* For rounded corners on table */
+    font-size: 20px;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 12px 15px; /* Increased padding */
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #eee;
+    background-color: #f9f9fc; /* Light header background */
+}
+
+.admin-table td {
+    padding: 12px 15px; /* Increased padding */
+    border-bottom: 1px solid #eee;
+    color: #333; /* Darker text for readability */
+}
+
+.admin-table tr:last-child td {
+    border-bottom: none; /* Remove border for last row */
+}
+
+.admin-table tr:hover {
+    background-color: #f5f5f9; /* Hover effect */
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-block; /* Ensure badge-like appearance */
+}
+
+.status-active { /* Renamed from status-completed */
+    background-color: rgba(140, 193, 82, 0.2);
+    color: var(--success-color);
+    text-align: center;
+    width: 103px;
+}
+
+.status-suspended { /* Renamed from status-canceled for clarity */
+    background-color: rgba(218, 68, 83, 0.2);
+    color: var(--danger-color);
+    text-align: center;
+    width: 103px;
+}
+
+/* Button Styles */
+.action-button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-right: 5px;
+    transition: background-color 0.2s;
+}
+
+/* Boton de agregar admins */
+.align-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.button-create {
+    display: flex;    
+    justify-content: end;
+    align-items: end;
+    width: auto;
+    background-color: green;
+    color: rgb(182, 8, 8);
+    padding: 10px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+}
+.button-create:hover {
+     background-color: #aab9a6;
+     background-color: #aab9a6;
+}
+
+.button-refresh {
+    background-color: var(--secondary-color);
+    color: white;
+}
+.button-refresh:hover {
+    background-color: #2aa0c7;
+}
+
+.button-suspend {
+    font-size: 20px;
+    background-color: var(--warning-color);
+    color: #fff;
+}
+.button-suspend:hover {
+    background-color: #e0a830;
+}
+
+.button-reactivate {
+    background-color: var(--success-color);
+    color: white;
+    font-size: 20px;
+    display: inline-flex; /* Añadido para usar flexbox */
+    align-items: center; /* Añadido para alinear verticalmente */
+    justify-content: center; /* Añadido para centrar contenido */
+}
+.button-reactivate:hover {
+    background-color: #7cb342;
+}
+
+.button-delete {
+    background-color: var(--danger-color);
+    color: white;
+    font-size: 20px;
+}
+.button-delete:hover {
+    background-color: #c43240;
+}
+
+
+@media (max-width: 576px) {
+    .header {
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .search-box {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* Estilos para el icono del botón Reactivar */
+.reactivate-icon {  
+  margin-right: 5px;
+  width: 20px;
+  margin-top: 5px;
+/*   height: 1em; */
+  
+  /* vertical-align: middle; ya no es necesario con flexbox en el botón */
+}
+
+/* Estilos para el Modal de Confirmación */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #333;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.modal-content p {
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 16px;
+}
+
+.modal-content p strong {
+    color: #000;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.modal-actions .action-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.modal-actions .button-cancel {
+    background-color: #ccc;
+    color: #333;
+}
+
+.modal-actions .button-cancel:hover {
+    background-color: #bbb;
+}
+/* Estilos para Alertas */
+.messages {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.alert {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.error-alert {
+    background-color: rgba(218, 68, 83, 0.2); /* Usar color de peligro con transparencia */
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.success-alert {
+    background-color: rgba(140, 193, 82, 0.2); /* Usar color de éxito con transparencia */
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}

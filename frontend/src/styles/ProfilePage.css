@@ -1,0 +1,197 @@
+/* Estilos para la página de perfil */
+.profile-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 28px;
+}
+
+.profile-card, .social-profiles-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #4a89dc; /* Usar color primario del dashboard si está disponible */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.profile-info-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-username {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.profile-role {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #777;
+}
+
+.profile-details {
+    margin-top: 20px;
+}
+
+.detail-item {
+    display: flex;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #555;
+    width: 120px; /* Ancho fijo para etiquetas */
+    flex-shrink: 0; /* Evitar que la etiqueta se encoja */
+}
+
+.detail-value {
+    color: #333;
+    flex-grow: 1; /* Permitir que el valor ocupe el espacio restante */
+}
+
+.card-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.social-profiles-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.social-profile-item {
+    background-color: #f9f9fc;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #555;
+}
+
+.provider-label, .uid-label {
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.no-social-profiles {
+    color: #777;
+    font-style: italic;
+}
+
+.logout-section {
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* Estilos para el botón de cerrar sesión */
+.logout-section button { /* Apunta al botón dentro de logout-section */
+    background-color: #da4453; /* Usar color de peligro (rojo) */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-section button:hover {
+    background-color: #c43240; /* Un rojo un poco más oscuro al pasar el ratón */
+}
+
+/* Estilos para el formulario de edición de perfil */
+.profile-card form .form-group {
+    margin-bottom: 15px;
+}
+
+.profile-card form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+    font-size: 15px;
+}
+
+/* Reutilizar .form-input de AdminGlobalDashboard.css si es posible, o definir aquí si es diferente */
+/* .profile-card form .form-input { ... } */
+
+.form-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Reutilizar .action-button y .button-cancel de AdminGlobalDashboard.css */
+
+.button-save {
+    background-color: #4a89dc; /* Usar color primario */
+    color: white;
+}
+
+.button-save:hover {
+    background-color: #3bafda; /* Usar color secundario o un tono más oscuro */
+}
+
+.button-save:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.edit-section {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.button-edit {
+    background-color: #f6bb42; /* Usar color de advertencia o un color neutro */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.button-edit:hover {
+    background-color: #e0a830;
+}

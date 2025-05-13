@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import RegisterView, UserViewSet, GroupViewSet, PermissionViewSet, GoogleLogin, AdminRegisterView, AdminManagementViewSet # Añadir AdminManagementViewSet
+from .views import RegisterView, UserViewSet, GroupViewSet, PermissionViewSet, GoogleLogin, AdminRegisterView, AdminManagementViewSet, UserProfileUpdateView # Añadir UserProfileUpdateView
 from rest_framework import routers
 from .models import User
 from django.urls import path
@@ -25,6 +25,9 @@ urlpatterns = [
     # Esta vista permite crear usuarios con is_staff=True, que podrían ser 'admin' o 'adminglobal'.
     # La lógica en el repositorio DjangoUserRepository asigna is_superuser=True si role='adminglobal'.
     path('admin/register/', AdminRegisterView.as_view(), name='admin_register'), 
+
+    # URL para obtener y actualizar el perfil del usuario autenticado
+    path('profile/', UserProfileUpdateView.as_view(), name='user_profile_update'),
 
     path('', include(router.urls)),
 ]

@@ -74,4 +74,22 @@ export class ApiUserRepository extends IUserRepository {
       throw error;
     }
   }
+
+  /**
+   * Actualiza los datos de un usuario.
+   * @param {number} userId - El ID del usuario a actualizar.
+   * @param {object} userData - Los datos del usuario a actualizar.
+   * @returns {Promise<object>} Una promesa que resuelve con el objeto del usuario actualizado.
+   */
+  async updateUser(userId, userData) { // Añadido userId
+    try {
+      // Usar el endpoint PATCH para actualizar un usuario específico por ID
+      const response = await api.patch(`/users/manage-admins/${userId}/`, userData); // Cambiada la URL y añadido userId
+      // return new User(response.data); // Si se usa entidad User
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating user ${userId} via API:`, error); // Mensaje de error actualizado
+      throw error;
+    }
+  }
 }

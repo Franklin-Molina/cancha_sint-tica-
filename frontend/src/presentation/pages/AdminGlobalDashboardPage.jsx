@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; // Para el botón de crear
-import { useAuth } from '../context/AuthContext.jsx'; // Para verificar el rol del usuario
+import { Link, NavLink, Outlet } from 'react-router-dom'; // Importar Outlet
+import { useAuth } from '../context/AuthContext.jsx'; 
 
-// Importar casos de uso y repositorios del frontend
+// Casos de uso y repositorios
 import { GetUserListUseCase } from '../../application/use-cases/get-user-list.js';
-import { UpdateUserStatusUseCase } from '../../application/use-cases/update-user-status.js'; // Importar
-import { DeleteUserUseCase } from '../../application/use-cases/delete-user.js'; // Importar
+import { UpdateUserStatusUseCase } from '../../application/use-cases/update-user-status.js';
+import { DeleteUserUseCase } from '../../application/use-cases/delete-user.js';
 import { ApiUserRepository } from '../../infrastructure/repositories/api-user-repository.js';
 
+import '../../styles/AdminGlobalDashboard.css'; // La ruta de importación es correcta
+
 function AdminGlobalDashboardPage() {
-  const { user } = useAuth(); // Para verificar si el usuario es adminglobal
+  const { user, logout } = useAuth(); // Obtener logout del contexto
   const [adminUsers, setAdminUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // Estado para la alerta de suspensión
+  const [suspendSuccess, setSuspendSuccess] = useState('');
 
   // Instanciar repositorio y casos de uso
   const userRepository = new ApiUserRepository();
@@ -49,12 +53,17 @@ function AdminGlobalDashboardPage() {
     try {
       await updateUserStatusUseCase.execute(userId, false);
       // Actualizar la lista de usuarios para reflejar el cambio
-      setAdminUsers(prevUsers => 
+        setAdminUsers(prevUsers => 
         prevUsers.map(u => u.id === userId ? { ...u, is_active: false } : u)
       );
-      alert('Administrador suspendido exitosamente.');
+      setSuspendSuccess('Administrador suspendido exitosamente.');
+      // Ocultar la alerta después de 3 segundos
+      setTimeout(() => {
+        setSuspendSuccess('');
+      }, 3000);
     } catch (err) {
       console.error(`Error suspending user ${userId}:`, err);
+      // Podríamos añadir un estado de error para suspensión si es necesario, por ahora usamos alert
       alert(`Error al suspender administrador: ${err.message}`);
     }
   };
@@ -66,7 +75,13 @@ function AdminGlobalDashboardPage() {
       setAdminUsers(prevUsers => 
         prevUsers.map(u => u.id === userId ? { ...u, is_active: true } : u)
       );
-      alert('Administrador reactivado exitosamente.');
+       setSuspendSuccess('Administrador reactivado exitosamente.');
+      // Ocultar la alerta después de 3 segundos
+      setTimeout(() => {
+        setSuspendSuccess('');
+      }, 3000);
+      
+   
     } catch (err) {
       console.error(`Error reactivating user ${userId}:`, err);
       alert(`Error al reactivar administrador: ${err.message}`);
@@ -74,17 +89,15 @@ function AdminGlobalDashboardPage() {
   };
 
   const handleDeleteUser = async (userId) => {
-    // Confirmación antes de eliminar
-    if (window.confirm(`¿Estás seguro de que quieres eliminar al administrador con ID ${userId}? Esta acción no se puede deshacer.`)) {
-      try {
-        await deleteUserUseCase.execute(userId);
-        // Actualizar la lista de usuarios para reflejar la eliminación
-        setAdminUsers(prevUsers => prevUsers.filter(u => u.id !== userId));
-        alert('Administrador eliminado exitosamente.');
-      } catch (err) {
-        console.error(`Error deleting user ${userId}:`, err);
-        alert(`Error al eliminar administrador: ${err.message}`);
-      }
+    // La confirmación ahora se maneja en el modal del componente ManageAdminsTable.jsx
+    try {
+      await deleteUserUseCase.execute(userId);
+      // Actualizar la lista de usuarios para reflejar la eliminación
+      setAdminUsers(prevUsers => prevUsers.filter(u => u.id !== userId));
+    
+    } catch (err) {
+      console.error(`Error deleting user ${userId}:`, err);
+      alert(`Error al eliminar administrador: ${err.message}`);
     }
   };
 
@@ -99,57 +112,86 @@ function AdminGlobalDashboardPage() {
 
   // Verificar si el usuario actual es adminglobal antes de renderizar el contenido sensible
   if (!user || user.role !== 'adminglobal') {
-    return <div>Acceso denegado. Debes ser Administrador Global.</div>;
+    // Idealmente, ProtectedRoute ya debería haber manejado esto.
+    // Esto es una doble verificación.
+    return <div>Acceso denegado. Debes ser Administrador Global para ver esta página.</div>;
   }
 
   return (
-    <div>
-      <h1>Dashboard de Administrador Global</h1>
-      <p>Bienvenido, {user.username}.</p>
-      
-      <h2>Gestionar Administradores de Cancha</h2>
-      <div style={{ marginBottom: '1rem' }}>
-        <Link to="/adminglobal/register-admin" style={{ marginRight: '10px' }}>
-          <button>Crear Nuevo Admin de Cancha</button>
-        </Link>
-        <button onClick={fetchAdminUsers}>Ver/Actualizar Lista de Admins</button>
-      </div>
+    <div className="admin-global-dashboard-layout">
+      {/* Sidebar */}
+      <div className="sidebar">
+        <div className="sidebar-header">
+          <h2>Admin - Global</h2>
+        </div>
+        <div className="sidebar-menu">
+          {/* Usar NavLink para active class si se implementan más rutas de dashboard */}
+          <NavLink to="/adminglobal" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"} end> 
+            {/* Este enlace podría ir a una página de resumen o directamente a manage-admins si es la vista principal */}
+            <i className="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </NavLink>
+          
+          <div className="menu-title">GESTIÓN</div>
+          
+          {/* El NavLink a /adminglobal ya cubre la tabla de admins si es la ruta index */}
+          {/* Si se quiere un enlace explícito a la tabla de admins: */}
+          <NavLink to="/adminglobal/manage-admins" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}>
+            <i className="fas fa-users-cog"></i>
+            <span>Gestionar Admins</span>
+          </NavLink>
 
-      {adminUsers.length === 0 && !loading ? ( // Añadir !loading para no mostrar si está cargando
-        <p>No hay administradores de cancha registrados o no se pudieron cargar.</p>
-      ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>ID</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Username</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Email</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Nombre</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Estado</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {adminUsers.map(admin => (
-              <tr key={admin.id}>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{admin.id}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{admin.username}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{admin.email}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{admin.first_name} {admin.last_name}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{admin.is_active ? 'Activo' : 'Suspendido'}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  {admin.is_active ? (
-                    <button onClick={() => handleSuspendUser(admin.id)} style={{ marginRight: '5px' }}>Suspender</button>
-                  ) : (
-                    <button onClick={() => handleReactivateUser(admin.id)} style={{ marginRight: '5px' }}>Reactivar</button>
-                  )}
-                  <button onClick={() => handleDeleteUser(admin.id)} style={{ color: 'red' }}>Eliminar</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+          <NavLink to="/adminglobal/register-admin" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}>
+            <i className="fas fa-user-plus"></i>
+            <span>Crear Admin</span>
+          </NavLink>
+          
+          {/* Añadir más items de menú según sea necesario */}
+          
+          <div className="menu-title">EXTRAS</div>
+          
+          <NavLink to="/adminglobal/profile" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}> {/* Actualizar ruta a /adminglobal/profile */}
+            <i className="fas fa-user"></i>
+            <span>Mi Perfil</span>
+          </NavLink>
+          
+          <div className="menu-item" onClick={logout}> {/* Logout usando la función del contexto */}
+            <i className="fas fa-sign-out-alt"></i>
+            <span>Cerrar Sesión</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Main Content */}
+      <div className="main-content">
+        {/* Header */}
+        <div className="header">
+                   
+          <div className="header-right">          
+            
+            <div className="user-profile">
+              <div className="user-avatar">{user.username ? user.username.charAt(0).toUpperCase() : 'U'}</div>
+              <div className="user-info">
+                <div className="user-name">{user.first_name} {user.last_name} {user.username}</div>
+                <div className="user-role">{user.role}</div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        
+        {/* Content */}
+        <div className="content">
+          {/* Mostrar alerta de suspensión si existe */}
+          {suspendSuccess && (
+            <div className="messages"> {/* Usar la clase messages para centrar */}
+              <div className="alert success-alert">{suspendSuccess}</div>
+            </div>
+          )}
+          {/* Outlet renderizará el componente de la ruta anidada */}
+          <Outlet context={{ adminUsers, loading, error, fetchAdminUsers, handleSuspendUser, handleReactivateUser, handleDeleteUser }} />
+        </div>
+      </div>
     </div>
   );
 }

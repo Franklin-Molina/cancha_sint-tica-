@@ -1,43 +1,72 @@
-import React from 'react'; // No es necesario useContext si solo usas useAuth
-import { useAuth } from '../context/AuthContext.jsx'; // Usar useAuth hook
-import LogoutButton from '../components/Auth/LogoutButton.jsx'; // Importar LogoutButton
+import React from 'react';
+import { useAuth } from '../context/AuthContext.jsx';
+import LogoutButton from '../components/Auth/LogoutButton.jsx';
+import '../../styles/ProfilePage.css'; // Importar estilos específicos
 
 function ProfilePage() {
-  const { user, loading } = useAuth(); // Usar useAuth hook y obtener loading
+  const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Cargando perfil...</div>; // Mostrar cargando mientras se obtiene el usuario
+    return <div className="profile-container">Cargando perfil...</div>;
   }
 
   if (!user) {
-    // Redirigir al login si no hay usuario autenticado después de cargar
-    // La redirección se maneja en el contexto de autenticación si fetchUser falla
-    return <div>Usuario no autenticado. Por favor, inicia sesión.</div>;
+    return <div className="profile-container">Usuario no autenticado. Por favor, inicia sesión.</div>;
   }
 
   return (
-    <div>
-      <h1>Perfil de Usuario</h1>
-      <p><strong>Nombre de usuario:</strong> {user.username}</p>
-      <p><strong>Nombre:</strong> {user.first_name}</p>
-      <p><strong>Apellido:</strong> {user.last_name}</p>
-      <p><strong>Email:</strong> {user.email}</p>
-      {user.edad && <p><strong>Edad:</strong> {user.edad}</p>} {/* Mostrar edad si existe */}
+    <div className="profile-container">
+      <h1 className="page-title">Perfil de Usuario</h1>
+      
+      <div className="profile-card">
+        <div className="profile-header">
+          <div className="profile-avatar">{user.username ? user.username.charAt(0).toUpperCase() : 'U'}</div>
+          <div className="profile-info-header">
+            <h2 className="profile-username">{user.username}</h2>
+            <p className="profile-role">{user.role}</p>
+          </div>
+        </div>
+        
+        <div className="profile-details">
+          <div className="detail-item">
+            <span className="detail-label">Nombre:</span>
+            <span className="detail-value">{user.first_name}</span>
+          </div>
+          <div className="detail-item">
+            <span className="detail-label">Apellido:</span>
+            <span className="detail-value">{user.last_name}</span>
+          </div>
+          <div className="detail-item">
+            <span className="detail-label">Email:</span>
+            <span className="detail-value">{user.email}</span>
+          </div>
+          {user.edad && (
+            <div className="detail-item">
+              <span className="detail-label">Edad:</span>
+              <span className="detail-value">{user.edad}</span>
+            </div>
+          )}
+        </div>
+      </div>
 
-      <h2>Cuentas Vinculadas</h2>
-      {user.social_profiles && user.social_profiles.length > 0 ? (
-        <ul>
-          {user.social_profiles.map(profile => (
-            <li key={profile.id}>
-              Proveedor: {profile.provider}, UID: {profile.uid}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No hay cuentas sociales vinculadas.</p>
-      )}
+      <div className="social-profiles-card">
+        <h2 className="card-title">Cuentas Vinculadas</h2>
+        {user.social_profiles && user.social_profiles.length > 0 ? (
+          <ul className="social-profiles-list">
+            {user.social_profiles.map(profile => (
+              <li key={profile.id} className="social-profile-item">
+                <span className="provider-label">Proveedor:</span> {profile.provider}, <span className="uid-label">UID:</span> {profile.uid}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="no-social-profiles">No hay cuentas sociales vinculadas.</p>
+        )}
+      </div>
 
-      <LogoutButton /> {/* Agregar el botón de cerrar sesión */}
+      <div className="logout-section">
+        <LogoutButton />
+      </div>
     </div>
   );
 }

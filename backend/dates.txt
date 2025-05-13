@@ -5,7 +5,6 @@ testu 123456
 
 ------------------------------------
 AdminGlobal
-
 Username: admingod
 Email address: admingod@gmail.com
 Password: 123456

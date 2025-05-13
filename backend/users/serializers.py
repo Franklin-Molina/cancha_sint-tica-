@@ -107,3 +107,31 @@ class PerfilSocialSerializer(serializers.ModelSerializer):
     class Meta:
         model = PerfilSocial
         fields = ('id', 'user', 'provider', 'uid', 'extra_data')
+
+# Serializador para actualizar el perfil del usuario
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'edad')
+        # No incluir campos sensibles como password o role aquí
+        # email puede requerir validación adicional si debe ser único
+        extra_kwargs = {
+            'email': {'required': False}, # Hacer email opcional en la actualización si no siempre se envía
+            'username': {'required': False}, # Hacer username opcional
+            'first_name': {'required': False}, # Hacer first_name opcional
+            'last_name': {'required': False}, # Hacer last_name opcional
+        }
+
+    # Opcional: Añadir validaciones personalizadas si es necesario
+    # def validate_email(self, value):
+    #     user = self.context['request'].user
+    #     if User.objects.exclude(pk=user.pk).filter(email=value).exists():
+    #         raise serializers.ValidationError("Este email ya está en uso.")
+    #     return value
+
+    # El método update se implementa automáticamente por ModelSerializer
+    # si los campos están en `fields` y son editables en el modelo.
+    # Si se necesita lógica de actualización personalizada, se puede sobrescribir:
+    # def update(self, instance, validated_data):
+    #     # Lógica de actualización personalizada si es necesario
+    #     return super().update(instance, validated_data)

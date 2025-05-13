@@ -3,6 +3,7 @@ siempre hablame en español y los comentarios que hagas en el codigo tambien son
 # No usar && para combinar multiples comandos, usar ;
 # Guarda cada Dependencias e instalaciones
 - Cada nueva instalacion o dependencia almacenala en el archivo requirements.txt
+# Siempre manten la arquitectura  Clean Architecture
 
 ## 1. 🔄 Conciencia y contexto del proyecto
 - **Siempre lee 'PLANNING.md'** al comienzo de una nueva conversación para comprender la arquitectura, los objetivos, el estilo y las limitaciones del proyecto.

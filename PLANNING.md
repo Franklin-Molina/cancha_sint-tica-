@@ -2,6 +2,13 @@
 
 ## Visión General
 Desarrollar una plataforma completa para la gestión de canchas sintéticas que permita a los usuarios ver disponibilidad, realizar reservaciones, gestionar sus planes mensuales y realizar pagos en línea. El sistema tendrá una arquitectura moderna con separación de backend y frontend.
+# Siempre manten la arquitectura  Clean Architecture
+
+
+<!-- # PLANNING.MD - Sistema de Gestión de Canchas Sintéticas
+
+## Visión General
+Desarrollar una plataforma completa para la gestión de canchas sintéticas que permita a los usuarios ver disponibilidad, realizar reservaciones, gestionar sus planes mensuales y realizar pagos en línea. El sistema tendrá una arquitectura moderna con separación de backend y frontend.
 
 # Entono virtual
    - Tienes que verificar si el entorno virtual esta activado
@@ -72,6 +79,7 @@ Desarrollar una plataforma completa para la gestión de canchas sintéticas que 
 - **Hosting**: AWS, Digital Ocean, o similar
 - **Almacenamiento**: S3 o similar para archivos estáticos
  -->
+ <!-- 
 ## Consideraciones de Seguridad
 - Implementación de HTTPS
 - Protección contra ataques CSRF y XSS
@@ -125,4 +133,6 @@ Desarrollar una plataforma completa para la gestión de canchas sintéticas que 
 - Despliegue a producción
 - Monitoreo de errores y rendimiento
 - Soporte post-lanzamiento
-- Recolección de feedback
+- Recolección de feedback --> 
+
+
