@@ -1,5 +1,10 @@
+git branch
+git merge feature/vite-migration
+git add .
+git commit -m 
+git push
 
-
+---------------------------
 kira
 123456
 adm

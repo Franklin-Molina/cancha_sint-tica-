@@ -19,3 +19,4 @@ yarn-error.log*
 # caché
 .cache/
 __pycache__/
+__pycache__
