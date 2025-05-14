@@ -19,12 +19,6 @@ Password: 123456
 
 
 
-
-
-
-
-
-
 # Crear user adminglobal
 python backend/manage.py createsuperuser
 

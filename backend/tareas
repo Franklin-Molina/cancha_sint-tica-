@@ -1,6 +1,0 @@
-Realizaré cada paso minuciosamente, comenzando con la refactorización de la aplicación `courts` según el plan que discutimos:
-
-1. Definir la interfaz `ICourtRepository` en `courts/domain/repositories/`.
-2. Crear la implementación `DjangoCourtRepository` en `courts/infrastructure/repositories/`.
-3. Crear casos de uso (por ejemplo, `GetCourtListUseCase`, `GetCourtDetailsUseCase`) en `courts/application/use_cases/`.
-4. Modificar las vistas en `courts/api/views.py` para que utilicen los casos de uso.

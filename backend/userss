@@ -1,8 +1,0 @@
-graph TD
-    A[Usuario se registra] --> B{Rol?}
-    B -- Cliente --> C[Acciones de Cliente: Ver Canchas, Reservar]
-    B -- Admin (Creado por Adminglobal) --> D[Acciones de Admin: Gestionar Canchas, Reservas, Clientes]
-    B -- Adminglobal --> E[Acciones de Adminglobal: Gestionar Admins, Supervisión General]
-
-    D --> C
-    E --> D
