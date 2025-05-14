@@ -68,17 +68,18 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
-    # Añadir CorsMiddleware
+    # Añadir CorsMiddleware     
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware', ###  
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Middleware de django-allauth (añadir después de AuthenticationMiddleware)
     'allauth.account.middleware.AccountMiddleware',
+    # Middleware de django-allauth (añadir después de AuthenticationMiddleware)
+    # 'allauth.account.middleware.AccountMiddleware', # Este middleware no existe en allauth 0.54.0
 ]
 
 ROOT_URLCONF = 'cancha.urls'
@@ -116,8 +117,9 @@ SITE_ID = 1 # django-allauth requiere un SITE_ID
 
 # Configuraciones adicionales de allauth (ajustar según necesidad)
 ACCOUNT_EMAIL_VERIFICATION = 'optional' # Puede ser 'mandatory', 'optional', o 'none'
-ACCOUNT_SIGNUP_FIELDS = ['email', 'password', 'first_name', 'last_name'] # Campos requeridos para el registro
-ACCOUNT_AUTHENTICATION_METHOD = 'username' # Usar username como método de autenticación principal
+ACCOUNT_SIGNUP_FIELDS = ['username', 'email', 'password', 'first_name', 'last_name'] # Campos requeridos para el registro
+ACCOUNT_AUTHENTICATION_METHOD = 'username' # Usar username como método de autenticación principal para allauth 0.54.0
+ACCOUNT_USERNAME_REQUIRED = True # Requerido para allauth 0.54.0
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username' # Especificar el campo de username del modelo de usuario
 LOGIN_REDIRECT_URL = '/' # URL a la que redirigir después del login
 LOGOUT_REDIRECT_URL = '/' # URL a la que redirigir después del logout
