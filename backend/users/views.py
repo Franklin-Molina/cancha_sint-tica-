@@ -15,6 +15,7 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer # Importar serializadores de simplejwt
 from .serializers_jwt import CustomTokenObtainPairSerializer
 
 # Importar casos de uso y repositorio
@@ -137,6 +138,23 @@ class GoogleLogin(SocialLoginView): # subclass the SocialLoginView
     adapter_class = GoogleOAuth2Adapter
     client_class = OAuth2Client
     permission_classes = [permissions.AllowAny]
+
+    def get_response(self):
+        # Obtener la respuesta base de SocialLoginView
+        response = super().get_response()
+
+        # Generar un nuevo par de tokens (access y refresh) para el usuario autenticado
+        # Esto asegura que la respuesta siempre incluya ambos tokens
+        # Usar TokenObtainPairSerializer para generar ambos tokens
+        token = TokenObtainPairSerializer.get_token(self.user)
+        refresh = token
+        access = token.access_token
+
+        # Modificar la respuesta para incluir ambos tokens
+        response.data['access_token'] = str(access)
+        response.data['refresh_token'] = str(refresh)
+
+        return response
     
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
