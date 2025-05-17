@@ -8,12 +8,13 @@ function CourtList() {
   const [courts, setCourts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchCourts = async () => {
       try {
         // Asumiendo que el backend corre en localhost:8000 y el endpoint es /courts/
-        const response = await axios.get('http://localhost:8000/courts/');
+        const response = await axios.get(`${API_URL}/api/courts/`);
         setCourts(response.data);
         setLoading(false);
       } catch (err) {

@@ -16,7 +16,7 @@ export class ApiAuthRepository extends IAuthRepository {
    */
   async login(username, password) {
     try {
-      const response = await api.post('/users/login/', { username, password });
+      const response = await api.post('/api/users/login/', { username, password });
       const { access, refresh } = response.data;
       const tokens = new AuthTokens({ access, refresh });
       await this.saveTokens(tokens); // Guardar tokens después de un login exitoso
@@ -71,7 +71,7 @@ export class ApiAuthRepository extends IAuthRepository {
         return null; // No hay tokens, no hay usuario autenticado
       }
       // La instancia de api ya adjunta el token de acceso si existe en localStorage
-      const response = await api.get('/users/users/me/');
+      const response = await api.get('/api/users/users/me/');
       return new AuthenticatedUser(response.data);
     } catch (error) {
       console.error('Error fetching authenticated user:', error);

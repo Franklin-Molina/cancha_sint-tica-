@@ -23,6 +23,7 @@ function RegisterPage() {
   const [age, setAge] = useState(''); // Estado para la edad
   const [error, setError] = useState(''); // Estado para manejar errores
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => { // Hacer la función asíncrona
     e.preventDefault();
@@ -43,7 +44,7 @@ function RegisterPage() {
 
     try {
       // Realizar la llamada a la API de backend para registrar al usuario
-      const response = await axios.post('http://localhost:8000/api/users/register/', { // Usar la URL correcta del endpoint de registro
+      const response = await axios.post(`${API_URL}/api/users/register/`, { // Usar la URL correcta del endpoint de registro
         username, // Incluir nombre de usuario
         email,
         password,

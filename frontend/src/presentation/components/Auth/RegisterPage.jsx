@@ -22,6 +22,7 @@ function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleRegistration = async (e) => {
     e.preventDefault();
@@ -32,7 +33,7 @@ function RegisterPage() {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/users/register/', {
+      const response = await axios.post(`${API_URL}/api/users/register/`, {
         username,
         email,
         password,

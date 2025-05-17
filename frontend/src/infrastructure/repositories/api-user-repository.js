@@ -15,7 +15,7 @@ export class ApiUserRepository extends IUserRepository {
     try {
       // El endpoint /api/users/manage-admins/ ya filtra por role='admin' en el backend (AdminManagementViewSet)
       // Si se necesitan otros filtros, se pueden pasar como params.
-      const response = await api.get('/users/manage-admins/', { params: filters });
+      const response = await api.get('/api/users/manage-admins/', { params: filters });
       // return response.data.map(userData => new User(userData)); // Si se usa entidad User
       return response.data;
     } catch (error) {
@@ -32,7 +32,7 @@ export class ApiUserRepository extends IUserRepository {
   async createAdminUser(userData) {
     try {
       // Usar el endpoint /api/users/admin/register/ que ya existe y está protegido
-      const response = await api.post('/users/admin/register/', userData);
+      const response = await api.post('/api/users/admin/register/', userData);
       // return new User(response.data); // Si se usa entidad User
       return response.data;
     } catch (error) {
@@ -51,7 +51,7 @@ export class ApiUserRepository extends IUserRepository {
     try {
       const action = isActive ? 'reactivate' : 'suspend';
       // Usar el endpoint /api/users/manage-admins/<id>/[suspend|reactivate]/
-      const response = await api.patch(`/users/manage-admins/${userId}/${action}/`);
+      const response = await api.patch(`/api/users/manage-admins/${userId}/${action}/`);
       // return new User(response.data); // Si la API devuelve el usuario actualizado
       return response.data; // O simplemente un mensaje de éxito
     } catch (error) {
@@ -68,7 +68,7 @@ export class ApiUserRepository extends IUserRepository {
   async deleteUser(userId) {
     try {
       // Usar el endpoint /api/users/manage-admins/<id>/
-      await api.delete(`/users/manage-admins/${userId}/`);
+      await api.delete(`/api/users/manage-admins/${userId}/`);
     } catch (error) {
       console.error(`Error deleting user ${userId} via API:`, error);
       throw error;

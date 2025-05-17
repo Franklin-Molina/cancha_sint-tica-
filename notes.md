@@ -37,3 +37,9 @@ admin_user = User.objects.create_superuser('admin', 'admin@admin.com', 'admin123
 
 write to file 
 replace file
+
+
+-----------
+Todo web
+python manage.py runserver 192.168.100.10:8000
+npm run dev -- --host

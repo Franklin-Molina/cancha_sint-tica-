@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-t(%bi!=6dsyhd=5#kug=+^)0k981pis_4rg4=aq)9a-di2^0l8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.100.10']
 
 
 # Application definition
@@ -252,7 +252,9 @@ SIMPLE_JWT = {
 # Configuración de CORS para permitir solicitudes desde el frontend durante el desarrollo
 CORS_ALLOW_ALL_ORIGINS = True # Deshabilitar para especificar orígenes permitidos
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000", # Permitir solicitudes desde el frontend de React
+    #"http://localhost:3000", # Permitir solicitudes desde el frontend de React
+    "http://192.168.100.10:5173",
+
 ]
 
 CORS_ALLOW_CREDENTIALS = True # Permitir que las solicitudes incluyan credenciales
@@ -260,6 +262,7 @@ CORS_ALLOW_CREDENTIALS = True # Permitir que las solicitudes incluyan credencial
 # Configuración de CSRF para confiar en el origen del frontend
 CSRF_TRUSTED_ORIGINS = [
  
-    "http://localhost:5173",
+    #"http://localhost:5173",
+    "http://192.168.100.10:5173",
     #   "http://localhost:3000",
 ]

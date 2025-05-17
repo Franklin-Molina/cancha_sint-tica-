@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // TODO: Configurar la URL base de la API desde una variable de entorno
-const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -53,7 +53,7 @@ api.interceptors.response.use(
         }
 
         // Solicitar un nuevo accessToken usando el refreshToken
-        const response = await axios.post(`${API_BASE_URL}/users/login/refresh/`, {
+        const response = await axios.post(`${API_BASE_URL}/api/users/login/refresh/`, {
           refresh: refreshToken,
         });
 

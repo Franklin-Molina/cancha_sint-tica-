@@ -2,6 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom'; // Importar Outlet
 import { useAuth } from '../context/AuthContext.jsx'; 
 
+import { CiLogout } from "react-icons/ci";
+import { FaBars } from 'react-icons/fa'; // Importar icono de hamburguesa
+
+
+
 // Casos de uso y repositorios
 import { GetUserListUseCase } from '../../application/use-cases/get-user-list.js';
 import { UpdateUserStatusUseCase } from '../../application/use-cases/update-user-status.js';
@@ -14,6 +19,7 @@ function AdminGlobalDashboardPage() {
   const { user, logout } = useAuth(); // Obtener logout del contexto
   const [adminUsers, setAdminUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Estado para controlar la visibilidad de la sidebar
   const [error, setError] = useState(null);
   // Estado para la alerta de suspensión
   const [suspendSuccess, setSuspendSuccess] = useState('');
@@ -117,16 +123,28 @@ function AdminGlobalDashboardPage() {
     return <div>Acceso denegado. Debes ser Administrador Global para ver esta página.</div>;
   }
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="admin-global-dashboard-layout">
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}> {/* Añadir clase 'open' si isSidebarOpen es true */}
         <div className="sidebar-header">
+         
           <h2>Admin - Global</h2>
         </div>
         <div className="sidebar-menu">
+          <div class="profile-container">
+            <div class="profile-img">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-name">{user.username}</div>
+            <div class="profile-role">{user.role}</div>
+        </div>
           {/* Usar NavLink para active class si se implementan más rutas de dashboard */}
-          <NavLink to="/adminglobal" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"} end> 
+          <NavLink to="/adminglobal" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"} end onClick={toggleSidebar}> {/* Cerrar sidebar al hacer click */}
             {/* Este enlace podría ir a una página de resumen o directamente a manage-admins si es la vista principal */}
             <i className="fas fa-tachometer-alt"></i>
             <span>Dashboard</span>
@@ -136,12 +154,12 @@ function AdminGlobalDashboardPage() {
           
           {/* El NavLink a /adminglobal ya cubre la tabla de admins si es la ruta index */}
           {/* Si se quiere un enlace explícito a la tabla de admins: */}
-          <NavLink to="/adminglobal/manage-admins" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}>
+          <NavLink to="/adminglobal/manage-admins" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"} onClick={toggleSidebar}> {/* Cerrar sidebar al hacer click */}
             <i className="fas fa-users-cog"></i>
             <span>Gestionar Admins</span>
           </NavLink>
 
-          <NavLink to="/adminglobal/register-admin" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}>
+          <NavLink to="/adminglobal/register-admin" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"} onClick={toggleSidebar}> {/* Cerrar sidebar al hacer click */}
             <i className="fas fa-user-plus"></i>
             <span>Crear Admin</span>
           </NavLink>
@@ -150,14 +168,14 @@ function AdminGlobalDashboardPage() {
           
           <div className="menu-title">EXTRAS</div>
           
-          <NavLink to="/adminglobal/profile" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}> {/* Actualizar ruta a /adminglobal/profile */}
+          <NavLink to="/adminglobal/profile" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"} onClick={toggleSidebar}> {/* Actualizar ruta a /adminglobal/profile */} {/* Cerrar sidebar al hacer click */}
             <i className="fas fa-user"></i>
             <span>Mi Perfil</span>
           </NavLink>
           
-          <div className="menu-item" onClick={logout}> {/* Logout usando la función del contexto */}
-            <i className="fas fa-sign-out-alt"></i>
-            <span>Cerrar Sesión</span>
+          <div className="menu-item" onClick={() => { logout(); toggleSidebar(); }}> {/* Logout usando la función del contexto y cerrar sidebar */}
+              <i class="fas fa-sign-out-alt"></i>
+            <span> Cerrar Sesión</span>
           </div>
         </div>
       </div>
@@ -166,13 +184,17 @@ function AdminGlobalDashboardPage() {
       <div className="main-content">
         {/* Header */}
         <div className="header">
+          {/* Botón de hamburguesa para móviles */}
+          <div className="sidebar-toggle" onClick={toggleSidebar}>
+            <FaBars />
+          </div>
                    
           <div className="header-right">          
             
             <div className="user-profile">
               <div className="user-avatar">{user.username ? user.username.charAt(0).toUpperCase() : 'U'}</div>
               <div className="user-info">
-                <div className="user-name">{user.first_name} {user.last_name} {user.username}</div>
+                <div className="user-name">{user.username}</div>
                 <div className="user-role">{user.role}</div>
               </div>
               

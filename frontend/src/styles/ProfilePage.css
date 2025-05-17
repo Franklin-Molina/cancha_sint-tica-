@@ -212,7 +212,7 @@
 }
 
 .alert.success-alert {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: #59c271;
+    color: green;
     border: 1px solid #c3e6cb;
 }

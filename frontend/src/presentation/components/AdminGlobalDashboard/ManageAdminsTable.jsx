@@ -98,8 +98,8 @@ function ManageAdminsTable() {
 
       {/* Modal de Confirmación de Eliminación */}
       {showDeleteModal && adminToDelete && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="modal-delete">
+          <div className="modal-contentx">
             <h2>Confirmar Eliminación</h2>
             <p>¿Estás seguro de que deseas eliminar al administrador:</p>
             <p><strong>Username:</strong> {adminToDelete.username}</p>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import Button from '../common/Button.jsx'; // Importar el componente Button
+import { FcGoogle } from "react-icons/fc";
+
 
 /**
  * Componente de botón para iniciar sesión con Google.
@@ -17,9 +19,14 @@ function GoogleLoginButton({ onSuccess, onError }) {
   });
 
   return (
+    
     <Button onClick={() => login()} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-      Iniciar sesión con Google
+      
+       Iniciar sesión con Google
+      
     </Button>
+    
+    
   );
 }
 

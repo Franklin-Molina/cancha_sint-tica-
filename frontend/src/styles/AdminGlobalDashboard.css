@@ -43,6 +43,31 @@
     z-index: 1000; /* Ensure sidebar is on top */
 }
 
+.profile-container {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid rgba(52, 230, 17, 0.1);
+}
+
+
+.profile-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    margin-bottom: 10px;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;}
+
+
+
+
+
+
+
 .sidebar-header {
     padding: 20px;
     text-align: center;
@@ -100,6 +125,7 @@
     margin-left: 250px; /* Account for fixed sidebar */
     width: calc(100% - 250px);
     transition: all 0.3s ease;
+    background-color: rgb(144 196 148 / 85%);
 }
 
 /* Header */
@@ -203,6 +229,7 @@
 /* Content */
 .content {
     padding: 20px 30px;
+  
 }
 
 .page-title {
@@ -257,7 +284,7 @@
 
 .status-active { /* Renamed from status-completed */
     background-color: rgba(140, 193, 82, 0.2);
-    color: var(--success-color);
+    color: green;
     text-align: center;
     width: 103px;
 }
@@ -322,7 +349,7 @@
 }
 
 .button-reactivate {
-    background-color: var(--success-color);
+    background-color: green;
     color: white;
     font-size: 20px;
     display: inline-flex; /* Añadido para usar flexbox */
@@ -372,18 +399,36 @@
 }
 
 /* Estilos para el Modal de Confirmación */
-.modal-overlay {
+.modal-delete {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);  /*fondo semitransparente */
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center;    
     z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */
+    width: 100vw; /* Asegurar que cubra todo el ancho de la ventana gráfica */
+    height: 100vh; /* Asegurar que cubra toda la altura de la ventana gráfica */
 }
+.modal-contentx{
+  background-color: #ffffff;
+  padding: 48px 36px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  max-width: 90%;
+  box-sizing: border-box;
+  text-align: start;
+    
+}
+.modal-contentx:hover {
+  transform: translateY(1px);
+  box-shadow: 0 18px 42px rgba(0,0,0,0.25);
+}
+
 
 .modal-content h2 {
     margin-top: 0;
@@ -447,4 +492,103 @@
     background-color: rgba(140, 193, 82, 0.2); /* Usar color de éxito con transparencia */
     color: var(--success-color);
     border: 1px solid var(--success-color);
+}
+
+/* Media Queries para Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Ancho más pequeño en móviles */
+        left: -200px; /* Ocultar por defecto */
+        position: absolute; /* Cambiar a absolute para no afectar el layout */
+        height: auto; /* Altura automática */
+        min-height: 100vh; /* Asegurar que cubra la altura de la vista */
+    }
+
+    .main-content {
+        margin-left: 0; /* Eliminar margen izquierdo en móviles */
+        width: 100%;
+    }
+
+    .header {
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-box {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .content {
+        padding: 15px; /* Reducir padding en móviles */
+    }
+
+    .admin-table {
+        font-size: 16px; /* Reducir tamaño de fuente de la tabla */
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px; /* Reducir padding de celdas */
+    }
+
+    .status {
+        font-size: 12px; /* Reducir tamaño de fuente del estado */
+        width: auto; /* Ancho automático para el estado */
+    }
+
+    .action-button {
+        padding: 4px 8px; /* Reducir padding de botones */
+        font-size: 12px; /* Reducir tamaño de fuente de botones */
+    }
+
+    .modal-contentx {
+        padding: 20px; /* Reducir padding del modal */
+        width: 95%; /* Ajustar ancho del modal */
+    }
+
+    .modal-actions {
+        flex-direction: column; /* Apilar botones del modal */
+        gap: 10px; /* Espacio entre botones apilados */
+    }
+
+    .modal-actions .action-button {
+        width: 100%; /* Botones del modal ocupan todo el ancho */
+    }
+
+    .sidebar-toggle {
+        display: block; /* Mostrar botón de toggle en móviles */
+        font-size: 24px;
+        cursor: pointer;
+        margin-right: 15px;
+        color: #555;
+    }
+
+    .sidebar.open {
+        left: 0; /* Mostrar sidebar */
+    }
+}
+
+/* Media Query para pantallas más grandes que 768px (para asegurar estilos de escritorio) */
+@media (min-width: 769px) {
+    .sidebar {
+        position: fixed;
+        width: 250px;
+        left: 0;
+    }
+
+    .sidebar-toggle {
+        display: none; /* Ocultar botón de toggle en escritorio */
+    }
+
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+    }
 }

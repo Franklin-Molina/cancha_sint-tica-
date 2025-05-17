@@ -14,7 +14,7 @@ export class ApiCourtRepository extends ICourtRepository {
    */
   async getCourts() {
     try {
-      const response = await api.get('/courts/'); // Llamada a la API usando la instancia configurada
+      const response = await api.get('/api/courts/'); // Llamada a la API usando la instancia configurada
       // Mapear los datos de la respuesta a entidades Court del Dominio
       return response.data.map(courtData => new Court(courtData));
     } catch (error) {
@@ -30,7 +30,7 @@ export class ApiCourtRepository extends ICourtRepository {
    */
   async getCourtById(courtId) {
     try {
-      const response = await api.get(`/courts/${courtId}/`); // Llamada a la API
+      const response = await api.get(`/api/courts/${courtId}/`); // Llamada a la API
       // Mapear los datos de la respuesta a una entidad Court del Dominio
       return new Court(response.data);
     } catch (error) {
@@ -67,7 +67,7 @@ export class ApiCourtRepository extends ICourtRepository {
 
       // Enviar datos al backend usando FormData
       // El token de autorización se adjunta automáticamente por el interceptor de api.js
-      const response = await api.post('/courts/', data, {
+      const response = await api.post('/api/courts/', data, {
          headers: {
             'Content-Type': 'multipart/form-data', // Importante para enviar FormData
          },
@@ -88,7 +88,7 @@ export class ApiCourtRepository extends ICourtRepository {
    */
   async checkAvailability(startTime, endTime) {
     try {
-      const response = await api.get('/courts/availability/', {
+      const response = await api.get('/api/courts/availability/', {
         params: {
           start_time: startTime,
           end_time: endTime,

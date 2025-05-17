@@ -19,6 +19,7 @@ import LoginForm from './LoginForm.jsx'; // Importar el componente LoginForm
 function AuthPage() {
   // const navigate = useNavigate(); // useNavigate no se usa directamente aquí
   const { login: contextLogin, loginWithGoogle: contextLoginWithGoogle } = useAuth(); // Obtener funciones del contexto
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Estados para el formulario de inicio de sesión tradicional
   const [username, setUsername] = useState('');
@@ -38,7 +39,7 @@ function AuthPage() {
         // Hacer una solicitud GET a un endpoint que establezca la cookie CSRF
         // Usar el nuevo endpoint dedicado para obtener la cookie CSRF
         // Nota: Si api.js ya maneja esto, esta llamada directa a axios podría no ser necesaria
-        await axios.get('http://localhost:8000/api/csrf/');
+        await axios.get(`${API_URL}/api/csrf/`);
         console.log('Cookie CSRF obtenida.');
         setCsrfTokenObtained(true); // Establecer estado a true cuando se obtiene la cookie
       } catch (error) {

@@ -21,7 +21,7 @@ const ProtectedRoute = ({ children }) => {
 
   // Si no está autenticado, redirigir a la página de login
   if (!isAuthenticated) {
-    return <Navigate to="/auth" replace state={{ from: location }} />; // Pasar la ubicación actual para redirigir de vuelta después del login
+    return <Navigate to="/" replace state={{ from: location }} />; // Pasar la ubicación actual para redirigir de vuelta después del login
   }
 
   // Verificar si la ruta actual es la de registro de administrador

@@ -119,10 +119,8 @@ export const AuthProvider = ({ children }) => {
       console.log("Sesión cerrada.");
       // Limpiar estado local
       setIsAuthenticated(false);
-      setUser(null);
-      // Redirigir al home después de cerrar sesión
-      navigate('/');
-
+      setUser(null);      
+      return <Navigate to="/" replace />; // Redirigir a la página de inicio
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
       // Manejar el error si es necesario, aunque logout local debería ser robusto
