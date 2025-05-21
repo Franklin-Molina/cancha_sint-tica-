@@ -96,6 +96,80 @@ class UserViewSet(viewsets.ModelViewSet): # Mantener ModelViewSet por ahora, ref
     # TODO: Refactorizar otros métodos de UserViewSet (list, retrieve, create, update, destroy)
     # para usar casos de uso si es necesario, especialmente si tienen lógica de negocio compleja.
     # Por ahora, se dejan como están para mantener la funcionalidad de admin.
+    def list(self, request, *args, **kwargs):
+        """
+        Lista usuarios, aplicando filtros de query params si existen.
+        Usa GetUserListUseCase.
+        """
+        user_repository = DjangoUserRepository()
+        get_user_list_use_case = GetUserListUseCase(user_repository)
+
+        # Obtener filtros de los parámetros de consulta
+        filters = request.query_params.dict()
+
+        # Aplicar filtro basado en el rol del usuario autenticado
+        # Si el usuario es 'adminglobal', solo listar usuarios con rol 'admin'
+        if hasattr(request.user, 'role') and request.user.role == 'adminglobal':
+            filters['role'] = 'admin'
+        # Si el usuario es 'admin', listar todos los usuarios (comportamiento por defecto sin filtro de rol)
+
+        # Envolver la llamada asíncrona con async_to_sync
+        users = async_to_sync(get_user_list_use_case.execute)(filters=filters)
+
+        # Serializar la lista de usuarios
+        serializer = self.get_serializer(users, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['patch'], permission_classes=[IsAdminUser])
+    def activate(self, request, pk=None):
+        """
+        Activa un usuario con rol 'cliente'. Solo accesible para usuarios con rol 'admin'.
+        """
+        user_repository = DjangoUserRepository()
+        update_user_status_use_case = UpdateUserStatusUseCase(user_repository)
+
+        # Verificar que el usuario solicitante sea 'admin'
+        if not (hasattr(request.user, 'role') and request.user.role == 'admin'):
+             return Response({"detail": "No tienes permiso para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Verificar que el usuario a modificar tenga el rol 'cliente'
+        try:
+            user_to_modify = User.objects.get(pk=pk)
+            if user_to_modify.role != 'cliente':
+                 return Response({"detail": "Solo puedes activar usuarios con el rol 'cliente'."}, status=status.HTTP_403_FORBIDDEN)
+        except User.DoesNotExist:
+            return Response({"detail": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        user = async_to_sync(update_user_status_use_case.execute)(user_id=pk, is_active=True)
+        if user:
+            return Response({"detail": f"Usuario {user.username} activado."}, status=status.HTTP_200_OK)
+        return Response({"detail": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['patch'], permission_classes=[IsAdminUser])
+    def deactivate(self, request, pk=None):
+        """
+        Desactiva un usuario con rol 'cliente'. Solo accesible para usuarios con rol 'admin'.
+        """
+        user_repository = DjangoUserRepository()
+        update_user_status_use_case = UpdateUserStatusUseCase(user_repository)
+
+        # Verificar que el usuario solicitante sea 'admin'
+        if not (hasattr(request.user, 'role') and request.user.role == 'admin'):
+             return Response({"detail": "No tienes permiso para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Verificar que el usuario a modificar tenga el rol 'cliente'
+        try:
+            user_to_modify = User.objects.get(pk=pk)
+            if user_to_modify.role != 'cliente':
+                 return Response({"detail": "Solo puedes desactivar usuarios con el rol 'cliente'."}, status=status.HTTP_403_FORBIDDEN)
+        except User.DoesNotExist:
+            return Response({"detail": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        user = async_to_sync(update_user_status_use_case.execute)(user_id=pk, is_active=False)
+        if user:
+            return Response({"detail": f"Usuario {user.username} desactivado."}, status=status.HTTP_200_OK)
+        return Response({"detail": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     """

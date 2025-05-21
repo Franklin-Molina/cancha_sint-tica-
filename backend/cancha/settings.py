@@ -252,7 +252,7 @@ SIMPLE_JWT = {
 # Configuración de CORS para permitir solicitudes desde el frontend durante el desarrollo
 CORS_ALLOW_ALL_ORIGINS = True # Deshabilitar para especificar orígenes permitidos
 CORS_ALLOWED_ORIGINS = [
-    #"http://localhost:3000", # Permitir solicitudes desde el frontend de React
+    "http://localhost:3000", # Permitir solicitudes desde el frontend de React
     "http://192.168.100.10:5173",
 
 ]
@@ -262,7 +262,7 @@ CORS_ALLOW_CREDENTIALS = True # Permitir que las solicitudes incluyan credencial
 # Configuración de CSRF para confiar en el origen del frontend
 CSRF_TRUSTED_ORIGINS = [
  
-    #"http://localhost:5173",
+    "http://localhost:5173",
     "http://192.168.100.10:5173",
     #   "http://localhost:3000",
 ]

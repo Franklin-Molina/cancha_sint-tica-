@@ -61,7 +61,7 @@ function ManageAdminsTable() {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>ID</th>
+             {/*  <th>ID</th> */}
               <th>Username</th>
               <th>Email</th>
               <th>Nombre</th>
@@ -72,7 +72,7 @@ function ManageAdminsTable() {
           <tbody>
             {adminUsers.map(admin => (
               <tr key={admin.id}>
-                <td>{admin.id}</td>
+              {/*   <td>{admin.id}</td> */}
                 <td>{admin.username}</td>
                 <td>{admin.email}</td>
                 <td>{admin.first_name} {admin.last_name}</td>

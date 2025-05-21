@@ -144,8 +144,8 @@ function ProfilePage() {
               />
             </div>
             <div className="form-actions">
-              <button type="submit">Guardar</button>
-              <button type="button" onClick={handleCancelClick}>Cancelar</button>
+              <button className="save-button" type="submit">Guardar</button>
+              <button className="exit-button" type="button" onClick={handleCancelClick}>Cancelar</button>
             </div>
           </form>
         ) : (
@@ -168,7 +168,7 @@ function ProfilePage() {
                 <span className="detail-value">{user.edad}</span>
               </div>
             )}
-            <button onClick={handleEditClick}>Editar Perfil</button>
+            <button  className="edit-button" onClick={handleEditClick}>Editar Perfil</button>
           </div>
         )}
       </div>

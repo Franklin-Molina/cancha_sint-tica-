@@ -11,11 +11,22 @@ export class ApiUserRepository extends IUserRepository {
    * @param {object} [filters] - Filtros opcionales (ej. { role: 'admin' }).
    * @returns {Promise<object[]>} Una promesa que resuelve con un array de objetos de usuario.
    */
-  async getAllUsers(filters) {
+  async getAlladmins(filters) {
     try {
       // El endpoint /api/users/manage-admins/ ya filtra por role='admin' en el backend (AdminManagementViewSet)
       // Si se necesitan otros filtros, se pueden pasar como params.
       const response = await api.get('/api/users/manage-admins/', { params: filters });
+      // return response.data.map(userData => new User(userData)); // Si se usa entidad User
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching users from API:', error);
+      throw error;
+    }
+  }
+    async getAllUsers(filters) {
+    try {
+      // Usar el endpoint específico para la lista de usuarios según la respuesta del router
+      const response = await api.get('/api/users/users/', { params: filters }); // Cambiar la URL
       // return response.data.map(userData => new User(userData)); // Si se usa entidad User
       return response.data;
     } catch (error) {
@@ -59,6 +70,25 @@ export class ApiUserRepository extends IUserRepository {
       throw error;
     }
   }
+  
+  /**
+   * Actualiza el estado (activo/inactivo) de un usuario con rol 'cliente'.
+   * @param {number} userId - El ID del usuario.
+   * @param {boolean} isActive - El nuevo estado de activación.
+   * @returns {Promise<object>} Una promesa que resuelve con el objeto del usuario actualizado.
+   */
+  async updateClientUserStatus(userId, isActive) {
+    try {
+      const action = isActive ? 'activate' : 'deactivate';
+      // Usar los endpoints /api/users/<id>/[activate|deactivate]/ del UserViewSet
+      const response = await api.patch(`/api/users/users/${userId}/${action}/`);
+      // return new User(response.data); // Si la API devuelve el usuario actualizado
+      return response.data; // O simplemente un mensaje de éxito
+    } catch (error) {
+      console.error(`Error updating client user ${userId} status via API:`, error);
+      throw error;
+    }
+  }
 
   /**
    * Elimina un usuario.
@@ -69,6 +99,15 @@ export class ApiUserRepository extends IUserRepository {
     try {
       // Usar el endpoint /api/users/manage-admins/<id>/
       await api.delete(`/api/users/manage-admins/${userId}/`);
+    } catch (error) {
+      console.error(`Error deleting user ${userId} via API:`, error);
+      throw error;
+    }
+  }
+    async deleteOnlyUsers(userId) {
+    try {
+      // Usar el endpoint /api/users/manage-admins/<id>/
+      await api.delete(`/api/users/users/${userId}/`);
     } catch (error) {
       console.error(`Error deleting user ${userId} via API:`, error);
       throw error;

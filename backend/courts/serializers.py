@@ -11,7 +11,7 @@ class CourtSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Court
-        fields = ['id', 'name', 'description', 'characteristics', 'price', 'images'] # Incluir 'images' en los campos
+        fields = ['id', 'name', 'description', 'characteristics', 'price', 'is_active', 'images'] # Incluir 'images' en los campos
 
     def create(self, validated_data):
         # Lógica para crear la cancha y manejar las imágenes asociadas

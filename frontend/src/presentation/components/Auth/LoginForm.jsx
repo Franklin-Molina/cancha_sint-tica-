@@ -18,6 +18,20 @@ import GoogleLoginButton from './GoogleLoginButton.jsx'; // Importar GoogleLogin
  * @returns {JSX.Element} El elemento JSX del formulario de inicio de sesión.
  */
 function LoginForm({ username, password, error, setUsername, setPassword, setError, onSubmit, onGoogleSuccess, onGoogleError }) {
+
+  function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const showButton = document.querySelector('.show-password');
+
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      showButton.textContent = '🙈';
+    } else {
+      passwordInput.type = 'password';
+      showButton.textContent = '👁';
+    }
+  }
+
   return (
     <div className="login-container">
       <h2>Iniciar Sesión</h2>
@@ -32,30 +46,41 @@ function LoginForm({ username, password, error, setUsername, setPassword, setErr
             setError(''); // Limpiar error al escribir
           }}
         />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setError(''); // Limpiar error al escribir
-          }}
-        />
-        <button type="submit">Entrar</button> {/* Botón de tipo submit */}
+        <div className="password-input-container"> {/* Contenedor para el input y el botón */}
 
-        <p className="mb-4">- O -</p> {/* Separador */}
+          <div class="password-wrapper">
+            <input type="password" id="password" name="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(''); // Limpiar error al escribir
+              }} placeholder="Ingresa tu contraseña" required />
+            <button type="button" className="show-password" onClick={togglePassword}> {/* Botón para mostrar/ocultar */}
+              👁
+            </button>
+          </div>
+
+
+
+        </div>
+        <button className='login-button' type="submit">Entrar</button> {/* Botón de tipo submit */}
+        <div class="forgot-password">
+          <a href="#" >¿Olvidaste tu contraseña?</a>
+        </div>
+        <div className="divider">
+          <span>- O -</span>
+        </div>
+
 
         {/* Botón de inicio de sesión con Google */}
         <GoogleLoginButton onSuccess={onGoogleSuccess} onError={onGoogleError} />
 
       </form>
       {/* Enlace a formulario de registro */}
-      <p className="mt-4 text-center">
-        ¿No tienes una cuenta?{' '}
-        <a href="/register" className="text-blue-500 hover:underline">
-          Regístrate aquí
-        </a>
-      </p>
+      <div className="signup-link">
+        <p>¿No tienes una cuenta? <a href="/register" >Regístrate aquí</a></p>
+      </div>
+
     </div>
   );
 }

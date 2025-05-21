@@ -42,7 +42,7 @@ function LoginPage() {
           />
         </div>
         <div>
-          <label htmlFor="password">Contraseña:</label>
+          <label htmlFor="password" className='show-password'>Contraseña:</label>
           <input
             type="password"
             id="password"

@@ -181,14 +181,14 @@
     transition: background-color 0.3s ease;
 }
 
-.profile-form .form-actions button[type="submit"] {
-    background-color: #007bff;
+/* .profile-form .form-actions button[type="submit"] {
+    background-color: green;
     color: white;
 }
 
 .profile-form .form-actions button[type="submit"]:hover {
     background-color: #0056b3;
-}
+} */
 
 .profile-form .form-actions button[type="button"] {
     background-color: #6c757d;
@@ -215,4 +215,44 @@
     background-color: #59c271;
     color: green;
     border: 1px solid #c3e6cb;
+}
+
+
+/* Botones perfil */
+.edit-button {
+  width: 100%;
+  padding: 14px;
+/*   background: #ddc910; */
+  background: #e0a830;  
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+.edit-button:hover {
+  background: yellow;
+  transform: translateY(-2px);
+}
+
+.save-button{
+     background-color: green;
+     color: white;
+
+}
+.save-button:hover{
+     background-color: #64c218;
+}
+.exit-button{
+     background-color: rgb(122, 136, 122);
+     color: white;
+
+}
+.exit-button:hover{
+     background-color: #c9be22;
 }

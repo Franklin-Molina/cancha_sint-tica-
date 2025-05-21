@@ -2,95 +2,136 @@
 .dashboard-container {
   display: flex;
   min-height: 100vh; /* Ocupar al menos el alto de la ventana */
-  background-color: var(--body-bg); /* Usar variable del dashboard.css */
+  background-color: rgb(144 196 148 / 85%);
 }
 
 .dashboard-sidebar {
   width: 250px;
-  background-color: var(--sidebar-bg); /* Usar variable del dashboard.css */
-  color: var(--sidebar-color); /* Usar variable del dashboard.css */
-  position: fixed; /* Posición fija */
-  height: 100vh; /* Altura completa */
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-color);
+  position: fixed;
+  height: 100vh;
   overflow-y: auto;
   transition: all 0.3s ease;
 }
 
 .dashboard-sidebar-header {
-    padding: 20px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dashboard-sidebar-header h2 {
-    color: white;
-    font-size: 20px;
+  color: white;
+  font-size: 20px;
 }
 
 .dashboard-sidebar-menu {
-    padding: 10px 0;
+  padding: 10px 0;
 }
 
 .dashboard-menu-item {
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.2s;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .dashboard-menu-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .dashboard-menu-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-left: 4px solid var(--primary-color); /* Usar variable del dashboard.css */
+  background-color: rgba(255, 255, 255, 0.2);
+  border-left: 4px solid var(--primary-color);
 }
 
 .dashboard-menu-item i {
-    margin-right: 15px;
-    font-size: 16px;
+  margin-right: 15px;
+  font-size: 16px;
 }
 
 .dashboard-menu-title {
-    padding: 8px 20px;
-    font-size: 11px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: bold;
-    margin-top: 10px;
+  padding: 8px 20px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: bold;
+  padding-left: 20px;
 }
 
+.dashboard-menu-title:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-menu-title i {
+  margin-right: 10px;
+}
+
+.submenu {
+  padding-left: 20px;
+  /* overflow: hidden;
+  max-height: 0; */
+  transition: max-height 0.3s ease-out;
+}
+
+/* Style for expanded submenu */
+.submenu.expanded {
+  max-height: 500px;
+  transition: max-height 0.3s ease-in;
+}
+
+.submenu .dashboard-menu-item {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+}
 
 .dashboard-content {
-  flex: 1; /* Usar flex: 1 en lugar de flex-grow */
-  margin-left: 250px; /* Margen para dejar espacio a la sidebar fija */
-  width: calc(100% - 250px); /* Ancho calculado */
-  padding: 0; /* Eliminar padding aquí, se añadirá en el contenido de la página */
+  flex: 1;
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  padding: 0;
 }
 
 /* Responsive para la sidebar */
 @media (max-width: 992px) {
-    .dashboard-sidebar {
-        width: 80px;
-        overflow: visible;
-    }
+  .dashboard-sidebar {
+    width: 80px;
+    overflow: visible;
+  }
 
-    .dashboard-sidebar-header h2, .dashboard-menu-item span {
-        display: none;
-    }
+  .dashboard-sidebar-header h2,
+  .dashboard-menu-item span {
+    display: none;
+  }
 
-    .dashboard-menu-title {
-        display: none;
-    }
+  .dashboard-menu-title {
+    display: none;
+  }
 
-    .dashboard-menu-item i {
-        margin-right: 0;
-        font-size: 18px;
-    }
+  .dashboard-menu-item i {
+    margin-right: 0;
+    font-size: 18px;
+  }
 
-    .dashboard-content {
-        margin-left: 80px;
-        width: calc(100% - 80px);
-    }
+  .dashboard-content {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+  }
 }

@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom'; // Importar Outlet
 import { useAuth } from '../context/AuthContext.jsx'; 
 
-import { CiLogout } from "react-icons/ci";
-import { FaBars } from 'react-icons/fa'; // Importar icono de hamburguesa
-
 
 
 // Casos de uso y repositorios
@@ -186,10 +183,10 @@ function AdminGlobalDashboardPage() {
         <div className="header">
           {/* Botón de hamburguesa para móviles */}
           <div className="sidebar-toggle" onClick={toggleSidebar}>
-            <FaBars />
+            <i className="fas fa-bars"></i> {/* Icono de hamburguesa */}
           </div>
-                   
-          <div className="header-right">          
+
+        {/*   <div className="header-right">
             
             <div className="user-profile">
               <div className="user-avatar">{user.username ? user.username.charAt(0).toUpperCase() : 'U'}</div>
@@ -199,7 +196,7 @@ function AdminGlobalDashboardPage() {
               </div>
               
             </div>
-          </div>
+          </div> */}
         </div>
         
         {/* Content */}

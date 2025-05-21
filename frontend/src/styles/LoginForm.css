@@ -3,7 +3,7 @@
   background-color: #ffffff;
   padding: 48px 36px;
   border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
   width: 400px;
   transition: all 0.3s ease;
   display: flex;
@@ -14,7 +14,7 @@
 
 .login-container:hover {
   transform: translateY(-6px);
-  box-shadow: 0 18px 42px rgba(0,0,0,0.25);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.25);
 }
 
 .login-container h2 {
@@ -53,10 +53,10 @@ input[type="password"]:focus {
   outline: none;
 }
 
-button {
+.login-button {
   width: 100%;
   padding: 14px;
-  background: #667eea;
+  background: #1c963b;
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -68,29 +68,134 @@ button {
   margin-top: 5px;
 }
 
-button:hover {
-  background: #556cd6;
+.login-button:hover {
+  background: rgb(61, 138, 37);
   transform: translateY(-2px);
+}
+
+.google-button {
+  width: 100%;
+  background-color: white;
+  color: #333;
+  border: 2px solid #e1e1e1;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.google-button:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.signup-link {
+  text-align: center;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e1e1e1;
+}
+
+.signup-link p {
+  color: #666;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.signup-link a:hover {
+  color: #764ba2;
+}
+
+.forgot-password {
+  text-align: right;
+  padding: 5px;
+  
+}
+
+.forgot-password a {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+  color: #764ba2;
+}
+
+.divider {
+  margin: 10px 0;
+  position: relative;
+  text-align: center;
+}
+
+.show-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.show-password:hover {
+  color: #667eea;
+}
+
+.password-wrapper {
+  position: relative;
+
 }
 
 /* --- Media Query para Responsive --- */
 @media (max-width: 480px) {
   .login-container {
-    width: 90%; /* Ocupa más ancho en pantallas pequeñas */
-    padding: 30px 20px; /* Reduce el padding */
-    margin: 20px auto; /* Añade margen vertical */
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Sombra ligeramente menor */
+    width: 90%;
+    /* Ocupa más ancho en pantallas pequeñas */
+    padding: 30px 20px;
+    /* Reduce el padding */
+    margin: 20px auto;
+    /* Añade margen vertical */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    /* Sombra ligeramente menor */
   }
 
   .login-container h2 {
-    font-size: 22px; /* Reduce tamaño del título */
+    font-size: 22px;
+    /* Reduce tamaño del título */
   }
 
   input[type="text"],
   input[type="password"],
   button {
-    padding: 12px 14px; /* Ajusta padding de inputs y botón */
-    font-size: 14px; /* Ajusta tamaño de fuente */
+    padding: 12px 14px;
+    /* Ajusta padding de inputs y botón */
+    font-size: 14px;
+    /* Ajusta tamaño de fuente */
   }
 
   button {

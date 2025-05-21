@@ -20,6 +20,6 @@ export class DeleteUserUseCase {
    * @returns {Promise<void>} Una promesa que resuelve cuando el usuario ha sido eliminado.
    */
   async execute(userId) {
-    return this.userRepository.deleteUser(userId);
+    return this.userRepository.deleteOnlyUsers(userId);
   }
 }

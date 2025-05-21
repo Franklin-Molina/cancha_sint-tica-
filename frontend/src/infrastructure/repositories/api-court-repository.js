@@ -128,6 +128,23 @@ export class ApiCourtRepository extends ICourtRepository {
     throw new Error(`Backend endpoint for weekly availability of court ${courtId} not implemented.`);
   }
 
+  /**
+   * Actualiza el estado (activo/inactivo) de una cancha.
+   * @param {number} courtId - El ID de la cancha.
+   * @param {boolean} isActive - El nuevo estado de activación.
+   * @returns {Promise<object>} Una promesa que resuelve con el objeto de la cancha actualizado.
+   */
+  async updateCourtStatus(courtId, isActive) {
+    try {
+      // Usar el endpoint PATCH /api/courts/<id>/ para actualizar el estado
+      const response = await api.patch(`/api/courts/${courtId}/`, { is_active: isActive });
+      // return new Court(response.data); // Si la API devuelve la cancha actualizada
+      return response.data; // O simplemente un mensaje de éxito
+    } catch (error) {
+      console.error(`Error updating court ${courtId} status via API:`, error);
+      throw error;
+    }
+  }
 
   // TODO: Implementar otros métodos de ICourtRepository si se añaden
 }
