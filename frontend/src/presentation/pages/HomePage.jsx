@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 // Importar el caso de uso y la implementación del repositorio
 import { GetCourtsUseCase } from '../../application/use-cases/get-courts.js';
@@ -21,25 +21,40 @@ function HomePage({ openAuthModal }) { // Recibir openAuthModal como prop
   const courtRepository = new ApiCourtRepository();
   const getCourtsUseCase = new GetCourtsUseCase(courtRepository);
 
+  // Ref para rastrear si el efecto ya se ejecutó
+  const effectRan = useRef(false);
 
   useEffect(() => {
-    // Función para obtener las canchas usando el caso de uso
-    const fetchCourts = async () => {
-      try {
-        setLoading(true);
-        // Llamar al caso de uso en lugar de llamar directamente a la API
-        const courtsList = await getCourtsUseCase.execute();
-        setCourts(courtsList); // Guardar la lista de canchas en el estado
-        setLoading(false);
-      } catch (err) {
-        setError(err);
-        setLoading(false);
-        console.error('Error al obtener canchas:', err);
-      }
+    // Usar el ref para asegurar que el efecto solo se ejecute una vez en desarrollo (StrictMode)
+    if (effectRan.current === false) {
+      // Función para obtener las canchas usando el caso de uso
+      const fetchCourts = async () => {
+        try {
+          setLoading(true);
+          // Llamar al caso de uso en lugar de llamar directamente a la API
+          const courtsList = await getCourtsUseCase.execute();
+          setCourts(courtsList); // Guardar la lista de canchas en el estado
+          setLoading(false);
+        } catch (err) {
+          setError(err);
+          setLoading(false);
+          console.error('Error al obtener canchas:', err);
+        }
+      };
+
+      fetchCourts(); // Llamar a la función al montar el componente
+      
+      // Marcar que el efecto ya se ejecutó
+      effectRan.current = true;
+    }
+
+    // Función de limpieza (opcional para este caso, pero buena práctica)
+    return () => {
+      // Resetear el ref si el componente se desmonta (útil para pruebas)
+      // effectRan.current = false; 
     };
 
-    fetchCourts(); // Llamar a la función al montar el componente
-  }, []); // El array vacío asegura que se ejecute solo una vez al montar
+  }, []); // El array vacío asegura que se ejecute solo una vez al montar (después del primer ciclo de StrictMode)
 
   // Funciones para controlar el modal de autenticación (ahora pasadas como props)
   // const openAuthModal = () => {

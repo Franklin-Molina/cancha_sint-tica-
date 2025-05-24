@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Importar useState y useEffect
+import React, { useState, useEffect, useRef } from 'react'; // Importar useState, useEffect y useRef
 import axios from 'axios'; // Importar axios (para la cookie CSRF, si no se mueve esa lógica)
 // import { useNavigate } from 'react-router-dom'; // useNavigate no se usa directamente aquí si AuthContext maneja la redirección
 import { useAuth } from '../../context/AuthContext.jsx'; // Importar useAuth
@@ -27,6 +27,9 @@ function AuthPage() {
   const [error, setError] = useState('');
   const [csrfTokenObtained, setCsrfTokenObtained] = useState(false); // Nuevo estado para la cookie CSRF
 
+  // Ref para rastrear si el efecto ya se ejecutó
+  const effectRan = useRef(false);
+
   // Las instancias del repositorio y casos de uso se manejan en AuthContext.
   // No es necesario crearlas aquí.
 
@@ -34,23 +37,35 @@ function AuthPage() {
   // Efecto para obtener la cookie CSRF al montar el componente
   // Esta lógica podría moverse a la capa de infraestructura si es compleja
   useEffect(() => {
-    const fetchCsrfToken = async () => {
-      try {
-        // Hacer una solicitud GET a un endpoint que establezca la cookie CSRF
-        // Usar el nuevo endpoint dedicado para obtener la cookie CSRF
-        // Nota: Si api.js ya maneja esto, esta llamada directa a axios podría no ser necesaria
-        await axios.get(`${API_URL}/api/csrf/`);
-      //  console.log('Cookie CSRF obtenida.');
-        setCsrfTokenObtained(true); // Establecer estado a true cuando se obtiene la cookie
-      } catch (error) {
-        console.error('Error al obtener la cookie CSRF:', error);
-        // Manejar el error si la cookie CSRF no se puede obtener
-        setError('Error al cargar la página de autenticación. Inténtalo de nuevo.');
-      }
+    // Usar el ref para asegurar que el efecto solo se ejecute una vez en desarrollo (StrictMode)
+    if (effectRan.current === false) {
+      const fetchCsrfToken = async () => {
+        try {
+          // Hacer una solicitud GET a un endpoint que establezca la cookie CSRF
+          // Usar el nuevo endpoint dedicado para obtener la cookie CSRF
+          // Nota: Si api.js ya maneja esto, esta llamada directa a axios podría no ser necesaria
+          await axios.get(`${API_URL}/api/csrf/`);
+        //  console.log('Cookie CSRF obtenida.');
+          setCsrfTokenObtained(true); // Establecer estado a true cuando se obtiene la cookie
+        } catch (error) {
+          console.error('Error al obtener la cookie CSRF:', error);
+          // Manejar el error si la cookie CSRF no se puede obtener
+          setError('Error al cargar la página de autenticación. Inténtalo de nuevo.');
+        }
+      };
+
+      fetchCsrfToken();
+      
+      // Marcar que el efecto ya se ejecutó
+      effectRan.current = true;
+    }
+
+    // Función de limpieza (opcional para este caso)
+    return () => {
+      // effectRan.current = false; // No es necesario resetear para este caso
     };
 
-    fetchCsrfToken();
-  }, []); // El array vacío asegura que el efecto se ejecute solo una vez al montar
+  }, []); // El array vacío asegura que se ejecute solo una vez al montar (después del primer ciclo de StrictMode)
 
   // Manejar inicio de sesión con Google exitoso usando el caso de uso
   // Manejar inicio de sesión con Google exitoso usando el caso de uso

@@ -16,8 +16,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         username = attrs.get('username')
         password = attrs.get('password')
 
-        logger.debug(f"Atributos recibidos en el serializador: {attrs}")
-        logger.debug(f"Intentando autenticar usuario: {username}")
+      #  logger.debug(f"Atributos recibidos en el serializador: {attrs}")
+      #  logger.debug(f"Intentando autenticar usuario: {username}")
 
         # Verificación para evitar que se pasen tokens JWT como credenciales
         jwt_pattern = re.compile(r'^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$')
@@ -27,7 +27,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         try:
             user_authenticated = authenticate(username=username, password=password)
-            logger.debug(f"Resultado de authenticate: {user_authenticated}")
+           # logger.debug(f"Resultado de authenticate: {user_authenticated}")
 
             if user_authenticated is None:
                 # Si authenticate devuelve None, podría ser por credenciales incorrectas o usuario inactivo.
@@ -54,7 +54,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 logger.debug(f"Autenticación fallida: usuario {user.username} inactivo (verificación post-authenticate).")
                 raise serializers.ValidationError("La cuenta de usuario está inactiva.", code="authorization")
 
-            logger.debug(f"Usuario autenticado: {user.username}, is_active: {user.is_active}")
+          #  logger.debug(f"Usuario autenticado: {user.username}, is_active: {user.is_active}")
 
         except serializers.ValidationError:
             # Si es una ValidationError lanzada intencionalmente (ej. cuenta inactiva, credenciales inválidas),
