@@ -14,7 +14,7 @@ function Layout({ children }) {
 
   // Función para abrir el modal de autenticación
   const openAuthModal = () => {
-    console.log('Abriendo modal de autenticación');
+    //console.log('Abriendo modal de autenticación');
     setShowAuthModal(true);
   };
 

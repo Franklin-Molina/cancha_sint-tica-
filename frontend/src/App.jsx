@@ -38,7 +38,7 @@ function App() {
           <Route path="canchas/create" element={<DashboardCourtsPage />} />
           <Route path="reservas" element={<DashboardBookingsPage />} />
           <Route path="usuarios" element={<DashboardUsersPage />} />
-          <Route path="perfil" element={<DashboardProfilePage />} />
+          <Route path="perfil" element={<ProfilePage />} />
           {/* Ruta para la página de modificación de canchas */}
           <Route path="manage-courts/:id" element={<DashboardModifyCourtPage />} />
         </Route>

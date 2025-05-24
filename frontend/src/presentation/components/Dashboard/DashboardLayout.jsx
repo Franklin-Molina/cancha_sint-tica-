@@ -126,7 +126,7 @@ function DashboardLayout() {
           <Link to="/dashboard/perfil" className="dashboard-menu-item" onClick={closeSidebar}> {/* Cerrar sidebar al hacer click */}
             <i className="fas fa-user"></i>
             <span>Perfil</span>
-          </Link>
+          </Link>          
 
           <div className="dashboard-menu-item" onClick={() => { handleLogout(); closeSidebar(); }} style={{ cursor: 'pointer' }}> {/* Logout y cerrar sidebar */}
             <i className="fas fa-sign-out-alt"></i>

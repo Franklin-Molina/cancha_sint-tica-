@@ -109,3 +109,11 @@ class DjangoUserRepository(IUserRepository):
             return True
         except User.DoesNotExist:
             return False
+
+    @sync_to_async
+    def set_password(self, user: User, new_password: str) -> None:
+        """
+        Establece la nueva contraseña para un usuario y la guarda.
+        """
+        user.set_password(new_password)
+        user.save()

@@ -3,7 +3,7 @@
 ## Visión General
 Desarrollar una plataforma completa para la gestión de canchas sintéticas que permita a los usuarios ver disponibilidad, realizar reservaciones, gestionar sus planes mensuales y realizar pagos en línea. El sistema tendrá una arquitectura moderna con separación de backend y frontend.
 # Siempre manten la arquitectura  Clean Architecture
-
+# Simpre habla en español
 
 <!-- # PLANNING.MD - Sistema de Gestión de Canchas Sintéticas
 

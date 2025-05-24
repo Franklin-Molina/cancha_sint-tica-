@@ -1,3 +1,9 @@
+.button-activate{
+    background-color: rgba(158, 42, 235, 0.747);
+}
+.button-modify{
+    background-color: rgba(43, 223, 139, 0.781);
+}
 .canchas-table {
     width: 100%;
     border-collapse: collapse;

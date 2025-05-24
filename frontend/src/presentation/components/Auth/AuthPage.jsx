@@ -40,7 +40,7 @@ function AuthPage() {
         // Usar el nuevo endpoint dedicado para obtener la cookie CSRF
         // Nota: Si api.js ya maneja esto, esta llamada directa a axios podría no ser necesaria
         await axios.get(`${API_URL}/api/csrf/`);
-        console.log('Cookie CSRF obtenida.');
+      //  console.log('Cookie CSRF obtenida.');
         setCsrfTokenObtained(true); // Establecer estado a true cuando se obtiene la cookie
       } catch (error) {
         console.error('Error al obtener la cookie CSRF:', error);
@@ -110,7 +110,7 @@ function AuthPage() {
       // Llamar a la función login del contexto con las credenciales originales.
       // AuthContext.login se encargará de llamar al caso de uso, guardar tokens y llamar a fetchUser.
       await contextLogin(username, password);
-      console.log('Llamada a contextLogin completada.');
+      //console.log('Llamada a contextLogin completada.');
       // La redirección es manejada por fetchUser en AuthContext
 
     } catch (error) {

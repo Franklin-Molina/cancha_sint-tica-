@@ -4,10 +4,17 @@ import LogoutButton from '../components/Auth/LogoutButton.jsx';
 import '../../styles/ProfilePage.css'; // Importar estilos específicos
 import { ApiUserRepository } from '../../infrastructure/repositories/api-user-repository.js'; // Importar el repositorio
 import { UpdateUserProfileUseCase } from '../../application/use-cases/update-user-profile.js'; // Importar el caso de uso
+import { ChangePasswordUseCase } from '../../application/use-cases/change-password.js'; // Importar el caso de uso de cambio de contraseña
 
 function ProfilePage() {
   const { user, loading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  // Estados para el modal de cambio de contraseña
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
   const [username, setUsername] = useState(user ? user.username : '');
   const [firstName, setFirstName] = useState(user ? user.first_name : '');
   const [lastName, setLastName] = useState(user ? user.last_name : '');
@@ -16,9 +23,10 @@ function ProfilePage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Instanciar el repositorio y el caso de uso
+  // Instanciar el repositorio y los casos de uso
   const userRepository = new ApiUserRepository();
   const updateUserProfileUseCase = new UpdateUserProfileUseCase(userRepository);
+  const changePasswordUseCase = new ChangePasswordUseCase(userRepository); // Instanciar caso de uso de cambio de contraseña
 
   if (loading) {
     return <div className="profile-container">Cargando perfil...</div>;
@@ -80,6 +88,49 @@ function ProfilePage() {
       setError('Error al actualizar el perfil. Inténtalo de nuevo.');
     }
   };
+
+  const handleChangePasswordSubmit = async (e) => {
+    e.preventDefault();
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    if (!currentPassword || !newPassword) {
+      setPasswordError('Por favor, ingresa la contraseña actual y la nueva contraseña.');
+      return;
+    }
+
+    try {
+      // Llamar al caso de uso para cambiar la contraseña
+      // Si el caso de uso no lanza un error, asumimos que fue exitoso.
+      const result = await changePasswordUseCase.execute(user.id, currentPassword, newPassword);
+
+      // Si llegamos aquí, la llamada fue exitosa.
+      // Mostrar mensaje de éxito del backend si está disponible, de lo contrario usar un mensaje genérico.
+      setPasswordSuccess(result.detail || 'Contraseña cambiada exitosamente.');
+
+      // Limpiar campos y cerrar modal después de un tiempo
+      setTimeout(() => {
+        setCurrentPassword('');
+        setNewPassword('');
+        setIsPasswordModalOpen(false);
+        setPasswordSuccess(''); // Limpiar el mensaje de éxito después de cerrar el modal
+      }, 2000);
+
+    } catch (error) {
+     // console.error('Error al cambiar la contraseña:', error);
+      // Log detallado de la respuesta de error si está disponible
+      if (error.response) {
+      //  console.error('Detalles del error de respuesta:', error.response.data);
+        // Mostrar mensaje de error del backend si está disponible
+        setPasswordError(error.response.data.error || error.response.data.detail || 'Error al cambiar la contraseña.');
+      } else {
+        // Mostrar mensaje de error genérico si no hay respuesta del backend
+        setPasswordError(error.message || 'Error al cambiar la contraseña. Inténtalo de nuevo.');
+      }
+      // No cerrar el modal automáticamente en caso de error para que el usuario vea el mensaje
+    }
+  };
+
 
   return (
     <div className="profile-container">
@@ -168,10 +219,53 @@ function ProfilePage() {
                 <span className="detail-value">{user.edad}</span>
               </div>
             )}
-            <button  className="edit-button" onClick={handleEditClick}>Editar Perfil</button>
+            <button className="edit-button" onClick={handleEditClick}>Editar Perfil</button>
+            <button className="change-password-button" onClick={() => setIsPasswordModalOpen(true)}>Cambiar Contraseña</button>
           </div>
         )}
       </div>
+
+      {/* Modal para cambiar contraseña */}
+      {isPasswordModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>Cambiar Contraseña</h2>
+              <button className="close-button" onClick={() => setIsPasswordModalOpen(false)}>&times;</button>
+            </div>
+            <div className="modal-content">
+              <form onSubmit={handleChangePasswordSubmit}>
+                <div className="form-group">
+                  <label htmlFor="current-password">Contraseña Actual:</label>
+                  <input
+                    type="password"
+                    id="current-password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="new-password">Nueva Contraseña:</label>
+                  <input
+                    type="password"
+                    id="new-password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                {passwordError && <div className="alert error-alert">{passwordError}</div>}
+                {passwordSuccess && <div className="alert success-alert">{passwordSuccess}</div>}
+                <div className="form-actions">
+                  <button className="save-button" type="submit">Cambiar Contraseña</button>
+                  <button className="exit-button" type="button" onClick={() => setIsPasswordModalOpen(false)}>Cancelar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="social-profiles-card">
         <h2 className="card-title">Cuentas Vinculadas</h2>

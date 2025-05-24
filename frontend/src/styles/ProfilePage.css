@@ -3,7 +3,7 @@
     padding: 20px;
     max-width: 800px;
     margin: 0 auto;
-    text-align: center;
+   
 }
 
 .page-title {
@@ -169,7 +169,7 @@
 .profile-form .form-actions {
     margin-top: 25px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 10px;
 }
 
@@ -256,4 +256,141 @@
 }
 .exit-button:hover{
      background-color: #c9be22;
+}
+
+/* Estilos para el botón de cambiar contraseña */
+.change-password-button {
+  width: 100%;
+  padding: 14px;
+  background: #4a89dc; /* Color azul, similar al avatar */
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  box-sizing: border-box;
+  margin-top: 10px; /* Espacio entre el botón de editar y cambiar contraseña */
+}
+
+.change-password-button:hover {
+  background: #3b73c6; /* Azul más oscuro al pasar el ratón */
+  transform: translateY(-2px);
+}
+
+/* Estilos para el Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegurar que esté por encima de otros elementos */
+}
+
+.modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px; /* Ancho máximo para el modal */
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.modal .close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #777;
+    padding: 0;
+}
+
+.modal .close-button:hover {
+    color: #333;
+}
+/*
+.modal-content {
+     Estilos para el contenido del modal si es necesario 
+}
+*/
+.modal .form-group {
+    margin-bottom: 15px;
+}
+
+.modal label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+    font-size: 15px;
+}
+
+.modal input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.modal .form-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end; /* Alinear botones a la derecha */
+    gap: 10px;
+}
+
+.modal .form-actions button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.modal .form-actions .save-button {
+    background-color: #5cb85c; /* Verde para guardar */
+    color: white;
+}
+
+.modal .form-actions .save-button:hover {
+    background-color: #4cae4c;
+}
+
+.modal .form-actions .exit-button {
+    background-color: #f0ad4e; /* Naranja para cancelar */
+    color: white;
+}
+
+.modal .form-actions .exit-button:hover {
+    background-color: #ec971f;
+}
+
+/* Estilos para las alertas dentro del modal */
+.modal .alert {
+    margin-bottom: 15px; /* Espacio debajo de la alerta */
 }

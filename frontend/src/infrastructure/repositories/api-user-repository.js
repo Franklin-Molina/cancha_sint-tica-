@@ -131,4 +131,25 @@ export class ApiUserRepository extends IUserRepository {
       throw error;
     }
   }
+
+  /**
+   * Cambia la contraseña de un usuario.
+   * @param {number} userId - El ID del usuario.
+   * @param {string} currentPassword - La contraseña actual del usuario.
+   * @param {string} newPassword - La nueva contraseña para el usuario.
+   * @returns {Promise<object>} Una promesa que resuelve con un mensaje de éxito o error.
+   */
+  async changePassword(userId, currentPassword, newPassword) {
+    try {
+      // Asumiendo un endpoint en el backend para cambiar la contraseña
+      const response = await api.post(`/api/users/change-password/`, {
+        current_password: currentPassword,
+        new_password: newPassword,
+      });
+      return response.data;
+    } catch (error) {
+     // console.error(`Error changing password for user ${userId} via API:`, error);
+      throw error;
+    }
+  }
 }

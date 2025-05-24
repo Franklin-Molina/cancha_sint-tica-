@@ -26,6 +26,7 @@ from .application.use_cases.update_user_profile import UpdateUserProfileUseCase
 from .application.use_cases.get_user_list import GetUserListUseCase # Nuevo
 from .application.use_cases.update_user_status import UpdateUserStatusUseCase # Nuevo
 from .application.use_cases.delete_user import DeleteUserUseCase # Nuevo
+from .application.use_cases.change_password import ChangePasswordUseCase # Importar caso de uso de cambio de contraseña
 # Nota: Los casos de uso para login/logout/google se manejan en el frontend
 # y los endpoints de JWT/dj-rest-auth manejan la autenticación en el backend.
 
@@ -347,3 +348,32 @@ class UserProfileUpdateView(RetrieveUpdateAPIView):
         Retorna el usuario autenticado para operaciones de detalle y actualización.
         """
         return self.request.user
+
+class ChangePasswordView(views.APIView):
+    """
+    Vista para cambiar la contraseña del usuario autenticado.
+    """
+    permission_classes = [IsAuthenticated] # Solo usuarios autenticados
+
+    def post(self, request):
+        user = request.user
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+
+        if not current_password or not new_password:
+            return Response({"error": "La contraseña actual y la nueva contraseña son requeridas."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_repository = DjangoUserRepository()
+        change_password_use_case = ChangePasswordUseCase(user_repository) # TODO: Importar ChangePasswordUseCase del backend
+
+        try:
+            # Envolver la llamada asíncrona con async_to_sync si el caso de uso es asíncrono
+            # Si el caso de uso es síncrono, llamar directamente:
+            # change_password_use_case.execute(user, current_password, new_password)
+            async_to_sync(change_password_use_case.execute)(user, current_password, new_password)
+            return Response({"detail": "Contraseña cambiada exitosamente."}, status=status.HTTP_200_OK)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f"Error interno al cambiar la contraseña: {e}")
+            return Response({"error": "Error interno del servidor al cambiar la contraseña."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

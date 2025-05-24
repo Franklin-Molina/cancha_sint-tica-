@@ -226,7 +226,7 @@ function DashboardUsersPage() {
           onClick={() => handleViewDetails(clientUser)}
           className="action-button button-details"
         >
-          Detalles
+          Ver más
         </button>
       </td>
     </tr>

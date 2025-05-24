@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
     try {
       // Llamar al caso de uso para iniciar sesión
       const tokens = await loginUserUseCase.execute(username, password);
-      console.log("Login exitoso, tokens obtenidos:", tokens);
+     // console.log("Login exitoso, tokens obtenidos:", tokens);
       // Después de obtener los tokens, obtener la información del usuario
       await fetchUser(); // fetchUser ahora maneja la redirección después de obtener el usuario
 
@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }) => {
     try {
       // Llamar al caso de uso para cerrar sesión
       await logoutUserUseCase.execute();
-      console.log("Sesión cerrada.");
+     // console.log("Sesión cerrada.");
       // Limpiar estado local
       setIsAuthenticated(false);
       setUser(null);      

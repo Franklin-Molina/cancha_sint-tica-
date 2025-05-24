@@ -19,7 +19,7 @@ api.interceptors.request.use(
     const accessToken = localStorage.getItem('accessToken'); // Asumiendo que el token se guarda en localStorage
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
-      console.log("Enviando token en header Authorization:", accessToken);
+     // console.log("Enviando token en header Authorization:", accessToken);
     }
     return config;
   },
@@ -65,7 +65,7 @@ api.interceptors.response.use(
         return api(originalRequest); // Reintentar la solicitud original con el nuevo token
 
       } catch (refreshError) {
-        console.error('Error refreshing token:', refreshError);
+      //  console.error('Error refreshing token:', refreshError);
         // Si el refresh falla (ej. refreshToken expirado), desloguear o redirigir
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
