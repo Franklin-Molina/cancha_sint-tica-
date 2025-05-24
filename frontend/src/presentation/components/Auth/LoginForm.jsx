@@ -48,7 +48,7 @@ function LoginForm({ username, password, error, setUsername, setPassword, setErr
         />
         <div className="password-input-container"> {/* Contenedor para el input y el botón */}
 
-          <div class="password-wrapper">
+          <div className="password-wrapper">
             <input type="password" id="password" name="password"
               value={password}
               onChange={(e) => {
@@ -64,7 +64,7 @@ function LoginForm({ username, password, error, setUsername, setPassword, setErr
 
         </div>
         <button className='login-button' type="submit">Entrar</button> {/* Botón de tipo submit */}
-        <div class="forgot-password">
+        <div className="forgot-password">
           <a href="#" >¿Olvidaste tu contraseña?</a>
         </div>
         <div className="divider">

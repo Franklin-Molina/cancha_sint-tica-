@@ -109,6 +109,7 @@
     font-size: 24px;
     font-weight: 600;
     color: #333;
+    text-align: center;
 }
 
 /* Responsive */
@@ -362,6 +363,23 @@
     display: none;
 }
 
+/* Estilos para formularios */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 /* SVG Chart Styles */
 .svg-chart {
     width: 100%;
@@ -440,6 +458,7 @@
     background-color: #ccc;
     border-radius: 8px;
     overflow: hidden;
+    max-height: 150px; /* Limitar la altura máxima de la imagen */
 }
 
 .image-preview {
@@ -509,4 +528,3 @@
     z-index: 1;
     /* Asegurar que esté por encima de la imagen pero debajo del botón cerrar */
 }
-

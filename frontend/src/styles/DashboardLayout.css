@@ -1,7 +1,8 @@
 /* Estilos básicos para el layout del dashboard */
 .dashboard-container {
   display: flex;
-  min-height: 100vh; /* Ocupar al menos el alto de la ventana */
+  min-height: 100vh;
+  /* Ocupar al menos el alto de la ventana */
   background-color: rgb(144 196 148 / 85%);
 }
 
@@ -13,12 +14,18 @@
   height: 100vh;
   overflow-y: auto;
   transition: all 0.3s ease;
+  display: flex;
+  /* Habilitar flexbox */
+  flex-direction: column;
+  /* Apilar elementos verticalmente */
 }
 
 .dashboard-sidebar-header {
   padding: 20px;
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  /* Evitar que se encoja */
 }
 
 .dashboard-sidebar-header h2 {
@@ -28,6 +35,10 @@
 
 .dashboard-sidebar-menu {
   padding: 10px 0;
+  flex-grow: 1;
+  /* Permitir que crezca para ocupar el espacio */
+  overflow-y: auto;
+  /* Permitir scroll si el contenido excede el espacio */
 }
 
 .dashboard-menu-item {
@@ -36,6 +47,36 @@
   align-items: center;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+.dashboard-menu-cancha {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 12px 20px;
+  font-size: 16px;    
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;  
+  justify-content: space-between;
+ 
+
+ 
+
+  
+ 
+
+
+
+
+
+
+
+
+
+
+
 }
 
 .dashboard-menu-item:hover {
@@ -109,6 +150,18 @@
   padding: 0;
 }
 
+.dashboard-page-content {
+  padding-top: 70px;
+  /* Ajustar según la altura del navbar */
+  padding-left: 20px;
+  /* Añadir padding izquierdo */
+  padding-right: 20px;
+  /* Añadir padding derecho */
+  overflow-x: auto;
+  /* Permitir scroll horizontal si el contenido es más ancho que la pantalla */
+}
+
+
 /* Responsive para la sidebar */
 @media (max-width: 992px) {
   .dashboard-sidebar {
@@ -133,5 +186,150 @@
   .dashboard-content {
     margin-left: 80px;
     width: calc(100% - 80px);
+  }
+}
+
+/* Estilos para ocultar las flechas de la barra de desplazamiento en navegadores WebKit */
+.dashboard-sidebar::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Media Queries para Responsive */
+@media (max-width: 768px) {
+
+
+  .dashboard-sidebar {
+    width: 200px;
+    position: fixed;
+    /* Fijar al viewport */
+    top: 0;
+    bottom: 0;
+    left: -200px;
+    /* Oculta inicialmente */
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  .dashboard-sidebar.open {
+    left: 0;
+    /* Mostrar sidebar */
+  }
+
+  .dashboard-sidebar-header h2,
+  .dashboard-menu-item span {
+    display: block;
+    /* Mostrar texto en sidebar abierto */
+  }
+
+  .dashboard-menu-title {
+    display: flex;
+    /* Mostrar títulos en sidebar abierto */
+  }
+
+  .dashboard-menu-item i {
+    margin-right: 15px;
+    /* Restaurar margen del icono */
+    font-size: 16px;
+    /* Restaurar tamaño del icono */
+  }
+
+  .dashboard-content {
+    margin-left: 0;
+    /* Eliminar margen izquierdo en móviles */
+    width: 100%;
+  }
+
+  .sidebar-toggle {
+    display: block;
+    /* Mostrar botón de toggle en móviles */
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 15px;
+    color: #555;
+    /* Color del icono */
+    position: fixed;
+    /* Posición fija para que esté siempre visible */
+    top: 15px;
+    /* Ajustar posición */
+    left: 15px;
+    /* Ajustar posición */
+    z-index: 1001;
+    /* Asegurar que esté por encima del sidebar */
+  }
+}
+
+/* Estilos para el overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+  z-index: 990; /* Por encima del contenido pero debajo del sidebar */
+  display: none; /* Ocultar por defecto */
+}
+
+/* Mostrar overlay cuando el sidebar está abierto en pantallas pequeñas */
+@media (max-width: 768px) {
+  .dashboard-sidebar.open + .sidebar-overlay {
+    display: block; /* Mostrar overlay */
+  }
+}
+
+
+/* Media Query para pantallas más grandes que 768px (para asegurar estilos de escritorio) */
+@media (min-width: 769px) {
+  .dashboard-sidebar {
+    width: 200px;
+    position: fixed;
+    /* Fijar al viewport */
+    top: 0;
+    bottom: 0;
+    left: -200px;
+    /* Oculta inicialmente */
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  .dashboard-sidebar.open {
+    left: 0;
+    /* Mostrar sidebar */
+  }
+
+  
+
+  .dashboard-menu-title {
+    display: flex;
+    /* Mostrar títulos en sidebar abierto */
+  }
+
+  .dashboard-menu-item i {
+    margin-right: 15px;
+    /* Restaurar margen del icono */
+    font-size: 16px;
+    /* Restaurar tamaño del icono */
+  }
+
+  .dashboard-content {
+    margin-left: 0;
+    /* Eliminar margen izquierdo en móviles */
+    width: 100%;
+  }
+
+
+  .dashboard-sidebar {
+    position: fixed;
+    width: 250px;
+    left: 0;
+  }
+
+ 
+
+  .dashboard-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
   }
 }

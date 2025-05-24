@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { ApiCourtRepository } from '../../infrastructure/repositories/api-court-repository'; // Importar ApiCourtRepository
+import CourtActionsModal from '../components/Dashboard/CourtActionsModal.jsx';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import '../../styles/DashboardCanchaTable.css';
+
+
+
 
 function DashboardManageCourtsPage() {
+  const navigate = useNavigate(); // Inicializar useNavigate
   const [courts, setCourts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionStatus, setActionStatus] = useState('');
+  const [selectedCourt, setSelectedCourt] = useState(null);
+  const [courtToDelete, setCourtToDelete] = useState(null); // Estado para la cancha a eliminar
+  // Eliminar estado courtToModify
+
+
   const courtRepository = new ApiCourtRepository();
 
   useEffect(() => {
@@ -56,6 +68,47 @@ function DashboardManageCourtsPage() {
     }
   };
 
+  const handleDeleteRequest = (court) => {
+    setCourtToDelete(court); // Establecer la cancha a eliminar para mostrar el modal de confirmación
+    handleCloseModal(); // Cerrar el modal de acciones
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!courtToDelete) return;
+
+    try {
+      setActionStatus(`Eliminando cancha ${courtToDelete.name}...`);
+      await courtRepository.deleteCourt(courtToDelete.id);
+      setCourts(prevCourts => prevCourts.filter(c => c.id !== courtToDelete.id));
+      setActionStatus(`Cancha ${courtToDelete.name} eliminada exitosamente.`);
+      setTimeout(() => setActionStatus(''), 3000);
+    } catch (error) {
+      console.error(`Error al eliminar la cancha ${courtToDelete.id}:`, error);
+      setActionStatus(`Error al eliminar cancha ${courtToDelete.name}: ${error.message}`);
+    } finally {
+      setCourtToDelete(null); // Cerrar el modal de confirmación
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setCourtToDelete(null); // Cerrar el modal de confirmación sin eliminar
+  };
+
+  const handleModifyRequest = (court) => {
+    handleCloseModal(); // Cerrar el modal de acciones
+    navigate(`/dashboard/manage-courts/${court.id}`); // Navegar a la nueva página de modificación
+  };
+
+  // Eliminar funciones handleUpdateCourt y handleCancelModify
+
+
+  const handleOpenModal = (court) => {
+    setSelectedCourt(court);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedCourt(null);
+  };
 
   if (loading) {
     return <div>Cargando canchas...</div>;
@@ -97,20 +150,53 @@ function DashboardManageCourtsPage() {
               <td>{court.price}</td>
               <td>{court.is_active ? 'Activa' : 'Suspendida'}</td>
               <td>
-                {court.is_active ? (
-                  <button onClick={() => handleSuspendCourt(court.id)} className="action-button button-suspend">
-                    Suspender
-                  </button>
-                ) : (
-                  <button onClick={() => handleReactivateCourt(court.id)} className="action-button button-reactivate">
-                    Reactivar
-                  </button>
-                )}
+                <button
+                  onClick={() => handleOpenModal(court)}
+                  className="action-button button-more"
+                >
+                  Ver más
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {selectedCourt && (
+        <CourtActionsModal
+          court={selectedCourt}
+          onClose={handleCloseModal}
+          setCourts={setCourts}
+          onDeleteRequest={handleDeleteRequest}
+          onModifyRequest={handleModifyRequest} // Pasar la nueva prop
+        />
+      )}
+
+      {/* Modal de Confirmación de Eliminación */}
+      {courtToDelete && (
+        <div className="modal-details"> {/* Reutilizar clases de estilo si es posible */}
+          <div className="modal-contentx">
+            <h2 className="modal-title">Confirmar Eliminación</h2>
+            <p>¿Está seguro de que desea eliminar la cancha "{courtToDelete.name}"?</p>
+            <div className="modal-actions">
+              <button onClick={handleConfirmDelete} className="action-button button-delete">Sí, eliminar</button>
+              <button onClick={handleCancelDelete} className="action-button button-cancel">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Eliminar renderizado condicional del formulario de modificación */}
+      {/* {courtToModify && (
+        <CourtModifyForm
+          court={courtToModify}
+          onSave={handleUpdateCourt}
+          onCancel={handleCancelModify}
+        />
+      )} */}
+
+
+
+
     </div>
   );
 }

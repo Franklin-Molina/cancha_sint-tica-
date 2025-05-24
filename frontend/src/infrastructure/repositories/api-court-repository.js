@@ -145,6 +145,44 @@ export class ApiCourtRepository extends ICourtRepository {
       throw error;
     }
   }
+  /**
+   * Elimina una cancha específica por su ID a través de la API.
+   * @param {number} courtId - El ID de la cancha a eliminar.
+   * @returns {Promise<void>} Una promesa que resuelve cuando la cancha ha sido eliminada.
+   */
+  async deleteCourt(courtId) {
+    try {
+      await api.delete(`/api/courts/${courtId}/`);
+    } catch (error) {
+      console.error(`Error deleting court ${courtId} via API:`, error);
+      throw error; // Relanzar el error
+    }
+  }
+
+  /**
+   * Actualiza una cancha existente a través de la API.
+   * Soporta la actualización de campos y la gestión de imágenes (agregar nuevas y eliminar existentes).
+   * @param {number} courtId - El ID de la cancha a actualizar.
+   * @param {FormData} courtData - Los datos actualizados de la cancha, incluyendo archivos de imagen si es necesario.
+   * @returns {Promise<Court>} Una promesa que resuelve con la entidad Court actualizada.
+   */
+  async updateCourt(courtId, courtData) {
+    try {
+      // Usar el endpoint PATCH /api/courts/<id>/ para actualizaciones parciales
+      // Enviar FormData para soportar archivos
+      const response = await api.patch(`/api/courts/${courtId}/`, courtData, {
+         headers: {
+            'Content-Type': 'multipart/form-data', // Importante para enviar FormData
+         },
+      });
+      // Mapear los datos de la respuesta a una entidad Court del Dominio
+      return new Court(response.data);
+    } catch (error) {
+      console.error(`Error updating court ${courtId} via API:`, error);
+      throw error; // Relanzar el error
+    }
+  }
+
 
   // TODO: Implementar otros métodos de ICourtRepository si se añaden
 }

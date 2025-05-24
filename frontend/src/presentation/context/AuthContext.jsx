@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import { useNavigate, Navigate } from 'react-router-dom'; // Importar useNavigate y Navigate
 
 // Importar los casos de uso y la implementación del repositorio
 import { ApiAuthRepository } from '../../infrastructure/repositories/api-auth-repository.js';

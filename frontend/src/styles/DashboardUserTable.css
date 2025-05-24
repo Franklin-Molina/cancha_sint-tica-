@@ -1,0 +1,162 @@
+/* Table Styles (adapted from .recent-orders) */
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* For rounded corners on table */
+    font-size: 20px;
+    text-align: center;
+}
+
+.users-table th {
+    text-align: center;
+    padding: 12px 15px; /* Increased padding */
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #eee;
+    background-color: #f9f9fc; /* Light header background */
+}
+
+.users-table td {
+    padding: 12px 15px; /* Increased padding */
+    border-bottom: 1px solid #eee;
+    color: #333; /* Darker text for readability */
+}
+
+.users-table tr:last-child td {
+    border-bottom: none; /* Remove border for last row */
+}
+
+.users-table tr:hover {
+    background-color: #f5f5f9; /* Hover effect */
+}
+
+.modal-title{
+    text-align: center;
+    padding: 15px;
+}
+/* Media Queries para Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Ancho más pequeño en móviles */
+        left: -200px; /* Ocultar por defecto */
+        position: absolute; /* Cambiar a absolute para no afectar el layout */
+        height: auto; /* Altura automática */
+        min-height: 100vh; /* Asegurar que cubra la altura de la vista */
+    }
+.user-page-content{
+    padding-top: 70px;  
+    overflow-x: auto;
+
+}
+    .main-content {
+        margin-left: 0; /* Eliminar margen izquierdo en móviles */
+        width: 100%;
+    }
+
+    .header {
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-box {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .content {
+        padding: 15px; /* Reducir padding en móviles */
+    }
+
+    .users-table {
+        font-size: 16px; /* Reducir tamaño de fuente de la tabla */
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 8px; /* Reducir padding de celdas */
+    }
+
+    .status {
+        font-size: 12px; /* Reducir tamaño de fuente del estado */
+        width: auto; /* Ancho automático para el estado */
+    }
+
+    .action-button {
+      /*  padding: 4px 8px; /* Reducir padding de botones */
+        font-size: 12px; /* Reducir tamaño de fuente de botones */
+        width: 70px;
+        padding: 13px;
+        margin: 2px;
+    }
+
+    .modal-contentx {
+        padding: 20px; /* Reducir padding del modal */
+        width: 95%; /* Ajustar ancho del modal */
+        
+    }
+
+    .modal-actions {
+        flex-direction: column; /* Apilar botones del modal */
+        gap: 10px; /* Espacio entre botones apilados */
+    }
+
+    .modal-actions .action-button {
+        width: 100%; /* Botones del modal ocupan todo el ancho */
+    }
+
+    .sidebar-toggle {
+        display: block; /* Mostrar botón de toggle en móviles */
+        font-size: 24px;
+        cursor: pointer;
+        margin-right: 15px;
+        color: #555;
+    }
+
+    .sidebar.open {
+        left: 0; /* Mostrar sidebar */
+    }
+}
+
+/* Media Query para pantallas más grandes que 768px (para asegurar estilos de escritorio) */
+@media (min-width: 769px) {
+    .sidebar {
+        position: fixed;
+        width: 250px;
+        left: 0;
+    }
+
+    .sidebar-toggle {
+        display: none; /* Ocultar botón de toggle en escritorio */
+    }
+
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+    }
+    
+
+}
+
+/* Styles for User Details Modal */
+.modal-details {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: none; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}

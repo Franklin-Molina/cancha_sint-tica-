@@ -11,7 +11,7 @@ import { DeleteUserUseCase } from '../../application/use-cases/delete-user.js';
 
 import '../../styles/dashboard.css'; // Estilos generales del dashboard
 //import '../../styles/AdminGlobalDashboard.css'; // Importar estilos de AdminGlobalDashboard para la tabla
-import '../../styles/AdminGlobalDashboard.css'
+import '../../styles/DashboardUserTable.css';
 function DashboardUsersPage() {
   const { user } = useAuth();
   const [clientUsers, setClientUsers] = useState([]);
@@ -23,6 +23,11 @@ function DashboardUsersPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   // Estado para almacenar la información del usuario a eliminar
   const [userToDelete, setUserToDelete] = useState(null);
+
+  // Estado para controlar la visibilidad del modal de detalles
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  // Estado para almacenar la información del usuario a mostrar en el modal de detalles
+  const [userDetails, setUserDetails] = useState(null);
 
 
   // Instanciar repositorio y casos de uso
@@ -66,41 +71,41 @@ function DashboardUsersPage() {
   }, [user]); // Dependencia del usuario del contexto
 
   const handleSuspendUser = async (userId) => {
-   
-      try {
-        setActionStatus('Suspendiendo usuario...');
-        // Usar la nueva función del repositorio para clientes
-        await userRepository.updateClientUserStatus(userId, false);
-        // Actualizar la lista de usuarios para reflejar el cambio
-        setClientUsers(prevUsers =>
-          prevUsers.map(u => u.id === userId ? { ...u, is_active: false } : u)
-        );
-        setActionStatus('Usuario suspendido exitosamente.');
-        setTimeout(() => setActionStatus(''), 3000); // Ocultar mensaje después de 3s
-      } catch (err) {
-        console.error(`Error suspending user ${userId}:`, err);
-        setActionStatus(`Error al suspender usuario: ${err.message}`);
-      }
+
+    try {
+      setActionStatus('Suspendiendo usuario...');
+      // Usar la nueva función del repositorio para clientes
+      await userRepository.updateClientUserStatus(userId, false);
+      // Actualizar la lista de usuarios para reflejar el cambio
+      setClientUsers(prevUsers =>
+        prevUsers.map(u => u.id === userId ? { ...u, is_active: false } : u)
+      );
+      setActionStatus('Usuario suspendido exitosamente.');
+      setTimeout(() => setActionStatus(''), 3000); // Ocultar mensaje después de 3s
+    } catch (err) {
+      console.error(`Error suspending user ${userId}:`, err);
+      setActionStatus(`Error al suspender usuario: ${err.message}`);
     }
- 
+  }
+
 
   const handleReactivateUser = async (userId) => {
-    
-      try {
-        setActionStatus('Reactivando usuario...');
-        // Usar la nueva función del repositorio para clientes
-        await userRepository.updateClientUserStatus(userId, true);
-        // Actualizar la lista de usuarios para reflejar el cambio
-        setClientUsers(prevUsers =>
-          prevUsers.map(u => u.id === userId ? { ...u, is_active: true } : u)
-        );
-        setActionStatus('Usuario reactivado exitosamente.');
-        setTimeout(() => setActionStatus(''), 3000); // Ocultar mensaje después de 3s
-      } catch (err) {
-        console.error(`Error reactivating user ${userId}:`, err);
-        setActionStatus(`Error al reactivar usuario: ${err.message}`);
-      }
-    
+
+    try {
+      setActionStatus('Reactivando usuario...');
+      // Usar la nueva función del repositorio para clientes
+      await userRepository.updateClientUserStatus(userId, true);
+      // Actualizar la lista de usuarios para reflejar el cambio
+      setClientUsers(prevUsers =>
+        prevUsers.map(u => u.id === userId ? { ...u, is_active: true } : u)
+      );
+      setActionStatus('Usuario reactivado exitosamente.');
+      setTimeout(() => setActionStatus(''), 3000); // Ocultar mensaje después de 3s
+    } catch (err) {
+      console.error(`Error reactivating user ${userId}:`, err);
+      setActionStatus(`Error al reactivar usuario: ${err.message}`);
+    }
+
   };
 
   // Función para abrir el modal de confirmación
@@ -134,6 +139,18 @@ function DashboardUsersPage() {
     }
   };
 
+  // Función para abrir el modal de detalles
+  const handleViewDetails = (user) => {
+    setUserDetails(user);
+    setShowDetailsModal(true);
+  };
+
+  // Función para cerrar el modal de detalles
+  const handleCloseDetailsModal = () => {
+    setUserDetails(null);
+    setShowDetailsModal(false);
+  };
+
 
   if (loading) {
     return <div>Cargando usuarios...</div>;
@@ -144,10 +161,10 @@ function DashboardUsersPage() {
   }
 
   return (
-    <div className="dashboard-page-content"> {/* Usar la clase del layout */}
+    <div className="user-page-content"> {/* Usar la clase del layout */}
       <h1 className="page-title">Gestión de Usuarios Cliente</h1> {/* Usar page-title */}
 
-       {actionStatus && (
+      {actionStatus && (
         <div className="messages">
           <div className={`alert ${actionStatus.includes('Error') ? 'error-alert' : 'success-alert'}`}>
             {actionStatus}
@@ -160,59 +177,98 @@ function DashboardUsersPage() {
         <p>No se encontraron usuarios cliente.</p>
       ) : (
         Array.isArray(clientUsers) && ( // Asegurarse de que sea un array antes de renderizar la tabla
-          <table className="admin-table"> {/* Usar la clase admin-table */}
+          <table className="users-table">
+            {/* Usar la clase admin-table */}
             <thead>
-              <tr>
-                <th>ID</th>
-                <th>Username</th> {/* Cambiar a Username */}
-                <th>Email</th>
-                <th>Nombre</th> {/* Cambiar a Nombre */}
-                <th>Rol</th>
+              <tr>               
+                <th>Usuario</th> 
+                <th>Nombre</th>
                 <th>Estado</th>
                 <th>Acciones</th>
+                <th>Detalles</th>
               </tr>
             </thead>
             <tbody>
-              {clientUsers.map(clientUser => (
-                <tr key={clientUser.id}>
-                  <td>{clientUser.id}</td>
-                  <td>{clientUser.username}</td>
-                  <td>{clientUser.email}</td>
-                  <td>{clientUser.first_name} {clientUser.last_name}</td>
-                  <td>{clientUser.role}</td>
-                  <td>
-                     <span className={`status ${clientUser.is_active ? 'status-active' : 'status-suspended'}`}> {/* Usar clases de estado */}
-                       {clientUser.is_active ? 'Activo' : ' Suspendido'}
-                     </span>
-                  </td>
-                  <td>
-                    {clientUser.is_active ? (
-                      <button onClick={() => handleSuspendUser(clientUser.id)} className="action-button button-suspend">🛑 Suspender</button> 
-                    ) : (
-                       <button onClick={() => handleReactivateUser(clientUser.id)} className="action-button button-reactivate"><img src="/check.png" alt="Reactivar" className="reactivate-icon" />Rreactivar</button>
-                    )}
-                    {/* Modificar el onClick para abrir el modal */}
-                    <button onClick={() => confirmDelete(clientUser)} className="action-button button-delete"> 🗑 Eliminar</button> {/* Usar clases de acción */}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )
+  {clientUsers.map(clientUser => (
+    <tr key={clientUser.id}>
+      <td>{clientUser.username}</td>
+      <td>{clientUser.first_name} {clientUser.last_name}</td>
+      <td>
+        <span className={`status ${clientUser.is_active ? 'status-active' : 'status-suspended'}`}>
+          {clientUser.is_active ? 'Activo' : 'Suspendido'}
+        </span>
+      </td>
+      <td>
+        {clientUser.is_active ? (
+          <button
+            onClick={() => handleSuspendUser(clientUser.id)}
+            className="action-button button-suspend"
+          >
+            Suspender
+          </button>
+        ) : (
+          <button
+            onClick={() => handleReactivateUser(clientUser.id)}
+            className="action-button button-reactivate"
+          >
+            Reactivar
+          </button>
+        )}
+        <button
+          onClick={() => confirmDelete(clientUser)}
+          className="action-button button-delete"
+        >
+          Eliminar
+        </button>
+      </td>
+      <td>
+        <button
+          onClick={() => handleViewDetails(clientUser)}
+          className="action-button button-details"
+        >
+          Detalles
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
+          
+          </table>)
       )}
 
       {/* Modal de Confirmación de Eliminación */}
       {showDeleteModal && userToDelete && (
         <div className="modal-delete">
           <div className="modal-contentx">
-            <h2>Confirmar Eliminación</h2>
+            <h2 className='modal-title'>Confirmar Eliminación</h2>
             <p>¿Estás seguro de que deseas eliminar al usuario:</p>
-            <p><strong>Username:</strong> {userToDelete.username}</p>
+            <p><strong>Usuario:</strong> {userToDelete.username}</p>
             <p><strong>Email:</strong> {userToDelete.email}</p>
             <p><strong>Nombre:</strong> {userToDelete.first_name} {userToDelete.last_name}</p>
             <div className="modal-actions">
               <button onClick={proceedDelete} className="action-button button-delete">Sí, Eliminar</button>
               <button onClick={cancelDelete} className="action-button button-cancel">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Detalles del Usuario */}
+      {showDetailsModal && userDetails && (
+        <div className="modal-details">
+          <div className="modal-contentx">
+            <h2 className='modal-title'>Detalles del Usuario</h2>
+            <p><strong>ID:</strong> {userDetails.id}</p>
+            <p><strong>Usuario:</strong> {userDetails.username}</p>
+            <p><strong>Email:</strong> {userDetails.email}</p>
+            <p><strong>Nombre:</strong> {userDetails.first_name}</p>
+            <p><strong>Apellido:</strong> {userDetails.last_name}</p>
+            <p><strong>Rol:</strong> {userDetails.role}</p>
+            <p><strong>Estado:</strong> {userDetails.is_active ? 'Activo' : 'Suspendido'}</p>
+            {/* Agrega aquí más campos si es necesario */}
+            <div className="modal-actions">
+              <button onClick={handleCloseDetailsModal} className="action-button button-cancel">Cerrar</button>
             </div>
           </div>
         </div>

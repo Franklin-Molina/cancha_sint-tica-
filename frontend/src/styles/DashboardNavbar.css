@@ -1,0 +1,112 @@
+.dashboard-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: var(--header-bg); /* Usar variable del dashboard */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 999; /* Debajo del sidebar pero encima del contenido */
+}
+
+.minimizar {
+  display: none; /* Ocultar por defecto en pantallas grandes */
+}
+
+.navbar-brand h2 {
+  margin: 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Estilos para el botón de toggle (hamburguesa) */
+.dashboard-navbar .sidebar-toggle {
+  display: none; /* Ocultar por defecto en escritorio */
+  font-size: 24px;
+  cursor: pointer;
+  color: #555;
+}
+
+/* Media Query para mostrar el botón de toggle en pantallas pequeñas */
+@media (max-width: 768px) {
+  .dashboard-navbar {
+    display: flex;
+    justify-content: space-between; /* Distribuye los elementos con espacio entre ellos */
+    align-items: center;
+    padding: 0 1rem;
+    height: 60px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+  }
+  
+  
+
+  /* Estilo para el logo y hamburguesa */
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .navbar-brand h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  .navbar-brand i {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+    color: #555;
+  }
+
+  /* Estilo para elementos de la derecha */
+  .navbar-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #5e72e4;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .user-role {
+    font-size: 0.75rem;
+    color: #777;
+  }
+  .minimizar{
+    display: block; /* Mostrar en pantallas pequeñas */
+    width: 80px;
+  }
+}

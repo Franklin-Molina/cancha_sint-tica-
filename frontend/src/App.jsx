@@ -17,7 +17,7 @@ import CourtDetailPage from './presentation/pages/CourtDetailPage.jsx';
 import DashboardBookingsPage from './presentation/pages/DashboardBookingsPage.jsx';
 import DashboardProfilePage from './presentation/pages/DashboardProfilePage.jsx';
 import DashboardUsersPage from './presentation/pages/DashboardUsersPage.jsx'; // Importar DashboardUsersPage
-
+import DashboardModifyCourtPage from './presentation/pages/DashboardModifyCourtPage.jsx'; // Importar la nueva página de modificación
 import AdminGlobalDashboardPage from './presentation/pages/AdminGlobalDashboardPage.jsx';
 import ManageAdminsTable from './presentation/components/AdminGlobalDashboard/ManageAdminsTable.jsx'; // Nuevo componente
 
@@ -25,6 +25,24 @@ function App() {
   return (
     
       <Routes>
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<DashboardOverviewPage />} />
+          <Route path="canchas/manage" element={<DashboardManageCourtsPage />} />
+          <Route path="canchas/create" element={<DashboardCourtsPage />} />
+          <Route path="reservas" element={<DashboardBookingsPage />} />
+          <Route path="usuarios" element={<DashboardUsersPage />} />
+          <Route path="perfil" element={<DashboardProfilePage />} />
+          {/* Ruta para la página de modificación de canchas */}
+          <Route path="manage-courts/:id" element={<DashboardModifyCourtPage />} />
+        </Route>
+
         <Route
           path="/"
           element={

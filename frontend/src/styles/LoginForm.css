@@ -56,7 +56,7 @@ input[type="password"]:focus {
 .login-button {
   width: 100%;
   padding: 14px;
-  background: #1c963b;
+   background: linear-gradient(135deg, #48b427 0%, #1ad46e 100%);
   border: none;
   border-radius: 8px;
   color: #fff;

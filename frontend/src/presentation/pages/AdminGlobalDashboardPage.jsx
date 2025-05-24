@@ -133,12 +133,12 @@ function AdminGlobalDashboardPage() {
           <h2>Admin - Global</h2>
         </div>
         <div className="sidebar-menu">
-          <div class="profile-container">
-            <div class="profile-img">
-                <i class="fas fa-user"></i>
+          <div className="profile-container">
+            <div className="profile-img">
+                <i className="fas fa-user"></i>
             </div>
-            <div class="profile-name">{user.username}</div>
-            <div class="profile-role">{user.role}</div>
+            <div className="profile-name">{user.username}</div>
+            <div className="profile-role">{user.role}</div>
         </div>
           {/* Usar NavLink para active class si se implementan más rutas de dashboard */}
           <NavLink to="/adminglobal" className={({ isActive }) => isActive ? "menu-item active" : "menu-item"} end onClick={toggleSidebar}> {/* Cerrar sidebar al hacer click */}
@@ -171,7 +171,7 @@ function AdminGlobalDashboardPage() {
           </NavLink>
           
           <div className="menu-item" onClick={() => { logout(); toggleSidebar(); }}> {/* Logout usando la función del contexto y cerrar sidebar */}
-              <i class="fas fa-sign-out-alt"></i>
+              <i className="fas fa-sign-out-alt"></i>
             <span> Cerrar Sesión</span>
           </div>
         </div>
@@ -183,7 +183,7 @@ function AdminGlobalDashboardPage() {
         <div className="header">
           {/* Botón de hamburguesa para móviles */}
           <div className="sidebar-toggle" onClick={toggleSidebar}>
-            <i className="fas fa-bars"></i> {/* Icono de hamburguesa */}
+            <i className="minimiza fas fa-bars"></i> {/* Icono de hamburguesa */}
           </div>
 
         {/*   <div className="header-right">
