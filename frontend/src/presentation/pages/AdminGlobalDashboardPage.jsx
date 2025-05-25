@@ -11,6 +11,7 @@ import { DeleteUserUseCase } from '../../application/use-cases/delete-user.js';
 import { ApiUserRepository } from '../../infrastructure/repositories/api-user-repository.js';
 
 import '../../styles/AdminGlobalDashboard.css'; // La ruta de importación es correcta
+import Spinner from '../components/common/Spinner';
 
 function AdminGlobalDashboardPage() {
   const { user, logout } = useAuth(); // Obtener logout del contexto
@@ -106,7 +107,7 @@ function AdminGlobalDashboardPage() {
 
 
   if (loading) {
-    return <div>Cargando dashboard de Administrador Global...</div>;
+    return <Spinner/>; 
   }
 
   if (error) {

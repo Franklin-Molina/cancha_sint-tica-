@@ -4,6 +4,7 @@ import CourtActionsModal from '../components/Dashboard/CourtActionsModal.jsx';
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 import '../../styles/DashboardCanchaTable.css';
 import Spinner from '../components/common/Spinner.jsx';
+import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 
 
@@ -39,46 +40,49 @@ function DashboardManageCourtsPage() {
       fetchCourts();
       hasFetchedCourts.current = true;
     }
-  }, []);
+  }, [courtRepository]); // Añadir courtRepository a las dependencias
 
-  const handleSuspendCourt = async (courtId) => {
+  // Usar el hook para suspender cancha
+  const [isSuspending, handleSuspendCourtClick] = useButtonDisable(async (courtId) => {
     try {
       setActionStatus('Suspendiendo cancha...');
       await courtRepository.updateCourtStatus(courtId, false);
-      // Actualizar la lista de canchas para reflejar el cambio
       setCourts(prevCourts =>
         prevCourts.map(c => c.id === courtId ? { ...c, is_active: false } : c)
       );
       setActionStatus('Cancha suspendida exitosamente.');
-      setTimeout(() => setActionStatus(''), 3000); // Ocultar mensaje después de 3s
+      setTimeout(() => setActionStatus(''), 3000);
     } catch (error) {
       console.error(`Error suspending court ${courtId}:`, error);
       setActionStatus(`Error al suspender cancha: ${error.message}`);
+      throw error;
     }
-  };
+  });
 
-  const handleReactivateCourt = async (courtId) => {
+  // Usar el hook para reactivar cancha
+  const [isReactivating, handleReactivateCourtClick] = useButtonDisable(async (courtId) => {
     try {
       setActionStatus('Reactivando cancha...');
       await courtRepository.updateCourtStatus(courtId, true);
-      // Actualizar la lista de canchas para reflejar el cambio
       setCourts(prevCourts =>
         prevCourts.map(c => c.id === courtId ? { ...c, is_active: true } : c)
       );
       setActionStatus('Cancha reactivada exitosamente.');
-      setTimeout(() => setActionStatus(''), 3000); // Ocultar mensaje después de 3s
+      setTimeout(() => setActionStatus(''), 3000);
     } catch (error) {
       console.error(`Error reactivating court ${courtId}:`, error);
       setActionStatus(`Error al reactivar cancha: ${error.message}`);
+      throw error;
     }
-  };
+  });
 
   const handleDeleteRequest = (court) => {
     setCourtToDelete(court); // Establecer la cancha a eliminar para mostrar el modal de confirmación
     handleCloseModal(); // Cerrar el modal de acciones
   };
 
-  const handleConfirmDelete = async () => {
+  // Usar el hook para confirmar eliminación
+  const [isDeleting, handleConfirmDeleteClick] = useButtonDisable(async () => {
     if (!courtToDelete) return;
 
     try {
@@ -90,10 +94,11 @@ function DashboardManageCourtsPage() {
     } catch (error) {
       console.error(`Error al eliminar la cancha ${courtToDelete.id}:`, error);
       setActionStatus(`Error al eliminar cancha ${courtToDelete.name}: ${error.message}`);
+      throw error;
     } finally {
       setCourtToDelete(null); // Cerrar el modal de confirmación
     }
-  };
+  });
 
   const handleCancelDelete = () => {
     setCourtToDelete(null); // Cerrar el modal de confirmación sin eliminar
@@ -183,7 +188,7 @@ function DashboardManageCourtsPage() {
             <h2 className="modal-title">Confirmar Eliminación</h2>
             <p>¿Está seguro de que desea eliminar la cancha "{courtToDelete.name}"?</p>
             <div className="modal-actions">
-              <button onClick={handleConfirmDelete} className="action-button button-delete">Sí, eliminar</button>
+              <button onClick={handleConfirmDeleteClick} className="action-button button-delete" disabled={isDeleting}>Sí, eliminar</button>
               <button onClick={handleCancelDelete} className="action-button button-cancel">Cancelar</button>
             </div>
           </div>

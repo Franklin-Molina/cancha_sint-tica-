@@ -1,6 +1,7 @@
-import React from 'react'; // No necesitamos useState aquí
+import React from 'react'; // Ya no necesitamos useState aquí, lo manejamos con el hook
 import '../../../styles/LoginForm.css'; // Importar los estilos
 import GoogleLoginButton from './GoogleLoginButton.jsx'; // Importar GoogleLoginButton
+import useButtonDisable from '../../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 /**
  * Componente de formulario de inicio de sesión.
@@ -18,6 +19,8 @@ import GoogleLoginButton from './GoogleLoginButton.jsx'; // Importar GoogleLogin
  * @returns {JSX.Element} El elemento JSX del formulario de inicio de sesión.
  */
 function LoginForm({ username, password, error, setUsername, setPassword, setError, onSubmit, onGoogleSuccess, onGoogleError }) {
+  // Usar el hook personalizado para manejar el estado de deshabilitación del botón
+  const [isSubmitting, handleFormSubmit] = useButtonDisable(onSubmit);
 
   function togglePassword() {
     const passwordInput = document.getElementById('password');
@@ -36,7 +39,7 @@ function LoginForm({ username, password, error, setUsername, setPassword, setErr
     <div className="login-container">
       <h2>Iniciar Sesión</h2>
       <div className="error">{error}</div> {/* Mostrar mensaje de error */}
-      <form onSubmit={onSubmit}> {/* Usar la prop onSubmit */}
+      <form onSubmit={handleFormSubmit}> {/* Usar el nuevo manejador de envío */}
         <input
           type="text"
           placeholder="Usuario"
@@ -63,7 +66,8 @@ function LoginForm({ username, password, error, setUsername, setPassword, setErr
 
 
         </div>
-        <button className='login-button' type="submit">Entrar</button> {/* Botón de tipo submit */}
+        {/* El botón se deshabilita cuando isSubmitting es true */}
+        <button className='login-button' type="submit" disabled={isSubmitting}>Entrar</button> {/* Botón de tipo submit */}
         <div className="forgot-password">
           <a href="#" >¿Olvidaste tu contraseña?</a>
         </div>

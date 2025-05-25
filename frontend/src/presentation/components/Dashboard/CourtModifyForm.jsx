@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // No importar estilos específicos, usar clases globales o de dashboard
 import '../../../styles/DashboardCanchaTable.css'; // Importar estilos de modal si son necesarios para las clases modal-details/modal-contentx
+import useButtonDisable from '../../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 function CourtModifyForm({ court, onSave, onCancel }) {
   const [formData, setFormData] = useState({
@@ -29,10 +30,11 @@ function CourtModifyForm({ court, onSave, onCancel }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  // Usar el hook para el envío del formulario
+  const [isSubmitting, handleSubmit] = useButtonDisable(async (e) => {
     e.preventDefault();
-    onSave(court.id, formData);
-  };
+    await onSave(court.id, formData); // Llamar a la función onSave pasada por props
+  });
 
   return (
     <div className="modal-details"> {/* Contenedor principal del modal */}
@@ -94,7 +96,7 @@ function CourtModifyForm({ court, onSave, onCancel }) {
               </div>
 
               <div className="modal-actions"> {/* Reutilizar clases de estilo si es posible */}
-                <button type="submit" className="action-button button-modify">Guardar Cambios</button> {/* Reutilizar clases de estilo si es posible */}
+                <button type="submit" className="action-button button-modify" disabled={isSubmitting}>Guardar Cambios</button> {/* Reutilizar clases de estilo si es posible */}
                 <button type="button" onClick={onCancel} className="action-button button-cancel">Cancelar</button> {/* Reutilizar clases de estilo si es posible */}
               </div>
             </form>

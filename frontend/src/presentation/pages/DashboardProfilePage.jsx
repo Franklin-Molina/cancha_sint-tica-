@@ -5,6 +5,7 @@ import '../../styles/ProfilePage.css'; // Importar estilos específicos
 import { ApiUserRepository } from '../../infrastructure/repositories/api-user-repository.js'; // Importar el repositorio
 import { UpdateUserProfileUseCase } from '../../application/use-cases/update-user-profile.js'; // Importar el caso de uso
 import { ChangePasswordUseCase } from '../../application/use-cases/change-password.js'; // Importar el caso de uso de cambio de contraseña
+import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 function DashboardProfilePage() {
   const { user, loading } = useAuth();
@@ -52,7 +53,8 @@ function DashboardProfilePage() {
     setSuccess('');
   };
 
-  const handleSubmit = async (e) => {
+  // Usar el hook para el formulario de perfil
+  const [isSubmittingProfile, handleProfileSubmit] = useButtonDisable(async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -86,10 +88,12 @@ function DashboardProfilePage() {
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
       setError('Error al actualizar el perfil. Inténtalo de nuevo.');
+      throw error; // Re-lanzar el error para que el hook lo capture y no deshabilite el botón si se desea
     }
-  };
+  });
 
-  const handleChangePasswordSubmit = async (e) => {
+  // Usar el hook para el formulario de cambio de contraseña
+  const [isSubmittingPassword, handleChangePasswordSubmit] = useButtonDisable(async (e) => {
     e.preventDefault();
     setPasswordError('');
     setPasswordSuccess('');
@@ -127,9 +131,9 @@ function DashboardProfilePage() {
         // Mostrar mensaje de error genérico si no hay respuesta del backend
         setPasswordError(error.message || 'Error al cambiar la contraseña. Inténtalo de nuevo.');
       }
-      // No cerrar el modal automáticamente en caso de error para que el usuario vea el mensaje
+      throw error; // Re-lanzar el error para que el hook lo capture y no deshabilite el botón si se desea
     }
-  };
+  });
 
 
   return (
@@ -146,7 +150,7 @@ function DashboardProfilePage() {
         </div>
 
         {isEditing ? (
-          <form className="profile-form" onSubmit={handleSubmit}>
+          <form className="profile-form" onSubmit={handleProfileSubmit}>
             {error && <div className="alert error-alert">{error}</div>}
             {success && <div className="alert success-alert">{success}</div>}
             <div className="form-group">
@@ -195,7 +199,7 @@ function DashboardProfilePage() {
               />
             </div>
             <div className="form-actions">
-              <button className="save-button" type="submit">Guardar</button>
+              <button className="save-button" type="submit" disabled={isSubmittingProfile}>Guardar</button>
               <button className="exit-button" type="button" onClick={handleCancelClick}>Cancelar</button>
             </div>
           </form>
@@ -258,7 +262,7 @@ function DashboardProfilePage() {
                 {passwordError && <div className="alert error-alert">{passwordError}</div>}
                 {passwordSuccess && <div className="alert success-alert">{passwordSuccess}</div>}
                 <div className="form-actions">
-                  <button className="save-button" type="submit">Cambiar Contraseña</button>
+                  <button className="save-button" type="submit" disabled={isSubmittingPassword}>Cambiar Contraseña</button>
                   <button className="exit-button" type="button" onClick={() => setIsPasswordModalOpen(false)}>Cancelar</button>
                 </div>
               </form>

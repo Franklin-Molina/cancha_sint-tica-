@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx'; // Corregir la ruta de importación
 import Spinner from '../components/common/Spinner.jsx';
+import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 // Casos de uso y repositorios
 import { GetUserListUseCase } from '../../application/use-cases/get-user-list.js';
@@ -69,45 +70,41 @@ function DashboardUsersPage() {
     } else {
       setLoading(false);
     }
-  }, [user]); // Dependencia del usuario del contexto
+  }, [user, getUserListUseCase]); // Dependencia del usuario del contexto y del caso de uso
 
-  const handleSuspendUser = async (userId) => {
-
+  // Usar el hook para suspender usuario
+  const [isSuspending, handleSuspendUserClick] = useButtonDisable(async (userId) => {
     try {
       setActionStatus('Suspendiendo usuario...');
-      // Usar la nueva función del repositorio para clientes
       await userRepository.updateClientUserStatus(userId, false);
-      // Actualizar la lista de usuarios para reflejar el cambio
       setClientUsers(prevUsers =>
         prevUsers.map(u => u.id === userId ? { ...u, is_active: false } : u)
       );
       setActionStatus('Usuario suspendido exitosamente.');
-      setTimeout(() => setActionStatus(''), 3000); // Ocultar mensaje después de 3s
+      setTimeout(() => setActionStatus(''), 3000);
     } catch (err) {
       console.error(`Error suspending user ${userId}:`, err);
       setActionStatus(`Error al suspender usuario: ${err.message}`);
+      throw err;
     }
-  }
+  });
 
-
-  const handleReactivateUser = async (userId) => {
-
+  // Usar el hook para reactivar usuario
+  const [isReactivating, handleReactivateUserClick] = useButtonDisable(async (userId) => {
     try {
       setActionStatus('Reactivando usuario...');
-      // Usar la nueva función del repositorio para clientes
       await userRepository.updateClientUserStatus(userId, true);
-      // Actualizar la lista de usuarios para reflejar el cambio
       setClientUsers(prevUsers =>
         prevUsers.map(u => u.id === userId ? { ...u, is_active: true } : u)
       );
       setActionStatus('Usuario reactivado exitosamente.');
-      setTimeout(() => setActionStatus(''), 3000); // Ocultar mensaje después de 3s
+      setTimeout(() => setActionStatus(''), 3000);
     } catch (err) {
       console.error(`Error reactivating user ${userId}:`, err);
       setActionStatus(`Error al reactivar usuario: ${err.message}`);
+      throw err;
     }
-
-  };
+  });
 
   // Función para abrir el modal de confirmación
   const confirmDelete = (user) => {
@@ -121,24 +118,24 @@ function DashboardUsersPage() {
     setShowDeleteModal(false);
   };
 
-  // Función para manejar la eliminación después de la confirmación
-  const proceedDelete = async () => {
+  // Usar el hook para manejar la eliminación después de la confirmación
+  const [isDeleting, proceedDeleteClick] = useButtonDisable(async () => {
     if (userToDelete) {
       try {
         setActionStatus('Eliminando usuario...');
         await deleteUserUseCase.execute(userToDelete.id);
-        // Actualizar la lista de usuarios para reflejar la eliminación
         setClientUsers(prevUsers => prevUsers.filter(u => u.id !== userToDelete.id));
         setActionStatus('Usuario eliminado exitosamente.');
-        setTimeout(() => setActionStatus(''), 3000); // Ocultar mensaje después de 3s
+        setTimeout(() => setActionStatus(''), 3000);
       } catch (err) {
         console.error(`Error deleting user ${userToDelete.id}:`, err);
         setActionStatus(`Error al eliminar usuario: ${err.message}`);
+        throw err;
       } finally {
-        cancelDelete(); // Cerrar el modal después de la eliminación (éxito o error)
+        cancelDelete();
       }
     }
-  };
+  });
 
   // Función para abrir el modal de detalles
   const handleViewDetails = (user) => {
@@ -202,15 +199,17 @@ function DashboardUsersPage() {
       <td>
         {clientUser.is_active ? (
           <button
-            onClick={() => handleSuspendUser(clientUser.id)}
+            onClick={() => handleSuspendUserClick(clientUser.id)}
             className="action-button button-suspend"
+            disabled={isSuspending}
           >
             Suspender
           </button>
         ) : (
           <button
-            onClick={() => handleReactivateUser(clientUser.id)}
+            onClick={() => handleReactivateUserClick(clientUser.id)}
             className="action-button button-reactivate"
+            disabled={isReactivating}
           >
             Reactivar
           </button>
@@ -248,7 +247,7 @@ function DashboardUsersPage() {
             <p><strong>Email:</strong> {userToDelete.email}</p>
             <p><strong>Nombre:</strong> {userToDelete.first_name} {userToDelete.last_name}</p>
             <div className="modal-actions">
-              <button onClick={proceedDelete} className="action-button button-delete">Sí, Eliminar</button>
+              <button onClick={proceedDeleteClick} className="action-button button-delete" disabled={isDeleting}>Sí, Eliminar</button>
               <button onClick={cancelDelete} className="action-button button-cancel">Cancelar</button>
             </div>
           </div>

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx'; // Corregida la ruta de importación
 import LogoutButton from '../components/Auth/LogoutButton.jsx';
 import '../../styles/ProfilePage.css'; // Importar estilos específicos
 import { ApiUserRepository } from '../../infrastructure/repositories/api-user-repository.js'; // Importar el repositorio
 import { UpdateUserProfileUseCase } from '../../application/use-cases/update-user-profile.js'; // Importar el caso de uso
 import { ChangePasswordUseCase } from '../../application/use-cases/change-password.js'; // Importar el caso de uso de cambio de contraseña
 import Spinner from '../components/common/Spinner.jsx';
+import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 
 function ProfilePage() {
@@ -54,7 +55,8 @@ function ProfilePage() {
     setSuccess('');
   };
 
-  const handleSubmit = async (e) => {
+  // Usar el hook para el formulario de perfil
+  const [isSubmittingProfile, handleProfileSubmit] = useButtonDisable(async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -88,8 +90,9 @@ function ProfilePage() {
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
       setError('Error al actualizar el perfil. Inténtalo de nuevo.');
+      throw error; // Re-lanzar el error para que el hook lo capture y no deshabilite el botón si se desea
     }
-  };
+  });
 
   const handleChangePasswordSubmit = async (e) => {
     e.preventDefault();
@@ -148,7 +151,7 @@ function ProfilePage() {
         </div>
 
         {isEditing ? (
-          <form className="profile-form" onSubmit={handleSubmit}>
+          <form className="profile-form" onSubmit={handleProfileSubmit}>
             {error && <div className="alert error-alert">{error}</div>}
             {success && <div className="alert success-alert">{success}</div>}
             <div className="form-group">
@@ -197,7 +200,7 @@ function ProfilePage() {
               />
             </div>
             <div className="form-actions">
-              <button className="save-button" type="submit">Guardar</button>
+              <button className="save-button" type="submit" disabled={isSubmittingProfile}>Guardar</button>
               <button className="exit-button" type="button" onClick={handleCancelClick}>Cancelar</button>
             </div>
           </form>
@@ -260,7 +263,7 @@ function ProfilePage() {
                 {passwordError && <div className="alert error-alert">{passwordError}</div>}
                 {passwordSuccess && <div className="alert success-alert">{passwordSuccess}</div>}
                 <div className="form-actions">
-                  <button className="save-button" type="submit">Cambiar Contraseña</button>
+                  <button className="save-button" type="submit" disabled={isSubmittingPassword}>Cambiar Contraseña</button>
                   <button className="exit-button" type="button" onClick={() => setIsPasswordModalOpen(false)}>Cancelar</button>
                 </div>
               </form>

@@ -4,6 +4,7 @@ import { ApiCourtRepository } from '../../infrastructure/repositories/api-court-
 import '../../styles/dashboard.css'; // Usar estilos generales del dashboard
 import '../../styles/DashboardCanchaTable.css'; // Mantener estilos de formulario si son necesarios
 import Spinner from '../components/common/Spinner';
+import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 function DashboardModifyCourtPage() {
   const { id } = useParams(); // Obtener el ID de la cancha de la URL
@@ -50,7 +51,7 @@ function DashboardModifyCourtPage() {
       setError(new Error("No se proporcionó ID de cancha."));
       setLoading(false);
     }
-  }, [id]); // Dependencia en el ID de la URL
+  }, [id, courtRepository]); // Dependencia en el ID de la URL y courtRepository
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -85,8 +86,8 @@ function DashboardModifyCourtPage() {
     }
   };
 
-
-  const handleSubmit = async (e) => {
+  // Usar el hook para el envío del formulario
+  const [isSubmitting, handleSubmit] = useButtonDisable(async (e) => {
     e.preventDefault();
     setActionStatus('Guardando cambios...');
 
@@ -111,7 +112,6 @@ function DashboardModifyCourtPage() {
        data.append('images_to_delete', JSON.stringify(formData.imagesToDelete));
     }
 
-
     try {
       // Usar updateCourt que debe soportar FormData y eliminación de imágenes
       await courtRepository.updateCourt(id, data);
@@ -123,8 +123,9 @@ function DashboardModifyCourtPage() {
     } catch (error) {
       console.error(`Error al actualizar la cancha ${id}:`, error);
       setActionStatus(`Error al actualizar cancha: ${error.message}`);
+      throw error; // Re-lanzar el error para que el hook lo capture
     }
-  };
+  });
 
   if (loading) {
     return <Spinner />; 
@@ -234,7 +235,7 @@ function DashboardModifyCourtPage() {
 
 
             <div className="modal-actions">
-              <button type="submit" className="action-button button-modify">Guardar Cambios</button>
+              <button type="submit" className="action-button button-modify" disabled={isSubmitting}>Guardar Cambios</button>
               <button type="button" onClick={() => navigate('/dashboard/canchas/manage')} className="action-button button-cancel">Cancelar</button>
             </div>
           </form>

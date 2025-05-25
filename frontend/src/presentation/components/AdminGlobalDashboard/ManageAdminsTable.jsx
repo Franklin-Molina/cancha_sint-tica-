@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useOutletContext } from 'react-router-dom'; // Para acceder al contexto del Outlet
 import '../../../styles/AdminGlobalDashboard.css'; // Importar los estilos
 import Spinner from '../common/Spinner';
+import useButtonDisable from '../../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 function ManageAdminsTable() {
   // Acceder a los datos y funciones pasados a través del contexto del Outlet
@@ -25,13 +26,13 @@ function ManageAdminsTable() {
     setShowDeleteModal(false);
   };
 
-  // Función para manejar la eliminación después de la confirmación
-  const proceedDelete = async () => {
+  // Usar el hook para manejar la eliminación después de la confirmación
+  const [isDeleting, proceedDelete] = useButtonDisable(async () => {
     if (adminToDelete) {
       await handleDeleteUser(adminToDelete.id);
       cancelDelete(); // Cerrar el modal después de la eliminación
     }
-  };
+  });
 
   // El loading y error se manejan en AdminGlobalDashboardPage, aquí solo mostramos la tabla o mensaje
   if (loading) {
@@ -107,7 +108,7 @@ function ManageAdminsTable() {
             <p><strong>Email:</strong> {adminToDelete.email}</p>
             <p><strong>Nombre:</strong> {adminToDelete.first_name} {adminToDelete.last_name}</p>
             <div className="modal-actions">
-              <button onClick={proceedDelete} className="action-button button-delete">Sí, Eliminar</button>
+              <button onClick={proceedDelete} className="action-button button-delete" disabled={isDeleting}>Sí, Eliminar</button>
               <button onClick={cancelDelete} className="action-button button-cancel">Cancelar</button>
             </div>
           </div>

@@ -6,6 +6,7 @@ import '../../styles/dashboard.css';
 import '../../styles/CourtDetailPage.css';
 import Spinner from '../components/common/Spinner';
 import { format, startOfWeek, addDays, setHours, setMinutes, isWithinInterval } from 'date-fns'; // Importar funciones adicionales de date-fns
+import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 
 // Importar los casos de uso y la implementación del repositorio
@@ -83,15 +84,14 @@ function CourtDetailPage() {
     setSelectedImage(null);
   };
 
-  // Función para manejar la verificación de disponibilidad (mantener por ahora)
-  const handleCheckAvailability = async () => {
+  // Usar el hook para manejar la verificación de disponibilidad
+  const [isCheckingAvailability, handleCheckAvailability] = useButtonDisable(async () => {
       if (!selectedDate || !startTime || !endTime) {
           setAvailabilityError("Por favor, selecciona fecha y rango de horas.");
           setAvailability(null);
           return;
       }
 
-      setCheckingAvailability(true);
       setAvailability(null);
       setAvailabilityError(null);
 
@@ -101,7 +101,6 @@ function CourtDetailPage() {
 
           if (startDateTime >= endDateTime) {
               setAvailabilityError("La hora de fin debe ser posterior a la hora de inicio.");
-              setCheckingAvailability(false);
               return;
           }
 
@@ -119,15 +118,13 @@ function CourtDetailPage() {
               setAvailabilityError("No se pudo verificar la disponibilidad para esta cancha.");
           }
 
-          setCheckingAvailability(false);
-
       } catch (err) {
           setAvailabilityError("Error al verificar disponibilidad. Inténtalo de nuevo.");
           setAvailability(null);
-          setCheckingAvailability(false);
           console.error('Error checking availability:', err.response ? err.response.data : err.message);
+          throw err; // Re-lanzar el error para que el hook lo capture
       }
-  };
+  });
 
   // Función para obtener la disponibilidad semanal para el calendario
   const fetchWeeklyAvailability = async () => {
@@ -319,8 +316,8 @@ function CourtDetailPage() {
                   <input type="time" id="end-time" value={endTime} onChange={(e) => setEndTime(e.target.value)} style={{ padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px' }} />
               </div>
           </div>
-          <button onClick={handleCheckAvailability} disabled={checkingAvailability} style={{ padding: '0.75rem 1.5rem', backgroundColor: '#4a89dc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', opacity: checkingAvailability ? 0.7 : 1 }}>
-              {checkingAvailability ? 'Verificando...' : 'Verificar Disponibilidad'}
+          <button onClick={handleCheckAvailability} disabled={isCheckingAvailability} style={{ padding: '0.75rem 1.5rem', backgroundColor: '#4a89dc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', opacity: isCheckingAvailability ? 0.7 : 1 }}>
+              {isCheckingAvailability ? 'Verificando...' : 'Verificar Disponibilidad'}
           </button>
 
           {availabilityError && (

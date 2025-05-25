@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../../styles/DashboardCanchaTable.css';
+import useButtonDisable from '../../hooks/useButtonDisable.js'; // Importar el hook personalizado
  
 
 function CourtActionsModal({ court, onClose, setCourts, onDeleteRequest, onModifyRequest }) {
@@ -29,26 +30,54 @@ function CourtActionsModal({ court, onClose, setCourts, onDeleteRequest, onModif
   //   // TODO: Navegar a la página de modificación de la cancha
   // }
 
-  // La lógica de activar/desactivar se mantiene aquí por ahora,
-  // pero la eliminación se manejará en la página principal con confirmación.
-  async function handleActivarDesactivar(courtId) {
-    console.log(`${court.is_active ? 'Desactivar' : 'Activar'} cancha ${courtId}`);
+  // Usar el hook para la acción de activar/desactivar
+  const [isActivatingDeactivating, handleActivarDesactivarClick] = useButtonDisable(async () => {
+    console.log(`${court.is_active ? 'Desactivar' : 'Activar'} cancha ${court.id}`);
     try {
-      // Importar ApiCourtRepository solo donde se necesita
       const { ApiCourtRepository } = await import('../../../infrastructure/repositories/api-court-repository');
       const courtRepository = new ApiCourtRepository();
-      await courtRepository.updateCourtStatus(courtId, !court.is_active);
+      await courtRepository.updateCourtStatus(court.id, !court.is_active);
       setCourts(prevCourts =>
         prevCourts.map(c =>
-          c.id === courtId ? { ...c, is_active: !c.is_active } : c
+          c.id === court.id ? { ...c, is_active: !c.is_active } : c
         )
       );
       onClose();
     } catch (error) {
-      console.error(`Error al activar/desactivar la cancha ${courtId}:`, error);
+      console.error(`Error al activar/desactivar la cancha ${court.id}:`, error);
       // TODO: Mostrar un mensaje de error al usuario
+      throw error; // Re-lanzar el error para que el hook lo capture
     }
-  }
+  });
+
+  // Usar el hook para la acción de eliminar
+  const [isDeleting, handleDeleteClick] = useButtonDisable(async () => {
+    await onDeleteRequest(court);
+  });
+
+  // Usar el hook para la acción de modificar
+  const [isModifying, handleModifyClick] = useButtonDisable(async () => {
+    await onModifyRequest(court);
+  });
+
+  return (
+    <div className="modal-details">
+      
+      <div className="modal-contentx">
+        <div className='closs-button'> 
+          <button className="close-button" onClick={onClose }>&times;</button>
+        </div>       
+        <h2 className="modal-title">Acciones para {court.name}</h2>
+        <div className="modal-actions">
+          <button onClick={handleDeleteClick} className="action-button button-delete" disabled={isDeleting}>Eliminar</button>
+          <button onClick={handleModifyClick} className="action-button button-modify" disabled={isModifying}>Modificar</button>
+          <button onClick={handleActivarDesactivarClick} className="action-button button-activate" disabled={isActivatingDeactivating}>
+            {court.is_active ? 'Desactivar' : 'Activar'}
+          </button>
+        </div>       
+      </div>
+    </div>
+  );
 }
 
 export default CourtActionsModal;

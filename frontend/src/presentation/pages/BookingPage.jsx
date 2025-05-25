@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 // Eliminar importación de axios
 import { useAuth } from '../context/AuthContext.jsx'; // Importar useAuth
 import Spinner from '../components/common/Spinner.jsx';
+import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 // Importar el caso de uso y la implementación del repositorio
 import { ApiBookingRepository } from '../../infrastructure/repositories/api-booking-repository';
@@ -56,10 +57,10 @@ function BookingPage() {
       setError(new Error("ID de cancha no proporcionado."));
       setLoading(false);
     }
-  }, [courtId]);
+  }, [courtId, courtRepository]); // Añadir courtRepository a las dependencias
 
-
-  const handleSubmit = async (e) => { // Hacer la función asíncrona
+  // Usar el hook para el envío del formulario
+  const [isSubmitting, handleSubmit] = useButtonDisable(async (e) => {
     e.preventDefault();
     setBookingError(null); // Limpiar errores de reserva anteriores
 
@@ -100,8 +101,9 @@ function BookingPage() {
       } else {
         setBookingError('Error al crear la reserva. Inténtalo de nuevo.');
       }
+      throw err; // Re-lanzar el error para que el hook lo capture
     }
-  };
+  });
 
   if (loading) {
     return <Spinner/>; 
@@ -156,7 +158,7 @@ function BookingPage() {
 
         {bookingError && <div style={{ color: 'red' }}>{bookingError}</div>} {/* Mostrar errores de reserva */}
 
-        <button type="submit">Confirmar Reserva</button>
+        <button type="submit" disabled={isSubmitting}>Confirmar Reserva</button>
       </form>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Importar axios
 import '../styles/RegisterPage.css'; // Importar estilos de la página de registro
+import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 function RegisterPage() {
   useEffect(() => {
@@ -25,7 +26,8 @@ function RegisterPage() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const handleSubmit = async (e) => { // Hacer la función asíncrona
+  // Usar el hook personalizado para manejar el estado de deshabilitación del botón
+  const [isSubmitting, handleFormSubmit] = useButtonDisable(async (e) => {
     e.preventDefault();
     setError(''); // Limpiar errores previos
 
@@ -41,6 +43,18 @@ function RegisterPage() {
       return;
     }
 
+
+    // Validar que las contraseñas coincidan
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
+    // Validar que todos los campos requeridos estén llenos
+    if (!username || !email || !password || !confirmPassword || !firstName || !lastName || !age) {
+      setError('Por favor completa todos los campos.');
+      return;
+    }
 
     try {
       // Realizar la llamada a la API de backend para registrar al usuario
@@ -61,14 +75,15 @@ function RegisterPage() {
       console.error('Error en el registro:', err.response ? err.response.data : err.message);
       // Mostrar mensaje de error al usuario
       setError(err.response && err.response.data ? JSON.stringify(err.response.data) : 'Error en el registro');
+      throw err; // Re-lanzar el error para que el hook lo capture y no deshabilite el botón si se desea
     }
-  };
+  });
 
   return (
     <div className="register-container"> {/* Usar la clase register-container */}
       <h2>Registro de Usuario</h2> {/* Usar h2 para el título */}
       {error && <div className="error">{error}</div>} {/* Usar la clase error para mostrar errores */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleFormSubmit}>
         <div className="form-row">
           <div className="form-group">
             <input
@@ -158,7 +173,7 @@ function RegisterPage() {
           </div>
         </div>
 
-        <button type="submit" className="submit-button">Registrar</button>
+        <button type="submit" className="submit-button" disabled={isSubmitting}>Registrar</button>
       </form>
     </div>
   );

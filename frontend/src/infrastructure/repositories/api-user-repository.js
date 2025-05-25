@@ -123,7 +123,7 @@ export class ApiUserRepository extends IUserRepository {
   async updateUser(userId, userData) { // Añadido userId
     try {
       // Usar el endpoint PATCH para actualizar el perfil del usuario autenticado
-      const response = await api.patch(`/users/profile/`, userData); // Cambiada la URL a /users/profile/
+      const response = await api.patch(`/api/users/profile/`, userData); // Cambiada la URL a /users/profile/
       // return new User(response.data); // Si se usa entidad User
       return response.data;
     } catch (error) {

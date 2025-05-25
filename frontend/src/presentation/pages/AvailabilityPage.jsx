@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 // Importar el caso de uso y la implementación del repositorio
 import { CheckAvailabilityUseCase } from '../../application/use-cases/check-availability';
 import { ApiCourtRepository } from '../../infrastructure/repositories/api-court-repository';
+import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 /**
  * Página para consultar la disponibilidad de las canchas.
@@ -20,15 +21,14 @@ function AvailabilityPage() {
   const courtRepository = new ApiCourtRepository();
   const checkAvailabilityUseCase = new CheckAvailabilityUseCase(courtRepository);
 
-  const handleCheckAvailability = async () => {
-    setLoading(true);
+  // Usar el hook para manejar la verificación de disponibilidad
+  const [isChecking, handleCheckAvailability] = useButtonDisable(async () => {
     setError(null);
     setAvailability(null);
 
     // Validar que las fechas/horas estén seleccionadas
     if (!startTime || !endTime) {
         setError(new Error("Por favor, selecciona hora de inicio y hora de fin."));
-        setLoading(false);
         return;
     }
 
@@ -40,12 +40,11 @@ function AvailabilityPage() {
       // Llamar al caso de uso para verificar disponibilidad
       const availabilityResults = await checkAvailabilityUseCase.execute(formattedStartTime, formattedEndTime);
       setAvailability(availabilityResults);
-      setLoading(false);
     } catch (err) {
       setError(err);
-      setLoading(false);
+      throw err; // Re-lanzar el error para que el hook lo capture
     }
-  };
+  });
 
   return (
     <div>
@@ -70,8 +69,8 @@ function AvailabilityPage() {
         />
       </div>
 
-      <button onClick={handleCheckAvailability} disabled={loading}>
-        {loading ? 'Consultando...' : 'Consultar Disponibilidad'}
+      <button onClick={handleCheckAvailability} disabled={isChecking}>
+        {isChecking ? 'Consultando...' : 'Consultar Disponibilidad'}
       </button>
 
       {error && <div style={{ color: 'red' }}>Error: {error.message}</div>}

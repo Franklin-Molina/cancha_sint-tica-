@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 // Importar el caso de uso y la implementación del repositorio
 import { CreateCourtUseCase } from '../../../application/use-cases/create-court';
 import { ApiCourtRepository } from '../../../infrastructure/repositories/api-court-repository';
+import useButtonDisable from '../../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 function CourtForm() {
   // Crear instancias del repositorio y caso de uso
@@ -45,7 +46,8 @@ function CourtForm() {
   };
 
 
-  const handleSubmit = async (e) => {
+  // Usar el hook para el envío del formulario
+  const [isSubmitting, handleSubmit] = useButtonDisable(async (e) => {
     e.preventDefault();
     setMessage(null); // Limpiar mensajes anteriores
 
@@ -103,8 +105,9 @@ function CourtForm() {
         // Si no hay error.response o error.response.data
         setMessage({ type: 'error', text: 'Error al crear cancha. Verifica la conexión o los datos.' });
       }
+      throw error; // Re-lanzar el error para que el hook lo capture
     }
-  };
+  });
 
   return (
     <div className="widget"> {/* Usar clase de estilo del dashboard */}
@@ -205,7 +208,7 @@ function CourtForm() {
           </div>
 
 
-          <button type="submit" style={{ padding: '0.75rem 1.5rem', backgroundColor: '#4a89dc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          <button type="submit" style={{ padding: '0.75rem 1.5rem', backgroundColor: '#4a89dc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }} disabled={isSubmitting}>
             Crear Cancha
           </button>
         </form>

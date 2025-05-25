@@ -6,6 +6,7 @@ import { CreateAdminUserUseCase } from '../../../application/use-cases/create-ad
 import { ApiUserRepository } from '../../../infrastructure/repositories/api-user-repository.js'; // Importar el repositorio
 // import api from '../../../infrastructure/api/api.js'; // Mantener la importación de api si se usa en otro lugar, si no, eliminar
 import '../../../styles/AdminRegisterPage.css'; // Importar los estilos específicos de este componente desde la nueva ubicación
+import useButtonDisable from '../../hooks/useButtonDisable.js'; // Importar el hook personalizado
 
 /**
  * Página de registro de administradores.
@@ -30,7 +31,8 @@ function AdminRegisterPage() {
   const userRepository = new ApiUserRepository();
   const createAdminUserUseCase = new CreateAdminUserUseCase(userRepository);
 
-  const handleRegistration = async (e) => {
+  // Usar el hook para el envío del formulario
+  const [isSubmitting, handleRegistration] = useButtonDisable(async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -93,8 +95,9 @@ function AdminRegisterPage() {
         setError('Error en el registro de administrador. Inténtalo de nuevo.');
       }
       setSuccess(''); // Limpiar mensaje de éxito previo
+      throw error; // Re-lanzar el error para que el hook lo capture
     }
-  };
+  });
 
   // Aplicar estructura y clases de RegisterPage.css
   // Nota: AdminRegisterPage ahora se renderiza dentro del layout de AdminGlobalDashboardPage,
@@ -198,7 +201,7 @@ function AdminRegisterPage() {
           </div>
 
           <div className="form-group">
-            <button type="submit" className="submit-button">
+            <button type="submit" className="submit-button" disabled={isSubmitting}>
               Registrar Administrador
             </button>
           </div>
