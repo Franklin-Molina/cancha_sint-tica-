@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Spinner from '../common/Spinner';
 
 /**
  * Componente para visualizar la lista de canchas.
@@ -27,7 +28,7 @@ function CourtList() {
   }, []); // El array vacío asegura que el efecto se ejecute solo una vez al montar
 
   if (loading) {
-    return <div>Cargando canchas...</div>;
+    return <Spinner/>; 
   }
 
   if (error) {

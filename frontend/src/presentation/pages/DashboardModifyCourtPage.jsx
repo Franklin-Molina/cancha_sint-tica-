@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'; // Necesario para obt
 import { ApiCourtRepository } from '../../infrastructure/repositories/api-court-repository'; // Necesario para obtener y actualizar la cancha
 import '../../styles/dashboard.css'; // Usar estilos generales del dashboard
 import '../../styles/DashboardCanchaTable.css'; // Mantener estilos de formulario si son necesarios
+import Spinner from '../components/common/Spinner';
 
 function DashboardModifyCourtPage() {
   const { id } = useParams(); // Obtener el ID de la cancha de la URL
@@ -126,7 +127,7 @@ function DashboardModifyCourtPage() {
   };
 
   if (loading) {
-    return <div>Cargando cancha...</div>;
+    return <Spinner />; 
   }
 
   if (error) {

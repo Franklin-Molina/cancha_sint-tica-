@@ -3,7 +3,7 @@ import { ApiCourtRepository } from '../../infrastructure/repositories/api-court-
 import CourtActionsModal from '../components/Dashboard/CourtActionsModal.jsx';
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 import '../../styles/DashboardCanchaTable.css';
-
+import Spinner from '../components/common/Spinner.jsx';
 
 
 
@@ -116,7 +116,7 @@ function DashboardManageCourtsPage() {
   };
 
   if (loading) {
-    return <div>Cargando canchas...</div>;
+    return <Spinner />; 
   }
 
   if (error) {

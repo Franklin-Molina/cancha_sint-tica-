@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 // Eliminar importación directa de api
 import '../../styles/dashboard.css'; // Reutilizar estilos del dashboard
+import Spinner from '../components/common/Spinner';
  
 // Importar el caso de uso y la implementación del repositorio
 import { GetBookingsUseCase } from '../../application/use-cases/get-bookings';
@@ -37,7 +38,7 @@ function DashboardBookingsPage() {
   }, []); // El array vacío asegura que se ejecute solo una vez al montar
 
   if (loading) {
-    return <div className="dashboard-page-content">Cargando reservas...</div>;
+    return <Spinner />; 
   }
 
   if (error) {

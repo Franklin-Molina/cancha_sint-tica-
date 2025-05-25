@@ -8,21 +8,16 @@ function CourtActionsModal({ court, onClose, setCourts, onDeleteRequest, onModif
       
       <div className="modal-contentx">
         <div className='closs-button'> 
-          <button className="close-button" onClick={() => setIsPasswordModalOpen(false)}>&times;</button>
-        </div>
-       
+          <button className="close-button" onClick={onClose }>&times;</button>
+        </div>       
         <h2 className="modal-title">Acciones para {court.name}</h2>
-      
         <div className="modal-actions">
           <button onClick={() => onDeleteRequest(court)} className="action-button button-delete">Eliminar</button>
           <button onClick={() => onModifyRequest(court)} className="action-button button-modify">Modificar</button>
           <button onClick={() => handleActivarDesactivar(court.id)} className="action-button button-activate">
             {court.is_active ? 'Desactivar' : 'Activar'}
           </button>
-        </div>
-        <button onClick={onClose} className="action-button button-cancel">
-          Cerrar
-        </button>
+        </div>       
       </div>
     </div>
   );

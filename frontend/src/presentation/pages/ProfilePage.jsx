@@ -5,6 +5,8 @@ import '../../styles/ProfilePage.css'; // Importar estilos específicos
 import { ApiUserRepository } from '../../infrastructure/repositories/api-user-repository.js'; // Importar el repositorio
 import { UpdateUserProfileUseCase } from '../../application/use-cases/update-user-profile.js'; // Importar el caso de uso
 import { ChangePasswordUseCase } from '../../application/use-cases/change-password.js'; // Importar el caso de uso de cambio de contraseña
+import Spinner from '../components/common/Spinner.jsx';
+
 
 function ProfilePage() {
   const { user, loading } = useAuth();
@@ -29,7 +31,7 @@ function ProfilePage() {
   const changePasswordUseCase = new ChangePasswordUseCase(userRepository); // Instanciar caso de uso de cambio de contraseña
 
   if (loading) {
-    return <div className="profile-container">Cargando perfil...</div>;
+    return <Spinner />; 
   }
 
   if (!user) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'; // Importar useEffect
 import { useParams, useNavigate } from 'react-router-dom';
 // Eliminar importación de axios
 import { useAuth } from '../context/AuthContext.jsx'; // Importar useAuth
+import Spinner from '../components/common/Spinner.jsx';
 
 // Importar el caso de uso y la implementación del repositorio
 import { ApiBookingRepository } from '../../infrastructure/repositories/api-booking-repository';
@@ -103,7 +104,7 @@ function BookingPage() {
   };
 
   if (loading) {
-    return <div>Cargando información de la cancha...</div>;
+    return <Spinner/>; 
   }
 
   if (error) {

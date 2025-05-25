@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 // Importar el caso de uso y la implementación del repositorio
 import { GetCourtsUseCase } from '../../application/use-cases/get-courts.js';
 import { ApiCourtRepository } from '../../infrastructure/repositories/api-court-repository.js';
+import Spinner from '../components/common/Spinner.jsx';
 
 import '../../styles/HomePage.css';
 import '../../styles/dashboard.css';
@@ -67,7 +68,7 @@ function HomePage({ openAuthModal }) { // Recibir openAuthModal como prop
 
 
   if (loading) {
-    return <div className="home-content">Cargando canchas...</div>;
+    return <Spinner />; 
   }
 
   if (error) {

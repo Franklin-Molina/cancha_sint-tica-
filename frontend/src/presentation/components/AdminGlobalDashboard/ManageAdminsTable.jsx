@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useOutletContext } from 'react-router-dom'; // Para acceder al contexto del Outlet
 import '../../../styles/AdminGlobalDashboard.css'; // Importar los estilos
+import Spinner from '../common/Spinner';
 
 function ManageAdminsTable() {
   // Acceder a los datos y funciones pasados a través del contexto del Outlet
@@ -34,7 +35,7 @@ function ManageAdminsTable() {
 
   // El loading y error se manejan en AdminGlobalDashboardPage, aquí solo mostramos la tabla o mensaje
   if (loading) {
-    return <p>Cargando administradores...</p>; // O un spinner más elaborado
+    return <Spinner/>;  // O un spinner más elaborado
   }
 
   if (error) {

@@ -4,7 +4,9 @@ import { useParams } from 'react-router-dom';
 import '../../styles/HomePage.css';
 import '../../styles/dashboard.css';
 import '../../styles/CourtDetailPage.css';
+import Spinner from '../components/common/Spinner';
 import { format, startOfWeek, addDays, setHours, setMinutes, isWithinInterval } from 'date-fns'; // Importar funciones adicionales de date-fns
+
 
 // Importar los casos de uso y la implementación del repositorio
 import { GetCourtByIdUseCase } from '../../application/use-cases/get-court-by-id';
@@ -197,7 +199,7 @@ function CourtDetailPage() {
 
 
   if (loading) {
-    return <div className="home-content">Cargando detalles de la cancha...</div>;
+    return <Spinner />; // <div className="home-content">Cargando detalles de la cancha...</div>;
   }
 
   if (error) {

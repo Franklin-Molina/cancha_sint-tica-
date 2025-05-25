@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx'; // Corregir la ruta de importación
+import Spinner from '../components/common/Spinner.jsx';
 
 // Casos de uso y repositorios
 import { GetUserListUseCase } from '../../application/use-cases/get-user-list.js';
@@ -153,7 +154,7 @@ function DashboardUsersPage() {
 
 
   if (loading) {
-    return <div>Cargando usuarios...</div>;
+    return <Spinner />; 
   }
 
   if (error) {

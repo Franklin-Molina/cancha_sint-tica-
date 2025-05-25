@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom'; // Importar useLocation
 import { useAuth } from '../../context/AuthContext.jsx';
+import Spinner from '../common/Spinner.jsx';
 
 /**
  * Componente de ruta protegida.
@@ -16,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
 
   // Si aún está cargando el estado de autenticación inicial, no renderizar nada o mostrar un spinner
   if (loading) {
-    return <div>Cargando...</div>; // TODO: Reemplazar con un spinner o componente de carga adecuado
+    return <Spinner/>;  // TODO: Reemplazar con un spinner o componente de carga adecuado
   }
 
   // Si no está autenticado, redirigir a la página de login
