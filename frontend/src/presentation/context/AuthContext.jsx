@@ -79,11 +79,22 @@ export const AuthProvider = ({ children }) => {
   // Función para iniciar sesión con credenciales usando el caso de uso
   const login = async (username, password) => {
     try {
-      // Llamar al caso de uso para iniciar sesión
-      const tokens = await loginUserUseCase.execute(username, password);
-     // console.log("Login exitoso, tokens obtenidos:", tokens);
-      // Después de obtener los tokens, obtener la información del usuario
-      await fetchUser(); // fetchUser ahora maneja la redirección después de obtener el usuario
+      // Llamar al caso de uso para iniciar sesión y obtener tokens y datos del usuario
+      const { tokens, user } = await loginUserUseCase.execute(username, password);
+     // console.log("Respuesta de loginUserUseCase.execute():", { tokens, user }); // Añadir log para depuración
+
+      // Actualizar el estado del contexto con el usuario autenticado
+      setUser(user);
+      setIsAuthenticated(true);
+
+      // Redirigir después de un login exitoso según el rol
+      if (user.role === 'adminglobal') {
+          navigate('/adminglobal'); // Redirigir a adminglobal a su dashboard
+      } else if (user.is_staff) { // Para role='admin' u otros staff
+          navigate('/dashboard'); // Redirigir a administradores de cancha al dashboard
+      } else { // Para role='cliente'
+          navigate('/profile'); // Redirigir a usuarios normales al perfil
+      }
 
     } catch (error) {
       console.error('Error en el inicio de sesión (AuthContext):', error);

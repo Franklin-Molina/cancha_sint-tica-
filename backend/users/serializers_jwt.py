@@ -2,6 +2,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User
+from .serializers import UserSerializer # Importar UserSerializer
 import logging
 import re
 
@@ -69,9 +70,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         self.user = user
         data = super().validate(attrs)
 
-        # Añadir datos adicionales al payload de respuesta si es necesario
-        data["email"] = user.email
-        data["user_id"] = user.id
-        data["username"] = user.username
+        # Serializar el objeto de usuario
+        user_serializer = UserSerializer(self.user)
+        
+        # Añadir los datos serializados del usuario a la respuesta bajo la clave 'user'
+        data['user'] = user_serializer.data
 
         return data

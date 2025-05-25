@@ -206,6 +206,45 @@ def create_groups_and_permissions(sender, **kwargs):
 class LoginView(TokenObtainPairView):
     permission_classes = [permissions.AllowAny]
 
+    def post(self, request, *args, **kwargs):
+        # Llama al método post original para obtener la respuesta con los tokens
+        original_response = super().post(request, *args, **kwargs)
+
+        # Llama al método post original para obtener la respuesta con los tokens
+        original_response = super().post(request, *args, **kwargs)
+
+        print("Código de estado de la respuesta original:", original_response.status_code) # Añadir log para depuración
+
+        # Si la autenticación fue exitosa (código de estado 2xx)
+        if 200 <= original_response.status_code < 300:
+            # Obtiene el objeto de usuario autenticado
+            user = self.user
+            # Serializa el usuario
+            user_serializer = UserSerializer(user)
+            
+        # Llama al método post original para obtener la respuesta con los tokens
+        original_response = super().post(request, *args, **kwargs)
+
+        print("Código de estado de la respuesta original:", original_response.status_code) # Añadir log para depuración
+
+        # Si la autenticación fue exitosa (código de estado 2xx)
+        if 200 <= original_response.status_code < 300:
+            # Obtiene el objeto de usuario autenticado
+            user = self.user
+            # Serializa el usuario
+            user_serializer = UserSerializer(user)
+            
+            # Añade los datos del usuario directamente a los datos de la respuesta original
+            original_response.data['user'] = user_serializer.data
+
+            print("Respuesta del login enviada al frontend:", original_response.data) # Añadir log para depuración
+
+            # Devuelve la respuesta original modificada
+            return original_response
+
+        # Si la autenticación no fue exitosa, devuelve la respuesta original
+        return original_response
+
 class RefreshView(TokenRefreshView):
     permission_classes = [permissions.AllowAny]
 

@@ -17,10 +17,13 @@ export class ApiAuthRepository extends IAuthRepository {
   async login(username, password) {
     try {
       const response = await api.post('/api/users/login/', { username, password });
-      const { access, refresh } = response.data;
+      const { access, refresh, user } = response.data; // Extraer access, refresh, y user
       const tokens = new AuthTokens({ access, refresh });
       await this.saveTokens(tokens); // Guardar tokens después de un login exitoso
-      return tokens;
+      
+      // Crear instancia de AuthenticatedUser y devolver tokens y usuario
+      const authenticatedUserInstance = new AuthenticatedUser(user);
+      return { tokens, user: authenticatedUserInstance };
     } catch (error) {
       console.error('Error logging in:', error);
       throw error;
