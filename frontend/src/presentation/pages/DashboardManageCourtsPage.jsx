@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ApiCourtRepository } from '../../infrastructure/repositories/api-court-repository'; // Importar ApiCourtRepository
 import CourtActionsModal from '../components/Dashboard/CourtActionsModal.jsx';
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate
@@ -15,6 +15,7 @@ function DashboardManageCourtsPage() {
   const [actionStatus, setActionStatus] = useState('');
   const [selectedCourt, setSelectedCourt] = useState(null);
   const [courtToDelete, setCourtToDelete] = useState(null); // Estado para la cancha a eliminar
+  const hasFetchedCourts = useRef(false); // Ref para asegurar que fetchCourts se llame solo una vez
   // Eliminar estado courtToModify
 
 
@@ -33,7 +34,11 @@ function DashboardManageCourtsPage() {
       }
     };
 
-    fetchCourts();
+    // Solo llamar a fetchCourts si no se ha llamado antes
+    if (!hasFetchedCourts.current) {
+      fetchCourts();
+      hasFetchedCourts.current = true;
+    }
   }, []);
 
   const handleSuspendCourt = async (courtId) => {
