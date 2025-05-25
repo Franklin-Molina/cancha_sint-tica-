@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom'; // Importar useNavigate y Navigate
 
 // Importar los casos de uso y la implementación del repositorio
@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true); // Estado para indicar si se está cargando la sesión inicial
+  const hasFetchedUser = useRef(false); // Ref para asegurar que fetchUser se llame solo una vez
 
   // Obtener la función de navegación
   const navigate = useNavigate();
@@ -157,8 +158,11 @@ export const AuthProvider = ({ children }) => {
 
   // Efecto para cargar la sesión al iniciar la aplicación
   useEffect(() => {
-    // Intentar obtener el usuario autenticado al cargar la app
-    fetchUser();
+    // Intentar obtener el usuario autenticado al cargar la app solo una vez
+    if (!hasFetchedUser.current) {
+      fetchUser();
+      hasFetchedUser.current = true;
+    }
   }, []); // Se ejecuta solo una vez al montar el componente
 
 

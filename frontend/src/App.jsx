@@ -38,7 +38,7 @@ function App() {
           <Route path="canchas/create" element={<DashboardCourtsPage />} />
           <Route path="reservas" element={<DashboardBookingsPage />} />
           <Route path="usuarios" element={<DashboardUsersPage />} />
-          <Route path="perfil" element={<ProfilePage />} />
+          <Route path="perfil" element={<DashboardProfilePage />} /> {/* Usar DashboardProfilePage */}
           {/* Ruta para la página de modificación de canchas */}
           <Route path="manage-courts/:id" element={<DashboardModifyCourtPage />} />
         </Route>
@@ -96,21 +96,6 @@ function App() {
           }
         />
         <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<DashboardOverviewPage />} />
-          <Route path="canchas/manage" element={<DashboardManageCourtsPage />} />
-          <Route path="canchas/create" element={<DashboardCourtsPage />} />
-          <Route path="reservas" element={<DashboardBookingsPage />} />
-          <Route path="usuarios" element={<DashboardUsersPage />} />
-          <Route path="perfil" element={<DashboardProfilePage />} />
-        </Route>
-        <Route
           path="/adminglobal"
           element={
             <ProtectedRoute>
@@ -124,20 +109,6 @@ function App() {
           <Route path="profile" element={<ProfilePage />} /> {/* Perfil dentro del layout adminglobal */}
           <Route path="register-admin" element={<AdminRegisterPage />} /> {/* Registrar admin dentro del layout adminglobal */}
         </Route>
-        
-        {/* La ruta /adminglobal/register-admin ahora es anidada y no necesita su propia definición aquí con Layout */}
-        {/* 
-        <Route 
-          path="/adminglobal/register-admin" 
-          element={
-            <ProtectedRoute>
-              <Layout> 
-                <AdminRegisterPage />
-              </Layout>
-            </ProtectedRoute>
-          } 
-        /> 
-        */}
       </Routes>
     
   );

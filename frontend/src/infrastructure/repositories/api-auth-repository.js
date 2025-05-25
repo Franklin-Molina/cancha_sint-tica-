@@ -37,7 +37,7 @@ export class ApiAuthRepository extends IAuthRepository {
    */
   async loginWithGoogle(googleAccessToken) {
     try {
-      const response = await api.post('/users/google/', { access_token: googleAccessToken });
+      const response = await api.post('/api/users/google/', { access_token: googleAccessToken });
       const { access_token: access, refresh_token: refresh } = response.data;
       const tokens = new AuthTokens({ access, refresh });
       await this.saveTokens(tokens); // Guardar tokens después de un login exitoso
