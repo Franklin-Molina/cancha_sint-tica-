@@ -4,6 +4,24 @@
 .button-modify{
     background-color: rgba(43, 223, 139, 0.781);
 }
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #d30000;
+    padding: 0;
+    display: flex;
+
+}
+
+.close-button:hover {
+    color: #333;
+}
+.closs-button{
+    display: flex;
+    justify-content: end;
+}
 .canchas-table {
     width: 100%;
     border-collapse: collapse;

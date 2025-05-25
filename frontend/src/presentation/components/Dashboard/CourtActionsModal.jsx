@@ -5,8 +5,14 @@ import '../../../styles/DashboardCanchaTable.css';
 function CourtActionsModal({ court, onClose, setCourts, onDeleteRequest, onModifyRequest }) {
   return (
     <div className="modal-details">
+      
       <div className="modal-contentx">
+        <div className='closs-button'> 
+          <button className="close-button" onClick={() => setIsPasswordModalOpen(false)}>&times;</button>
+        </div>
+       
         <h2 className="modal-title">Acciones para {court.name}</h2>
+      
         <div className="modal-actions">
           <button onClick={() => onDeleteRequest(court)} className="action-button button-delete">Eliminar</button>
           <button onClick={() => onModifyRequest(court)} className="action-button button-modify">Modificar</button>
