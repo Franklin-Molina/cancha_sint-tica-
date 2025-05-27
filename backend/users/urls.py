@@ -3,11 +3,11 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import RegisterView, UserViewSet, GroupViewSet, PermissionViewSet, GoogleLogin, AdminRegisterView, AdminManagementViewSet, UserProfileUpdateView, ChangePasswordView # Añadir UserProfileUpdateView y ChangePasswordView
+from .views import RegisterView, UserViewSet, GroupViewSet, PermissionViewSet, GoogleLogin, AdminRegisterView, AdminManagementViewSet, UserProfileUpdateView, ChangePasswordView, LoginView # Añadir LoginView
 from rest_framework import routers
 from .models import User
 from django.urls import path
-from .views import CustomTokenObtainPairView
+# from .views import CustomTokenObtainPairView # Ya no es necesario si LoginView la reemplaza o si CustomTokenObtainPairView es la clase base de LoginView
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -17,7 +17,7 @@ router.register(r'manage-admins', AdminManagementViewSet, basename='manage-admin
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
-    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'), # Usar la vista personalizada
+    path('login/', LoginView.as_view(), name='token_obtain_pair'), # Cambiado a LoginView
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('google/', GoogleLogin.as_view(), name='google_login'),
     

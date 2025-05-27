@@ -9,13 +9,17 @@ from .services import crear_grupo_administradores
 from django.dispatch import receiver
 from django.db.models.signals import post_migrate
 from django.apps import AppConfig
+import logging # Importar el módulo logging
 from .models import User, PerfilSocial
+import time # Importar el módulo time
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer # Asegurarse que TokenObtainPairSerializer está importado
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken # Importar excepciones necesarias
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer # Importar serializadores de simplejwt
+# from rest_framework_simplejwt.views import TokenObtainPairView # Duplicado, ya importado arriba
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer # TokenObtainPairSerializer ya importado
 from .serializers_jwt import CustomTokenObtainPairSerializer
 
 # Importar casos de uso y repositorio
@@ -203,47 +207,80 @@ def create_groups_and_permissions(sender, **kwargs):
         crear_grupo_gestores_cancha()
         print("Grupos creados/actualizados.")
 
-class LoginView(TokenObtainPairView):
+class LoginView(views.APIView): # Cambiado de TokenObtainPairView a views.APIView
     permission_classes = [permissions.AllowAny]
+    serializer_class = CustomTokenObtainPairSerializer # Usamos tu serializador personalizado
+    logger = logging.getLogger('users')
 
     def post(self, request, *args, **kwargs):
-        # Llama al método post original para obtener la respuesta con los tokens
-        original_response = super().post(request, *args, **kwargs)
+        # self.logger.debug("LoginView: Inicio del proceso de login") # Log comentado
+        process_start_time = time.time()
 
-        # Llama al método post original para obtener la respuesta con los tokens
-        original_response = super().post(request, *args, **kwargs)
+        # Instanciar el serializador con los datos de la solicitud
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
-        print("Código de estado de la respuesta original:", original_response.status_code) # Añadir log para depuración
+        validation_start_time = time.time()
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            self.logger.warning(f"LoginView: TokenError durante la validación: {str(e)}")
+            # Re-lanzar como InvalidToken para que DRF lo maneje correctamente y devuelva un 401
+            raise InvalidToken(e.args[0])
+        except Exception as e:
+            self.logger.error(f"LoginView: Excepción no esperada durante serializer.is_valid: {str(e)}", exc_info=True)
+            # Devolver una respuesta de error genérica si no es un error de token conocido
+            return Response({"detail": "Se produjo un error durante la validación."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        validation_time = time.time()
+        # self.logger.debug(f"LoginView: Tiempo de validación del serializador (autenticación y generación de token): {validation_time - validation_start_time:.4f} segundos") # Log comentado
 
-        # Si la autenticación fue exitosa (código de estado 2xx)
-        if 200 <= original_response.status_code < 300:
-            # Obtiene el objeto de usuario autenticado
-            user = self.user
-            # Serializa el usuario
-            user_serializer = UserSerializer(user)
-            
-        # Llama al método post original para obtener la respuesta con los tokens
-        original_response = super().post(request, *args, **kwargs)
+        # El serializador CustomTokenObtainPairSerializer (o su base) debería establecer 'user'
+        # en sí mismo después de una validación exitosa si está personalizado para ello,
+        # o los datos validados contendrán los tokens.
+        # El objeto 'user' se obtiene del serializador si este lo expone.
+        # Si CustomTokenObtainPairSerializer no expone 'user', necesitaremos obtenerlo de request.data['username']
+        # y luego buscarlo, pero esto es menos ideal después de que el serializador ya lo validó.
+        # La práctica común es que el serializador TokenObtainPairSerializer establece self.user
+        # internamente y lo usa para generar el token.
+        # Para obtener el usuario, si el serializador no lo expone directamente,
+        # podemos tomar el username del request.data y buscar el usuario.
+        # Sin embargo, el serializador validado ya debería tener el usuario.
+        # TokenObtainPairSerializer en su método validate() establece self.user.
+        # Si CustomTokenObtainPairSerializer llama a super().validate(), entonces self.user estará disponible.
 
-        print("Código de estado de la respuesta original:", original_response.status_code) # Añadir log para depuración
+        user = getattr(serializer, 'user', None) # Intentar obtener el usuario del serializador
 
-        # Si la autenticación fue exitosa (código de estado 2xx)
-        if 200 <= original_response.status_code < 300:
-            # Obtiene el objeto de usuario autenticado
-            user = self.user
-            # Serializa el usuario
-            user_serializer = UserSerializer(user)
-            
-            # Añade los datos del usuario directamente a los datos de la respuesta original
-            original_response.data['user'] = user_serializer.data
+        if not user:
+            # Fallback si serializer.user no está disponible directamente.
+            # Esto no debería suceder si CustomTokenObtainPairSerializer hereda correctamente de TokenObtainPairSerializer
+            # y llama a super().validate().
+            self.logger.warning("LoginView: serializer.user no encontrado directamente. Esto puede indicar un problema en CustomTokenObtainPairSerializer.")
+            # Si no hay usuario, la validación del token ya falló o el serializador no lo expone.
+            # La respuesta de error ya se habrá lanzado desde is_valid(raise_exception=True)
+            # o se habrá devuelto una respuesta de error genérica.
+            # Este bloque es más una salvaguarda o para logging.
+            # No deberíamos llegar aquí si la validación falló y raise_exception=True.
+            # Si la validación fue exitosa pero 'user' no está, es un problema del serializador.
+            # Por ahora, si llegamos aquí, es un estado inesperado.
+            return Response({"detail": "Error al obtener el usuario después de la validación del token."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            print("Respuesta del login enviada al frontend:", original_response.data) # Añadir log para depuración
 
-            # Devuelve la respuesta original modificada
-            return original_response
+        # Serializar el objeto de usuario para incluirlo en la respuesta
+        user_serialization_start_time = time.time()
+        user_serializer_instance = UserSerializer(user) # UserSerializer ya está importado
+        user_data = user_serializer_instance.data
+        user_serialization_time = time.time()
+        # self.logger.debug(f"LoginView: Tiempo de serialización del usuario: {user_serialization_time - user_serialization_start_time:.4f} segundos") # Log comentado
 
-        # Si la autenticación no fue exitosa, devuelve la respuesta original
-        return original_response
+        # Combinar los datos del token con los datos del usuario
+        response_data = serializer.validated_data.copy()
+        response_data['user'] = user_data
+
+        process_end_time = time.time()
+        # self.logger.debug(f"LoginView: Tiempo total del proceso de login (exitoso): {process_end_time - process_start_time:.4f} segundos") # Log comentado
+        # self.logger.debug(f"LoginView: Respuesta del login enviada al frontend: {response_data}") # Log comentado
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 class RefreshView(TokenRefreshView):
     permission_classes = [permissions.AllowAny]

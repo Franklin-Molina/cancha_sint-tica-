@@ -187,6 +187,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Configuración de Password Hashers
+# Se prioriza Argon2, con fallback a los otros para contraseñas existentes.
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.ScryptPasswordHasher',
+]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -228,7 +238,7 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO',
+        'level': 'INFO', # Revertido a INFO
     },
     'loggers': {
         'django': {
@@ -236,9 +246,19 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'django.db.backends': { # Añadir logger para las consultas de base de datos
+            'handlers': ['console'],
+            'level': 'INFO', # Cambiado de DEBUG a INFO para reducir elruido
+            'propagate': False,
+        },
         'users': { # Añadir logger para la app users
             'handlers': ['console'],
             'level': 'DEBUG', # Usar DEBUG para ver logs más detallados
+            'propagate': False,
+        },
+        'django.server': { # Añadir logger para el servidor de desarrollo
+            'handlers': ['console'],
+            'level': 'WARNING', # Cambiar a WARNING para ocultar mensajes INFO como "System check"
             'propagate': False,
         },
     },
