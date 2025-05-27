@@ -238,7 +238,7 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO', # Revertido a INFO
+        'level': 'INFO',
     },
     'loggers': {
         'django': {
@@ -246,23 +246,14 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
-        'django.db.backends': { # Añadir logger para las consultas de base de datos
-            'handlers': ['console'],
-            'level': 'INFO', # Cambiado de DEBUG a INFO para reducir elruido
-            'propagate': False,
-        },
         'users': { # Añadir logger para la app users
             'handlers': ['console'],
             'level': 'DEBUG', # Usar DEBUG para ver logs más detallados
             'propagate': False,
         },
-        'django.server': { # Añadir logger para el servidor de desarrollo
-            'handlers': ['console'],
-            'level': 'WARNING', # Cambiar a WARNING para ocultar mensajes INFO como "System check"
-            'propagate': False,
-        },
     },
 }
+
 
 # Configuración de Simple JWT para usar username como campo de autenticación
 SIMPLE_JWT = {
