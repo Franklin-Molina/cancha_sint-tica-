@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react'; // Importar useMemo
 import { useParams, useNavigate } from 'react-router-dom'; // Necesario para obtener el ID de la URL y navegar
 import { ApiCourtRepository } from '../../infrastructure/repositories/api-court-repository'; // Necesario para obtener y actualizar la cancha
 import '../../styles/dashboard.css'; // Usar estilos generales del dashboard
@@ -9,7 +9,7 @@ import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook
 function DashboardModifyCourtPage() {
   const { id } = useParams(); // Obtener el ID de la cancha de la URL
   const navigate = useNavigate(); // Hook para navegar
-  const courtRepository = new ApiCourtRepository();
+  const courtRepository = useMemo(() => new ApiCourtRepository(), []); // Usar useMemo para estabilidad
 
   const [formData, setFormData] = useState({
     name: '',

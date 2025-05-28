@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react'; // Importar useMemo
 import { useAuth } from '../context/AuthContext.jsx'; // Corregir la ruta de importación
 import Spinner from '../components/common/Spinner.jsx';
 import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
@@ -32,13 +32,12 @@ function DashboardUsersPage() {
   const [userDetails, setUserDetails] = useState(null);
 
 
-  // Instanciar repositorio y casos de uso
-  const userRepository = new ApiUserRepository();
-  const getUserListUseCase = new GetUserListUseCase(userRepository);
-  // Instanciar DeleteUserUseCase
-  const deleteUserUseCase = new DeleteUserUseCase(userRepository);
+  // Instanciar repositorio y casos de uso usando useMemo para asegurar estabilidad
+  const userRepository = useMemo(() => new ApiUserRepository(), []);
+  const getUserListUseCase = useMemo(() => new GetUserListUseCase(userRepository), [userRepository]);
+  const deleteUserUseCase = useMemo(() => new DeleteUserUseCase(userRepository), [userRepository]);
   // Ya no necesitamos instanciar UpdateUserStatusUseCase
-  // const updateUserStatusUseCase = new UpdateUserStatusUseCase(userRepository);
+  // const updateUserStatusUseCase = useMemo(() => new UpdateUserStatusUseCase(userRepository), [userRepository]);
 
   const fetchClientUsers = async () => {
     try {
