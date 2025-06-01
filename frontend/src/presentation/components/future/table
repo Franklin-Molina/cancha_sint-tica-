@@ -1,0 +1,243 @@
+import React, { useState } from 'react';
+import { Calendar, Clock, User, Plus, X, Check } from 'lucide-react';
+
+const ModernBookingSystem = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [viewMode, setViewMode] = useState('week'); // 'week' or 'day'
+  
+  // Datos de ejemplo
+  const weekDays = [
+    { date: '26/05', day: 'Lun', full: 'Lunes' },
+    { date: '27/05', day: 'Mar', full: 'Martes' },
+    { date: '28/05', day: 'Mié', full: 'Miércoles' },
+    { date: '29/05', day: 'Jue', full: 'Jueves' },
+    { date: '30/05', day: 'Vie', full: 'Viernes' },
+    { date: '31/05', day: 'Sáb', full: 'Sábado' },
+    { date: '01/06', day: 'Dom', full: 'Domingo' }
+  ];
+
+  const timeSlots = [
+    '6:00', '7:00', '8:00', '9:00', '10:00', '11:00', '12:00',
+    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00',
+    '20:00', '21:00', '22:00', '23:00'
+  ];
+
+  // Estado de las reservas (simulado)
+  const bookings = {
+    '26/05': { '6:00': 'occupied', '9:00': 'occupied', '21:00': 'occupied' },
+    '27/05': { '6:00': 'occupied', '9:00': 'occupied' },
+    '28/05': { '6:00': 'occupied', '13:00': 'occupied', '18:00': 'occupied' },
+    '29/05': { '6:00': 'occupied', '8:00': 'occupied', '9:00': 'occupied' },
+    '30/05': { '6:00': 'occupied', '7:00': 'available' },
+    '31/05': { '6:00': 'occupied', '7:00': 'available', '13:00': 'occupied', '14:00': 'occupied', '23:00': 'occupied' },
+    '01/06': { '6:00': 'occupied' }
+  };
+
+  const getSlotStatus = (date, time) => {
+    return bookings[date]?.[time] || 'available';
+  };
+
+  const getSlotColor = (status) => {
+    switch (status) {
+      case 'occupied': return 'bg-red-400 border-red-500';
+      case 'available': return 'bg-green-400 border-green-500';
+      default: return 'bg-gray-100 border-gray-200 hover:bg-blue-50 hover:border-blue-200';
+    }
+  };
+
+  const handleSlotClick = (date, time) => {
+    const status = getSlotStatus(date, time);
+    if (status === 'available' || status === 'occupied') return;
+    
+    setSelectedSlot({ date, time });
+  };
+
+  const confirmReservation = () => {
+    if (selectedSlot) {
+      // Aquí iría la lógica para confirmar la reserva
+      alert(`Reserva confirmada para ${selectedSlot.date} a las ${selectedSlot.time}`);
+      setSelectedSlot(null);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-blue-500 p-3 rounded-full">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800">Sistema de Reservas</h1>
+                <p className="text-gray-500">Gestiona tu disponibilidad semanal</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setViewMode(viewMode === 'week' ? 'day' : 'week')}
+                className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-medium hover:bg-blue-200 transition-colors"
+              >
+                {viewMode === 'week' ? 'Vista Día' : 'Vista Semana'}
+              </button>
+              
+              <div className="flex items-center space-x-2 text-sm">
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 bg-green-400 rounded border"></div>
+                  <span>Disponible</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 bg-red-400 rounded border"></div>
+                  <span>Ocupado</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 bg-gray-100 rounded border"></div>
+                  <span>Libre</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Calendar Grid */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Days Header */}
+          <div className="grid grid-cols-8 bg-gradient-to-r from-blue-600 to-purple-600">
+            <div className="p-4 text-white font-semibold border-r border-blue-500">
+              <Clock className="w-5 h-5 mx-auto" />
+            </div>
+            {weekDays.map((day) => (
+              <div key={day.date} className="p-4 text-center text-white border-r border-blue-500 last:border-r-0">
+                <div className="font-bold text-lg">{day.day}</div>
+                <div className="text-sm opacity-90">{day.date}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Time Slots Grid */}
+          <div className="max-h-96 overflow-y-auto">
+            {timeSlots.map((time) => (
+              <div key={time} className="grid grid-cols-8 border-b border-gray-100 hover:bg-gray-50">
+                <div className="p-3 bg-gray-50 border-r border-gray-200 text-center font-medium text-gray-600">
+                  {time}
+                </div>
+                {weekDays.map((day) => {
+                  const status = getSlotStatus(day.date, time);
+                  const isSelected = selectedSlot?.date === day.date && selectedSlot?.time === time;
+                  
+                  return (
+                    <div
+                      key={`${day.date}-${time}`}
+                      className={`p-3 border-r border-gray-100 last:border-r-0 cursor-pointer transition-all duration-200 relative group ${
+                        getSlotColor(status)
+                      } ${isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
+                      onClick={() => handleSlotClick(day.date, time)}
+                    >
+                      {status === 'occupied' && (
+                        <div className="flex items-center justify-center h-full">
+                          <User className="w-4 h-4 text-red-700" />
+                        </div>
+                      )}
+                      {status === 'available' && (
+                        <div className="flex items-center justify-center h-full">
+                          <Check className="w-4 h-4 text-green-700" />
+                        </div>
+                      )}
+                      {status !== 'occupied' && status !== 'available' && (
+                        <div className="flex items-center justify-center h-full opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Plus className="w-4 h-4 text-gray-400" />
+                        </div>
+                      )}
+                      
+                      {/* Tooltip en hover */}
+                      <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        {day.full} {time}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm">Reservas Esta Semana</p>
+                <p className="text-3xl font-bold text-gray-800">24</p>
+              </div>
+              <div className="bg-green-100 p-3 rounded-full">
+                <Calendar className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm">Disponibilidad</p>
+                <p className="text-3xl font-bold text-gray-800">76%</p>
+              </div>
+              <div className="bg-blue-100 p-3 rounded-full">
+                <Clock className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm">Horas Ocupadas</p>
+                <p className="text-3xl font-bold text-gray-800">42h</p>
+              </div>
+              <div className="bg-purple-100 p-3 rounded-full">
+                <User className="w-6 h-6 text-purple-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Confirmation Modal */}
+        {selectedSlot && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+              <div className="text-center">
+                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">Confirmar Reserva</h3>
+                <p className="text-gray-600 mb-6">
+                  ¿Deseas reservar el {selectedSlot.date} a las {selectedSlot.time}?
+                </p>
+                
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setSelectedSlot(null)}
+                    className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={confirmReservation}
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  >
+                    Confirmar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ModernBookingSystem;

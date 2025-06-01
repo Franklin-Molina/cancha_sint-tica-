@@ -6,6 +6,7 @@ from ...domain.repositories.court_repository import ICourtRepository # Interfaz 
 from ...filters import CourtFilter # Asumiendo que CourtFilter está en backend/courts/filters.py
 from django.utils import timezone # Para check_availability
 from django.db.models import Q # Para queries complejas en check_availability
+from datetime import datetime, timedelta # Importar datetime y timedelta
 
 class DjangoCourtRepository(ICourtRepository):
     """
@@ -112,3 +113,92 @@ class DjangoCourtRepository(ICourtRepository):
 
     async def check_availability(self, start_time: str, end_time: str, court_id: Optional[int] = None) -> List[Dict[str, Any]]:
         return await self._check_availability_sync(start_time, end_time, court_id)
+
+    @sync_to_async
+    def _get_weekly_availability_sync(self, court_id: int, start_date: datetime, end_date: datetime) -> Dict[str, Dict[int, bool]]:
+        from bookings.models import Booking # Importar el modelo Booking aquí para evitar circular imports
+
+        try:
+            court = Court.objects.get(pk=court_id)
+        except Court.DoesNotExist:
+            return {} # O lanzar una excepción específica
+
+        # Inicializar la estructura de disponibilidad semanal
+        weekly_availability = {}
+        current_date = start_date.date()
+        while current_date <= end_date.date():
+            date_str = current_date.strftime('%Y-%m-%d')
+            weekly_availability[date_str] = {hour: True for hour in range(6, 24)} # Horas de 6 AM a 11 PM
+            current_date += timedelta(days=1)
+
+        # Obtener todas las reservas para la cancha en el rango de fechas
+        # Considerar solo reservas CONFIRMED o PENDING
+        print(f"DEBUG: Consultando reservas para cancha {court_id} ({court.name}) en el rango de {start_date} a {end_date}") # Debug print
+        bookings = Booking.objects.filter(
+            court=court,
+            start_time__lt=end_date,
+            end_time__gt=start_date
+        ).exclude(status='CANCELLED') # Excluir reservas canceladas
+
+        # Marcar las horas ocupadas
+        print(f"DEBUG: Procesando {len(bookings)} reservas para la cancha {court_id} en el rango {start_date} a {end_date}") # Debug print
+        for booking in bookings:
+            # Convertir las horas de reserva a la zona horaria local configurada en settings.py
+            booking_start_local = timezone.localtime(booking.start_time)
+            booking_end_local = timezone.localtime(booking.end_time)
+
+            print(f"DEBUG: Reserva encontrada: {booking.id} de {booking_start_local} a {booking_end_local} (Local Time)") # Debug print
+
+            # Asegurarse de que las fechas de inicio y fin de la reserva estén dentro del rango semanal
+            # Convertir start_date y end_date a la zona horaria local para la comparación
+            start_date_local = timezone.localtime(start_date)
+            end_date_local = timezone.localtime(end_date)
+
+            effective_start = max(booking_start_local, start_date_local)
+            effective_end = min(booking_end_local, end_date_local)
+
+            print(f"DEBUG: Rango efectivo de la reserva dentro de la semana: de {effective_start} a {effective_end}") # Debug print
+
+            print(f"DEBUG: Rango efectivo de la reserva dentro de la semana (Local Time): de {effective_start} a {effective_end}") # Debug print
+
+            # Redondear la hora de inicio de la reserva al inicio de la hora actual o siguiente
+            # Si la reserva empieza a las 10:01, la hora 10:00 ya está ocupada.
+            # Si la reserva empieza a las 10:00, la hora 10:00 está ocupada.
+            current_hour_dt = effective_start.replace(minute=0, second=0, microsecond=0)
+            
+            # Si la reserva termina exactamente en una hora (ej. 11:00), esa hora no se considera ocupada
+            # Si la reserva termina a las 11:01, la hora 11:00 sí se considera ocupada
+            # Ajustar effective_end para que el bucle incluya la última hora si la reserva la ocupa parcialmente
+            adjusted_effective_end = effective_end
+            if effective_end.minute > 0 or effective_end.second > 0 or effective_end.microsecond > 0:
+                adjusted_effective_end = effective_end.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+            
+            while current_hour_dt < adjusted_effective_end:
+                date_str = current_hour_dt.strftime('%Y-%m-%d')
+                hour = current_hour_dt.hour
+                
+                # Solo marcar si la hora está dentro del rango de 6 AM a 11 PM (23)
+                if 6 <= hour <= 23:
+                    print(f"DEBUG: Marcando hora como no disponible: {date_str} {hour}:00 (Local Time)") # Debug print
+                    if date_str in weekly_availability and hour in weekly_availability[date_str]:
+                        weekly_availability[date_str][hour] = False # Marcar como no disponible
+                
+                current_hour_dt += timedelta(hours=1)
+        
+        print(f"DEBUG: Disponibilidad semanal final generada: {weekly_availability}") # Debug print
+        return weekly_availability
+
+    async def get_weekly_availability(self, court_id: int, start_date: datetime, end_date: datetime) -> Dict[str, Dict[int, bool]]:
+        """
+        Obtiene la disponibilidad hora por hora para una cancha específica durante una semana.
+
+        Args:
+            court_id (int): El ID de la cancha.
+            start_date (datetime): La fecha y hora de inicio del rango semanal.
+            end_date (datetime): La fecha y hora de fin del rango semanal.
+
+        Returns:
+            dict: Un diccionario anidado que representa la disponibilidad semanal.
+                  Ejemplo: { 'YYYY-MM-DD': { hour: boolean, ... }, ... }
+        """
+        return await self._get_weekly_availability_sync(court_id, start_date, end_date)

@@ -11,9 +11,6 @@ export class GetBookingsUseCase {
    * @param {IBookingRepository} bookingRepository - Una implementación del repositorio de reservas.
    */
   constructor(bookingRepository) {
-    if (!(bookingRepository instanceof IBookingRepository)) {
-      throw new Error('bookingRepository must be an instance of IBookingRepository');
-    }
     this.bookingRepository = bookingRepository;
   }
 

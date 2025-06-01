@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import action
 from asgiref.sync import async_to_sync # Importar async_to_sync
+from django.views.decorators.csrf import csrf_exempt # Importar csrf_exempt
+from django.utils.decorators import method_decorator # Importar method_decorator
 
 from .models import Booking
 from .serializers import BookingSerializer
@@ -19,8 +21,13 @@ from .application.use_cases.get_booking_details import GetBookingDetailsUseCase
 from .application.use_cases.update_booking_status import UpdateBookingStatusUseCase
 
 
-class BookingViewSet(viewsets.ViewSet): # Cambiar a viewsets.ViewSet para definir acciones manualmente
+@method_decorator(csrf_exempt, name='dispatch')
+class BookingViewSet(viewsets.ModelViewSet): # Cambiar a viewsets.ModelViewSet para operaciones CRUD completas
     permission_classes = [IsAuthenticated] # Por defecto, solo usuarios autenticados
+
+    queryset = Booking.objects.all() # Añadir queryset
+    serializer_class = BookingSerializer # Añadir serializer_class
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'] # Permitir métodos HTTP explícitamente
 
     def get_permissions(self):
         # Permitir a administradores realizar cualquier acción
@@ -31,47 +38,33 @@ class BookingViewSet(viewsets.ViewSet): # Cambiar a viewsets.ViewSet para defini
             return [IsAuthenticated()]
         return super().get_permissions()
 
-    def list(self, request):
-        booking_repository = DjangoBookingRepository()
-        get_booking_list_use_case = GetBookingListUseCase(booking_repository)
-        
-        # Si no es admin, filtrar por usuario autenticado
-        user_filter = request.user if not request.user.is_staff else None
-        filters = request.query_params.dict() # Para otros filtros como status
-
-        bookings = async_to_sync(get_booking_list_use_case.execute)(user=user_filter, filters=filters)
-        serializer = BookingSerializer(bookings, many=True, context={'request': request})
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        booking_repository = DjangoBookingRepository()
-        get_booking_details_use_case = GetBookingDetailsUseCase(booking_repository)
-        
-        user_filter = request.user if not request.user.is_staff else None
-        booking = async_to_sync(get_booking_details_use_case.execute)(booking_id=pk, user=user_filter)
-        
-        if booking:
-            serializer = BookingSerializer(booking, context={'request': request})
-            return Response(serializer.data)
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         booking_repository = DjangoBookingRepository()
         create_booking_use_case = CreateBookingUseCase(booking_repository)
         
-        serializer = BookingSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            # El repositorio/caso de uso ahora maneja la lógica de creación de pago y asignación de usuario
-            booking_data = serializer.validated_data 
-            try:
-                booking = async_to_sync(create_booking_use_case.execute)(booking_data, user=request.user)
-                response_serializer = BookingSerializer(booking, context={'request': request})
-                return Response(response_serializer.data, status=status.HTTP_201_CREATED)
-            except ValueError as e: # Capturar errores de validación del caso de uso/repositorio
-                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-            except Exception as e:
-                return Response({"error": "Error interno al crear la reserva."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        print("DEBUG Backend: Datos de la petición (request.data) antes del serializador:", request.data) # Nuevo log
+
+        # Pasar el usuario al contexto del serializer
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        
+        if not serializer.is_valid():
+            print("DEBUG Backend: Errores del Serializer:", serializer.errors) # Debug print
+            print("DEBUG Backend: Datos recibidos (request.data) con errores:", request.data) # Debug print
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        print("DEBUG Backend: Datos validados del serializador (serializer.validated_data):", serializer.validated_data) # Nuevo log
+
+        # El serializer ahora manejará la asignación del usuario si se configura correctamente
+        booking_data = serializer.validated_data
+        try:
+            # El caso de uso ya no necesita el usuario como argumento separado si el serializer lo maneja
+            booking = async_to_sync(create_booking_use_case.execute)(booking_data) 
+            response_serializer = self.get_serializer(booking)
+            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": "Error interno al crear la reserva."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # La actualización completa (PUT) de una reserva podría no ser común,
     # usualmente se actualiza el estado (ej. cancelar).

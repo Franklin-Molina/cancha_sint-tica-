@@ -7,7 +7,8 @@ from .models import Court, CourtImage # Importar CourtImage
 from bookings.models import Booking # Necesario para CourtAvailabilityView si no se refactoriza completamente
 from .serializers import CourtSerializer, CourtImageSerializer # Importar CourtImageSerializer
 from .filters import CourtFilter
-from datetime import datetime # Necesario para CourtAvailabilityView si no se refactoriza completamente
+from datetime import datetime, timedelta # Importar timedelta también para usarlo en la vista
+from django.utils import timezone # Importar timezone
 
 # Importar casos de uso y repositorio
 from .infrastructure.repositories.django_court_repository import DjangoCourtRepository
@@ -104,35 +105,11 @@ class CourtDetail(views.APIView):
             instance = async_to_sync(court_repository.get_by_id)(pk)
             if not instance:
                  return Response(status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
+        except Exception as e: # Añadir la cláusula except faltante
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        serializer = CourtSerializer(instance, data=request.data, partial=True, context={'request': request})
-        if serializer.is_valid():
-            court_data = serializer.validated_data
-            images_data = request.FILES.getlist('images')
-            
-            try:
-                # Envolver la llamada asíncrona con async_to_sync
-                court = async_to_sync(update_court_use_case.execute)(court_id=pk, court_data=court_data, images_data=images_data)
-                if court: # El caso de uso devuelve la cancha actualizada o None
-                    response_serializer = CourtSerializer(court, context={'request': request})
-                    return Response(response_serializer.data)
-                return Response(status=status.HTTP_404_NOT_FOUND) # Si la cancha no se encontró para actualizar
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, *args, **kwargs):
-        court_repository = DjangoCourtRepository()
-        delete_court_use_case = DeleteCourtUseCase(court_repository)
-        
-        # Envolver la llamada asíncrona con async_to_sync
-        success = async_to_sync(delete_court_use_case.execute)(court_id=pk)
-        if success:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
+from .application.use_cases.get_weekly_availability import GetWeeklyAvailabilityUseCase # Importar el nuevo caso de uso
 
 class CourtAvailabilityView(views.APIView):
     permission_classes = [AllowAny]
@@ -162,3 +139,55 @@ class CourtAvailabilityView(views.APIView):
             return Response(availability_data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CourtWeeklyAvailabilityView(views.APIView):
+    """
+    Vista para obtener la disponibilidad semanal de una cancha específica.
+    """
+    permission_classes = [AllowAny] # Permitir a cualquier usuario ver la disponibilidad
+
+    def get(self, request, court_id: int, *args, **kwargs):
+        """
+        Maneja las solicitudes GET para obtener la disponibilidad semanal.
+
+        Args:
+            request: La solicitud HTTP.
+            court_id (int): El ID de la cancha.
+
+        Returns:
+            Response: La respuesta HTTP con la disponibilidad semanal o un mensaje de error.
+        """
+        start_date_str = request.query_params.get('start_date')
+        end_date_str = request.query_params.get('end_date')
+
+        if not start_date_str or not end_date_str:
+            return Response({"error": "Los parámetros 'start_date' y 'end_date' son requeridos."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Convertir las cadenas ISO 8601 a objetos datetime con zona horaria
+            # Reemplazar 'Z' con '+00:00' para compatibilidad con fromisoformat
+            start_dt = datetime.fromisoformat(start_date_str.replace('Z', '+00:00'))
+            end_dt = datetime.fromisoformat(end_date_str.replace('Z', '+00:00'))
+            
+            # Asegurarse de que los objetos datetime sean conscientes de la zona horaria
+            start_dt = timezone.make_aware(start_dt) if start_dt.tzinfo is None else start_dt
+            end_dt = timezone.make_aware(end_dt) if end_dt.tzinfo is None else end_dt
+
+        except ValueError:
+            return Response({"error": "Formato de fecha/hora inválido. Use formato ISO 8601."}, status=status.HTTP_400_BAD_REQUEST)
+
+        court_repository = DjangoCourtRepository()
+        get_weekly_availability_use_case = GetWeeklyAvailabilityUseCase(court_repository)
+
+        try:
+            # Envolver la llamada asíncrona con async_to_sync
+            weekly_availability_data = async_to_sync(get_weekly_availability_use_case.execute)(
+                court_id=court_id,
+                start_date=start_dt,
+                end_date=end_dt
+            )
+            return Response(weekly_availability_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"Error en CourtWeeklyAvailabilityView: {e}")
+            return Response({"error": "Error al obtener la disponibilidad semanal."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

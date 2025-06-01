@@ -5,6 +5,8 @@ import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './presentation/context/AuthContext.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { RepositoryProvider } from './presentation/context/RepositoryContext.jsx';
+import { UseCaseProvider } from './presentation/context/UseCaseContext.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

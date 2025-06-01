@@ -1,33 +1,43 @@
-import { IBookingRepository } from '../../domain/repositories/booking-repository'; // Importar la interfaz del repositorio
-import { Booking } from '../../domain/entities/booking'; // Importar la entidad Booking
+// frontend/src/application/use-cases/create-booking.js
 
 /**
- * Caso de uso para crear una nueva reserva.
- * Esta clase reside en la capa de Aplicación y orquesta el proceso de creación de reserva
- * utilizando la interfaz del repositorio de Dominio.
+ * @class CreateBookingUseCase
+ * @description Caso de uso para crear una nueva reserva.
  */
 export class CreateBookingUseCase {
-  /**
-   * @param {IBookingRepository} bookingRepository - Una implementación del repositorio de reservas.
-   */
-  constructor(bookingRepository) {
-    if (!(bookingRepository instanceof IBookingRepository)) {
-      throw new Error('bookingRepository must be an instance of IBookingRepository');
+    /**
+     * @param {BookingRepository} bookingRepository - El repositorio de reservas.
+     */
+    constructor(bookingRepository) {
+        this.bookingRepository = bookingRepository;
     }
-    this.bookingRepository = bookingRepository;
-  }
 
-  /**
-   * Ejecuta el caso de uso para crear una reserva.
-   * @param {object} bookingData - Los datos para crear la reserva.
-   * @param {number} bookingData.court - El ID de la cancha.
-   * @param {string} bookingData.start_time - La fecha y hora de inicio (ISO 8601).
-   * @param {string} bookingData.end_time - La fecha y hora de fin (ISO 8601).
-   * @returns {Promise<Booking>} Una promesa que resuelve con la entidad Booking creada.
-   */
-  async execute(bookingData) {
-    // Aquí se podría añadir lógica de aplicación adicional si fuera necesario
-    // (ej. validaciones, notificaciones, etc.) antes o después de llamar al repositorio.
-    return this.bookingRepository.createBooking(bookingData);
-  }
+    /**
+     * Ejecuta el caso de uso para crear una reserva.
+     * @param {string} courtId - El ID de la cancha.
+     * @param {string} startTime - La hora de inicio de la reserva (formato ISO 8601).
+     * @param {string} endTime - La hora de fin de la reserva (formato ISO 8601).
+     * @returns {Promise<object>} Los datos de la reserva creada.
+     * @throws {Error} Si ocurre un error al crear la reserva.
+     */
+    async execute(courtId, startTime, endTime) {
+        // Aquí se podría añadir lógica de validación de negocio antes de llamar al repositorio
+        // Por ejemplo, verificar si el usuario tiene permisos para reservar, etc.
+
+        try {
+            const bookingData = {
+                court: parseInt(courtId), // Convertir courtId a entero
+                start_time: startTime,
+                end_time: endTime,
+                // Otros campos necesarios para la reserva, como el usuario, se manejarían en el backend
+            };
+            return await this.bookingRepository.createBooking(bookingData);
+        } catch (error) {
+            console.error("Error en CreateBookingUseCase:", error);
+            throw new Error("No se pudo crear la reserva.");
+        }
+    }
 }
+
+// TODO: Definir la interfaz BookingRepository en frontend/src/domain/repositories/booking_repository.js
+// TODO: Implementar ApiBookingRepository en frontend/src/infrastructure/repositories/api-booking-repository.js

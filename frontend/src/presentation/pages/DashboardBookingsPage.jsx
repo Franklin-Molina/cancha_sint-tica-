@@ -1,41 +1,10 @@
-import React, { useEffect, useState } from 'react';
-// Eliminar importación directa de api
+import React from 'react';
 import '../../styles/dashboard.css'; // Reutilizar estilos del dashboard
 import Spinner from '../components/common/Spinner';
- 
-// Importar el caso de uso y la implementación del repositorio
-import { GetBookingsUseCase } from '../../application/use-cases/get-bookings';
-import { ApiBookingRepository } from '../../infrastructure/repositories/api-booking-repository';
+import { useFetchBookings } from '../hooks/useFetchBookings';
 
 function DashboardBookingsPage() {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Crear instancias del repositorio y caso de uso
-  // En una aplicación real, esto se haría a través de inyección de dependencias
-  const bookingRepository = new ApiBookingRepository();
-  const getBookingsUseCase = new GetBookingsUseCase(bookingRepository);
-
-  useEffect(() => {
-    // Función para obtener la lista de reservas usando el caso de uso
-    const fetchBookings = async () => {
-      try {
-        setLoading(true);
-        // Llamar al caso de uso
-        const bookingsList = await getBookingsUseCase.execute();
-        console.log('Respuesta de reservas:', bookingsList); // Log para verificar la estructura
-        setBookings(bookingsList); // Guardar la lista de reservas en el estado
-        setLoading(false);
-      } catch (err) {
-        setError(err);
-        setLoading(false);
-        console.error('Error al obtener reservas:', err);
-      }
-    };
-
-    fetchBookings(); // Llamar a la función al montar el componente
-  }, []); // El array vacío asegura que se ejecute solo una vez al montar
+  const { bookings, loading, error } = useFetchBookings();
 
   if (loading) {
     return <Spinner />; 

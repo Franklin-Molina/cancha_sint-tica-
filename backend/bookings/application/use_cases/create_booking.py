@@ -11,8 +11,10 @@ class CreateBookingUseCase:
     def __init__(self, booking_repository: IBookingRepository):
         self.booking_repository = booking_repository
 
-    async def execute(self, booking_data: Dict[str, Any], user: User) -> Booking:
+    async def execute(self, booking_data: Dict[str, Any]) -> Booking:
         # Aquí se podría añadir lógica de aplicación adicional si fuera necesario
         # (ej. validaciones de negocio complejas, notificaciones, etc.)
         # La validación de disponibilidad ya se maneja en el repositorio por ahora.
-        return await self.booking_repository.create(booking_data, user)
+        # El usuario ahora está incluido en booking_data
+        print("Datos de reserva enviados al repositorio:", booking_data) # Debug print
+        return await self.booking_repository.create(booking_data)

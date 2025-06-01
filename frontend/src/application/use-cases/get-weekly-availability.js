@@ -19,10 +19,12 @@ export class GetWeeklyAvailabilityUseCase {
   /**
    * Ejecuta el caso de uso para obtener la disponibilidad semanal.
    * @param {number} courtId - El ID de la cancha.
+   * @param {string} start_date - La fecha de inicio de la semana (ISO 8601).
+   * @param {string} end_date - La fecha de fin de la semana (ISO 8601).
    * @returns {Promise<object>} Una promesa que resuelve con un objeto que representa la disponibilidad semanal.
    */
-  async execute(courtId) {
+  async execute(courtId, start_date, end_date) {
     // Aquí se podría añadir lógica de aplicación adicional si fuera necesario.
-    return this.courtRepository.getWeeklyAvailability(courtId);
+    return this.courtRepository.getWeeklyAvailability(courtId, start_date, end_date);
   }
 }

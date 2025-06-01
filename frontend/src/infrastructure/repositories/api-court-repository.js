@@ -105,27 +105,25 @@ export class ApiCourtRepository extends ICourtRepository {
   /**
    * Obtiene la disponibilidad semanal para una cancha específica desde la API.
    * @param {number} courtId - El ID de la cancha.
+   * @param {string} start_date - La fecha de inicio de la semana (ISO 8601).
+   * @param {string} end_date - La fecha de fin de la semana (ISO 8601).
    * @returns {Promise<object>} Una promesa que resuelve con un objeto que representa la disponibilidad semanal.
    */
-  async getWeeklyAvailability(courtId) {
-    // Nota: Asumiendo que existe un endpoint en el backend para esto.
-    // Si no existe, esta lógica necesitaría hacer múltiples llamadas a checkAvailability
-    // o el backend necesitaría ser actualizado.
-    // Por ahora, simularemos la estructura de la respuesta basada en CourtDetailPage.jsx
-    // pero lanzaremos un error indicando que el endpoint no está implementado.
-
-    // Ejemplo de cómo podría ser la llamada si el endpoint existiera:
-    // try {
-    //   const response = await api.get(`/courts/${courtId}/weekly-availability/`);
-    //   return response.data; // Asumiendo que la API devuelve el formato { 'YYYY-MM-DD': { hour: boolean, ... }, ... }
-    // } catch (error) {
-    //   console.error(`Error fetching weekly availability for court ${courtId}:`, error);
-    //   throw error;
-    // }
-
-    // Lanzar error temporalmente ya que el endpoint probablemente no existe
-    console.warn(`getWeeklyAvailability: Backend endpoint for weekly availability of court ${courtId} is assumed not implemented.`);
-    throw new Error(`Backend endpoint for weekly availability of court ${courtId} not implemented.`);
+  async getWeeklyAvailability(courtId, start_date, end_date) {
+    try {
+      // Llamada al nuevo endpoint del backend para disponibilidad semanal
+      const response = await api.get(`/api/courts/${courtId}/weekly-availability/`, {
+        params: {
+          start_date: start_date,
+          end_date: end_date,
+        },
+      });
+      // Asumiendo que la API devuelve el formato { 'YYYY-MM-DD': { hour: boolean, ... }, ... }
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching weekly availability for court ${courtId}:`, error);
+      throw error; // Relanzar el error
+    }
   }
 
   /**

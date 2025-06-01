@@ -1,5 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { RepositoryProvider } from './presentation/context/RepositoryContext.jsx';
+import { UseCaseProvider } from './presentation/context/UseCaseContext.jsx';
 import HomePage from './presentation/pages/HomePage.jsx';
 import RegisterPage from './presentation/components/Auth/RegisterPage.jsx';
 import CourtListPage from './presentation/pages/CourtListPage.jsx';
@@ -23,8 +25,9 @@ import ManageAdminsTable from './presentation/components/AdminGlobalDashboard/Ma
 
 function App() {
   return (
-    
-      <Routes>
+    <RepositoryProvider>
+      <UseCaseProvider>
+        <Routes>
         <Route
           path="/dashboard"
           element={
@@ -110,7 +113,8 @@ function App() {
           <Route path="register-admin" element={<AdminRegisterPage />} /> {/* Registrar admin dentro del layout adminglobal */}
         </Route>
       </Routes>
-    
+    </UseCaseProvider>
+    </RepositoryProvider>
   );
 }
 
