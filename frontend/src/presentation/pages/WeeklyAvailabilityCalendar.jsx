@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { format, addDays } from 'date-fns';
-import { Calendar, Clock, User, Plus, X, Check,   } from 'lucide-react';
+import { Calendar, Clock, User, Plus, X, Check } from 'lucide-react';
 import '../../styles/WeeklyAvailabilityCalendar.css';
 
-function WeeklyAvailabilityCalendar({ 
-  weeklyAvailability, 
-  loadingWeeklyAvailability, 
-  weeklyAvailabilityError, 
-  onTimeSlotClick, 
-  daysOfWeek, 
-  hoursOfDay, 
-  monday 
+function WeeklyAvailabilityCalendar({
+  weeklyAvailability,
+  loadingWeeklyAvailability,
+  weeklyAvailabilityError,
+  onTimeSlotClick,
+  daysOfWeek,
+  hoursOfDay,
+  monday
 }) {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [viewMode, setViewMode] = useState('week');
@@ -18,11 +18,11 @@ function WeeklyAvailabilityCalendar({
   // Calcular estadísticas
   const calculateStats = () => {
     if (!weeklyAvailability) return { totalSlots: 0, availableSlots: 0, occupiedSlots: 0 };
-    
+
     let totalSlots = 0;
     let availableSlots = 0;
     let occupiedSlots = 0;
-    
+
     Object.values(weeklyAvailability).forEach(dayAvailability => {
       Object.values(dayAvailability).forEach(slot => {
         totalSlots++;
@@ -30,7 +30,7 @@ function WeeklyAvailabilityCalendar({
         if (slot === false) occupiedSlots++;
       });
     });
-    
+
     return { totalSlots, availableSlots, occupiedSlots };
   };
 
@@ -38,15 +38,8 @@ function WeeklyAvailabilityCalendar({
   const availabilityPercentage = stats.totalSlots > 0 ? Math.round((stats.availableSlots / stats.totalSlots) * 100) : 0;
 
   const handleTimeSlotClick = (formattedDate, hourNumber, isAvailable) => {
-    if (isAvailable) {
-      setSelectedSlot({ date: formattedDate, hour: hourNumber });
-    }
-  };
-
-  const confirmReservation = () => {
-    if (selectedSlot && onTimeSlotClick) {
-      onTimeSlotClick(selectedSlot.date, selectedSlot.hour);
-      setSelectedSlot(null);
+    if (isAvailable && onTimeSlotClick) {
+      onTimeSlotClick(formattedDate, hourNumber);
     }
   };
 
@@ -61,7 +54,7 @@ function WeeklyAvailabilityCalendar({
       <div className="weekly-availability-container">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <p>Cargando disponibilidad semanal...</p>
+        {/*   <p>Cargando disponibilidad semanal...</p> */}
         </div>
       </div>
     );
@@ -103,7 +96,7 @@ function WeeklyAvailabilityCalendar({
               <p className="header-subtitle">Gestiona tu horario disponible</p>
             </div>
           </div>
-          
+
           <div className="header-right">
             <button
               onClick={() => setViewMode(viewMode === 'week' ? 'day' : 'week')}
@@ -111,7 +104,7 @@ function WeeklyAvailabilityCalendar({
             >
               {viewMode === 'week' ? 'Vista Día' : 'Vista Semana'}
             </button>
-            
+
             <div className="legend">
               <div className="legend-item">
                 <div className="legend-color available"></div>
@@ -167,7 +160,7 @@ function WeeklyAvailabilityCalendar({
                   const isAvailable = dailyAvailability && dailyAvailability[hourNumber] === true;
                   const isOccupied = dailyAvailability && dailyAvailability[hourNumber] === false;
                   const isDefined = dailyAvailability && (dailyAvailability[hourNumber] === true || dailyAvailability[hourNumber] === false);
-                  
+
                   let cellClassName = 'slot-cell';
                   if (isAvailable) {
                     cellClassName += ' available';
@@ -212,7 +205,7 @@ function WeeklyAvailabilityCalendar({
             </div>
           </div>
         </div>
-        
+
         <div className="stat-card">
           <div className="stat-content">
             <div className="stat-text">
@@ -224,7 +217,7 @@ function WeeklyAvailabilityCalendar({
             </div>
           </div>
         </div>
-        
+
         <div className="stat-card">
           <div className="stat-content">
             <div className="stat-text">
@@ -238,37 +231,6 @@ function WeeklyAvailabilityCalendar({
         </div>
       </div>
 
-      {/* Confirmation Modal */}
-      {selectedSlot && (
-        <div className="modal-overlay" onClick={() => setSelectedSlot(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div className="modal-icon">
-                <Calendar className="icon" />
-              </div>
-              <h3 className="modal-title">Confirmar Reserva</h3>
-              <p className="modal-subtitle">
-                ¿Deseas reservar el {format(new Date(selectedSlot.date), 'dd/MM/yyyy')} a las {selectedSlot.hour}:00?
-              </p>
-            </div>
-            
-            <div className="modal-actions">
-              <button
-                onClick={() => setSelectedSlot(null)}
-                className="modal-btn cancel-btn"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={confirmReservation}
-                className="modal-btn confirm-btn"
-              >
-                Confirmar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

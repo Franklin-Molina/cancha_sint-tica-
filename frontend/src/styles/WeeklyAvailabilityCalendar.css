@@ -5,6 +5,8 @@
   background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
   padding: 1rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+ 
+  margin: 0 auto;
 } */
 
 /* Header Styles */
@@ -126,8 +128,8 @@
 
 .calendar-header {
   display: grid;
-  grid-template-columns: 80px repeat(7, 1fr);
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  grid-template-columns: 44px repeat(7, minmax(10px, 5fr)); /* Reduce el ancho mínimo de las columnas de los días */
+  background: linear-gradient(135deg, #3bf689, #069429);
 }
 
 .time-header-cell {
@@ -156,8 +158,8 @@
 }
 
 .day-name {
-  font-weight: 700;
-  font-size: 1.125rem;
+  font-weight: 600;
+  font-size: 1.00rem;
 }
 
 .day-date {
@@ -168,12 +170,13 @@
 
 .calendar-body {
   max-height: 24rem;
-  overflow-y: auto;
+  overflow-y: vi;
+  overflow-x: hidden;
 }
 
 .time-row {
   display: grid;
-  grid-template-columns: 80px repeat(7, 1fr);
+  grid-template-columns: 60px repeat(7, minmax(80px, 1fr)); /* Reduce el ancho mínimo de las columnas de los días */
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -536,7 +539,9 @@
 @media (max-width: 768px) {
   .weekly-availability-container {
     padding: 0.5rem;
+    
   }
+
   
   .header-content {
     flex-direction: column;
@@ -549,7 +554,7 @@
   
   .calendar-header,
   .time-row {
-    grid-template-columns: 60px repeat(7, 1fr);
+    grid-template-columns: 50px repeat(7, 1fr); /* Ajusta para pantallas más pequeñas */
   }
   
   .time-header-cell,
@@ -562,11 +567,11 @@
   }
   
   .day-name {
-    font-size: 0.875rem;
+    font-size: 0.500rem;
   }
   
   .day-date {
-    font-size: 0.75rem;
+    font-size: 0.55rem;
   }
   
   .slot-cell {
@@ -582,4 +587,8 @@
     margin: 0.5rem;
     padding: 1.5rem;
   }
+}
+
+@media (min-width: 769px) {
+  
 }

@@ -16,5 +16,5 @@ class CreateBookingUseCase:
         # (ej. validaciones de negocio complejas, notificaciones, etc.)
         # La validación de disponibilidad ya se maneja en el repositorio por ahora.
         # El usuario ahora está incluido en booking_data
-        print("Datos de reserva enviados al repositorio:", booking_data) # Debug print
+       # print("Datos de reserva enviados al repositorio:", booking_data) # Debug print
         return await self.booking_repository.create(booking_data)

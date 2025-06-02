@@ -42,17 +42,17 @@ class BookingViewSet(viewsets.ModelViewSet): # Cambiar a viewsets.ModelViewSet p
         booking_repository = DjangoBookingRepository()
         create_booking_use_case = CreateBookingUseCase(booking_repository)
         
-        print("DEBUG Backend: Datos de la petición (request.data) antes del serializador:", request.data) # Nuevo log
+        # print("DEBUG Backend: Datos de la petición (request.data) antes del serializador:", request.data) # Nuevo log
 
         # Pasar el usuario al contexto del serializer
         serializer = self.get_serializer(data=request.data, context={'request': request})
         
         if not serializer.is_valid():
-            print("DEBUG Backend: Errores del Serializer:", serializer.errors) # Debug print
-            print("DEBUG Backend: Datos recibidos (request.data) con errores:", request.data) # Debug print
+          #  print("DEBUG Backend: Errores del Serializer:", serializer.errors) # Debug print
+          #  print("DEBUG Backend: Datos recibidos (request.data) con errores:", request.data) # Debug print
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        print("DEBUG Backend: Datos validados del serializador (serializer.validated_data):", serializer.validated_data) # Nuevo log
+     #   print("DEBUG Backend: Datos validados del serializador (serializer.validated_data):", serializer.validated_data) # Nuevo log
 
         # El serializer ahora manejará la asignación del usuario si se configura correctamente
         booking_data = serializer.validated_data

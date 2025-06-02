@@ -291,7 +291,7 @@ function CourtDetailPage() {
       )}
 
       {bookingSuccess && (
-          <div style={{ color: 'green', marginTop: '1rem', fontWeight: 'bold' }}>¡Reserva creada con éxito00000!</div>
+          <div style={{ color: 'green', marginTop: '1rem', fontWeight: 'bold' }}>¡Reserva creada con éxito</div>
       )}
 
 

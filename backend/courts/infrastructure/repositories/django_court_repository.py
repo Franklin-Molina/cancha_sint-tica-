@@ -133,7 +133,7 @@ class DjangoCourtRepository(ICourtRepository):
 
         # Obtener todas las reservas para la cancha en el rango de fechas
         # Considerar solo reservas CONFIRMED o PENDING
-        print(f"DEBUG: Consultando reservas para cancha {court_id} ({court.name}) en el rango de {start_date} a {end_date}") # Debug print
+     #   print(f"DEBUG: Consultando reservas para cancha {court_id} ({court.name}) en el rango de {start_date} a {end_date}") # Debug print
         bookings = Booking.objects.filter(
             court=court,
             start_time__lt=end_date,
@@ -141,13 +141,13 @@ class DjangoCourtRepository(ICourtRepository):
         ).exclude(status='CANCELLED') # Excluir reservas canceladas
 
         # Marcar las horas ocupadas
-        print(f"DEBUG: Procesando {len(bookings)} reservas para la cancha {court_id} en el rango {start_date} a {end_date}") # Debug print
+    #    print(f"DEBUG: Procesando {len(bookings)} reservas para la cancha {court_id} en el rango {start_date} a {end_date}") # Debug print
         for booking in bookings:
             # Convertir las horas de reserva a la zona horaria local configurada en settings.py
             booking_start_local = timezone.localtime(booking.start_time)
             booking_end_local = timezone.localtime(booking.end_time)
 
-            print(f"DEBUG: Reserva encontrada: {booking.id} de {booking_start_local} a {booking_end_local} (Local Time)") # Debug print
+        #    print(f"DEBUG: Reserva encontrada: {booking.id} de {booking_start_local} a {booking_end_local} (Local Time)") # Debug print
 
             # Asegurarse de que las fechas de inicio y fin de la reserva estén dentro del rango semanal
             # Convertir start_date y end_date a la zona horaria local para la comparación
@@ -157,9 +157,9 @@ class DjangoCourtRepository(ICourtRepository):
             effective_start = max(booking_start_local, start_date_local)
             effective_end = min(booking_end_local, end_date_local)
 
-            print(f"DEBUG: Rango efectivo de la reserva dentro de la semana: de {effective_start} a {effective_end}") # Debug print
+          #  print(f"DEBUG: Rango efectivo de la reserva dentro de la semana: de {effective_start} a {effective_end}") # Debug print
 
-            print(f"DEBUG: Rango efectivo de la reserva dentro de la semana (Local Time): de {effective_start} a {effective_end}") # Debug print
+          #  print(f"DEBUG: Rango efectivo de la reserva dentro de la semana (Local Time): de {effective_start} a {effective_end}") # Debug print
 
             # Redondear la hora de inicio de la reserva al inicio de la hora actual o siguiente
             # Si la reserva empieza a las 10:01, la hora 10:00 ya está ocupada.
@@ -179,13 +179,13 @@ class DjangoCourtRepository(ICourtRepository):
                 
                 # Solo marcar si la hora está dentro del rango de 6 AM a 11 PM (23)
                 if 6 <= hour <= 23:
-                    print(f"DEBUG: Marcando hora como no disponible: {date_str} {hour}:00 (Local Time)") # Debug print
+                    # print(f"DEBUG: Marcando hora como no disponible: {date_str} {hour}:00 (Local Time)") # Debug print
                     if date_str in weekly_availability and hour in weekly_availability[date_str]:
                         weekly_availability[date_str][hour] = False # Marcar como no disponible
                 
                 current_hour_dt += timedelta(hours=1)
         
-        print(f"DEBUG: Disponibilidad semanal final generada: {weekly_availability}") # Debug print
+       # print(f"DEBUG: Disponibilidad semanal final generada: {weekly_availability}") # Debug print
         return weekly_availability
 
     async def get_weekly_availability(self, court_id: int, start_date: datetime, end_date: datetime) -> Dict[str, Dict[int, bool]]:

@@ -42,7 +42,7 @@ class DjangoBookingRepository(IBookingRepository):
     @sync_to_async
     @transaction.atomic # Asegurar que la creación de la reserva y el pago sea atómica
     def create(self, booking_data: Dict[str, Any]) -> Booking:
-        print("Datos de reserva recibidos en el repositorio:", booking_data) # Debug print
+       # print("Datos de reserva recibidos en el repositorio:", booking_data) # Debug print
         user = booking_data.get('user') # Obtener el usuario de booking_data
         court = booking_data.get('court') # Obtener la instancia de Court directamente
         start_time = booking_data.get('start_time') # Obtener el objeto datetime directamente
@@ -56,7 +56,7 @@ class DjangoBookingRepository(IBookingRepository):
         # Sin embargo, para simplificar y evitar duplicación, confiaremos en la validación del serializer.
 
         # Primero crear la reserva sin el pago (se asignará después)
-        print("Creando objeto Booking con:", {"user": user, "court": court, "start_time": start_time, "end_time": end_time, "status": 'PENDING'}) # Debug print
+       # print("Creando objeto Booking con:", {"user": user, "court": court, "start_time": start_time, "end_time": end_time, "status": 'PENDING'}) # Debug print
         booking = Booking.objects.create(
             user=user,
             court=court,
