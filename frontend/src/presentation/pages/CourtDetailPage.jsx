@@ -282,20 +282,23 @@ function CourtDetailPage() {
         monday={currentWeekStartDate} // Pasar la fecha de inicio de la semana actual
       />
 
+
+      
+
       {/* Mostrar mensajes de éxito o error de la reserva */}
       {bookingError && (
           <div style={{ color: 'red', marginTop: '1rem' }}>{bookingError}</div>
       )}
 
       {bookingSuccess && (
-          <div style={{ color: 'green', marginTop: '1rem', fontWeight: 'bold' }}>¡Reserva creada con éxito!</div>
+          <div style={{ color: 'green', marginTop: '1rem', fontWeight: 'bold' }}>¡Reserva creada con éxito00000!</div>
       )}
 
 
       {/* Modal para mostrar la imagen expandida */}
       {selectedImage && (
         <div className="modal-overlay" onClick={closeModal}> {/* Overlay oscuro para cerrar el modal */}
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}> {/* Contenido del modal, detener propagación del clic */}
+          <div className="mod" onClick={(e) => e.stopPropagation()}> {/* Contenido del modal, detener propagación del clic */}
             <img src={selectedImage} alt="Imagen expandida" className="modal-image" /> {/* Imagen expandida */}
             <button className="modal-close-btn" onClick={closeModal}>✕</button> {/* Botón de cerrar */}
           </div>
