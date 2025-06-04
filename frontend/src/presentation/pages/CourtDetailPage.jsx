@@ -1,21 +1,21 @@
-import { useState, useEffect, useCallback } from 'react'; // Importar useCallback
-import { useParams } from 'react-router-dom';
-// Eliminar importación directa de api
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom'; // Importar useNavigate
 import '../../styles/HomePage.css';
 import '../../styles/dashboard.css';
 import '../../styles/CourtDetailPage.css';
 import Spinner from '../components/common/Spinner';
-import { format, startOfWeek, addDays, setHours, setMinutes, isWithinInterval, parseISO } from 'date-fns'; // Importar parseISO
-import useButtonDisable from '../hooks/useButtonDisable.js'; // Importar el hook personalizado
-import WeeklyAvailabilityCalendar from '../pages/WeeklyAvailabilityCalendar.jsx'
+import Modal from '../components/common/Modal'; // Importar el componente Modal
+import { format, startOfWeek, addDays, setHours, setMinutes } from 'date-fns';
+import useButtonDisable from '../hooks/useButtonDisable.js';
+import WeeklyAvailabilityCalendar from '../pages/WeeklyAvailabilityCalendar.jsx';
 
 // Importar los casos de uso y la implementación del repositorio
 import { useRepositories } from '../context/RepositoryContext';
 import { useUseCases } from '../context/UseCaseContext';
 
-
 function CourtDetailPage() {
   const { courtId } = useParams();
+  const navigate = useNavigate(); // Inicializar useNavigate
   const [court, setCourt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,6 +29,7 @@ function CourtDetailPage() {
   const [isBooking, setIsBooking] = useState(false);
   const [bookingError, setBookingError] = useState(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false); // Nuevo estado para el modal de login
 
   // Estados para el modal de confirmación de reserva
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -38,17 +39,15 @@ function CourtDetailPage() {
   const [weeklyAvailability, setWeeklyAvailability] = useState({});
   const [loadingWeeklyAvailability, setLoadingWeeklyAvailability] = useState(false);
   const [weeklyAvailabilityError, setWeeklyAvailabilityError] = useState(null);
-  const [currentWeekStartDate, setCurrentWeekStartDate] = useState(startOfWeek(new Date(), { weekStartsOn: 1 })); // Estado para la fecha de inicio de la semana actual
+  const [currentWeekStartDate, setCurrentWeekStartDate] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
 
-
-  // Función para obtener los detalles de la cancha usando el caso de uso (memorizada con useCallback)
+  // Función para obtener los detalles de la cancha usando el caso de uso
   const fetchCourtDetails = useCallback(async () => {
-    if (!courtId) return; // No intentar cargar si no hay courtId
+    if (!courtId) return;
 
     try {
       setLoading(true);
-      setError(null); // Limpiar errores anteriores
-      // Llamar al caso de uso
+      setError(null);
       const courtDetails = await getCourtByIdUseCase.execute(courtId);
       setCourt(courtDetails);
       setLoading(false);
@@ -57,117 +56,89 @@ function CourtDetailPage() {
       setLoading(false);
       console.error(`Error al obtener detalles de la cancha ${courtId}:`, err);
     }
-  }, [courtId, getCourtByIdUseCase]); // Dependencias: courtId y el caso de uso
+  }, [courtId, getCourtByIdUseCase]);
 
   useEffect(() => {
     fetchCourtDetails();
-  }, [fetchCourtDetails]); // Dependencia de la función memorizada
+  }, [fetchCourtDetails]);
 
   // Efecto para cargar la disponibilidad semanal cuando se cargan los detalles de la cancha
   useEffect(() => {
-      if (court) {
-          console.log("DEBUG Frontend: useEffect para disponibilidad semanal activado."); // Debug print
-          fetchWeeklyAvailability(); // Restaurada la llamada para cargar el calendario
-      }
-  }, [court, courtId, currentWeekStartDate, getWeeklyAvailabilityUseCase]); // Añadimos court a las dependencias
+    if (court) {
+      console.log("DEBUG Frontend: useEffect para disponibilidad semanal activado.");
+      fetchWeeklyAvailability();
+    }
+  }, [court, courtId, currentWeekStartDate, getWeeklyAvailabilityUseCase]);
 
-  // Función para obtener la disponibilidad semanal para el calendario (optimizada)
+  // Función para obtener la disponibilidad semanal para el calendario
   const fetchWeeklyAvailability = async () => {
-      console.log("DEBUG Frontend: fetchWeeklyAvailability llamada."); // Debug print
-      setLoadingWeeklyAvailability(true);
-      setWeeklyAvailabilityError(null);
-      // Obtener el domingo de la semana actual (fin del día)
-      const sunday = addDays(currentWeekStartDate, 6);
-      const endOfSunday = setMinutes(setHours(sunday, 23), 59); // Fin del día domingo
+    console.log("DEBUG Frontend: fetchWeeklyAvailability llamada.");
+    setLoadingWeeklyAvailability(true);
+    setWeeklyAvailabilityError(null);
+    
+    const sunday = addDays(currentWeekStartDate, 6);
+    const endOfSunday = setMinutes(setHours(sunday, 23), 59);
 
-      const formattedStartTime = currentWeekStartDate.toISOString();
-      const formattedEndTime = endOfSunday.toISOString();
+    const formattedStartTime = currentWeekStartDate.toISOString();
+    const formattedEndTime = endOfSunday.toISOString();
 
-      const availabilityData = {};
-      const hours = Array.from({ length: 18 }, (_, i) => i + 6); // Horas de 6 AM a 11 PM (23)
-
-      try {
-          // Realizar una sola solicitud de disponibilidad para toda la semana usando el caso de uso optimizado
-          const weeklyAvailabilityResults = await getWeeklyAvailabilityUseCase.execute(courtId, formattedStartTime, formattedEndTime);
-
-          console.log("DEBUG Frontend: Respuesta de disponibilidad semanal recibida:", weeklyAvailabilityResults); // Debug print
-
-          // Asignar directamente la respuesta del backend al estado de disponibilidad semanal
-          // Asumiendo que el backend ya devuelve el formato correcto { 'YYYY-MM-DD': { hour: boolean, ... }, ... }
-          setWeeklyAvailability({ ...weeklyAvailabilityResults }); // Crear una nueva copia del objeto
-       //   console.log("DEBUG Frontend: Estado weeklyAvailability actualizado:", JSON.stringify(weeklyAvailabilityResults, null, 2)); // Debug print
-          setLoadingWeeklyAvailability(false);
-
-      } catch (err) {
-          setWeeklyAvailabilityError("Error al cargar la disponibilidad semanal.");
-          setLoadingWeeklyAvailability(false);
-          console.error('Error fetching weekly availability:', err);
-      }
+    try {
+      const weeklyAvailabilityResults = await getWeeklyAvailabilityUseCase.execute(courtId, formattedStartTime, formattedEndTime);
+      console.log("DEBUG Frontend: Respuesta de disponibilidad semanal recibida:", weeklyAvailabilityResults);
+      setWeeklyAvailability({ ...weeklyAvailabilityResults });
+      setLoadingWeeklyAvailability(false);
+    } catch (err) {
+      setWeeklyAvailabilityError("Error al cargar la disponibilidad semanal.");
+      setLoadingWeeklyAvailability(false);
+      console.error('Error fetching weekly availability:', err);
+    }
   };
-
 
   // Función para manejar el clic en una celda de disponibilidad del calendario
   const handleCellClick = async (date, hour) => {
-      setIsBooking(true);
-      setBookingError(null);
-      setBookingSuccess(false);
+    setIsBooking(true);
+    setBookingError(null);
+    setBookingSuccess(false);
 
-      console.log("DEBUG: handleCellClick - date:", date, "hour:", hour);
+    console.log("DEBUG: handleCellClick - date:", date, "hour:", hour);
 
-      try {
-          // Construir las horas de inicio y fin para la reserva (rango de 1 hora)
-          // Construir la fecha base en la zona horaria local para evitar desfases
-          const [year, month, day] = date.split('-').map(Number);
-          const baseDate = new Date(year, month - 1, day); // month - 1 porque los meses son 0-indexados
+    try {
+      const [year, month, day] = date.split('-').map(Number);
+      const baseDate = new Date(year, month - 1, day);
 
-          const startDateTime = setMinutes(setHours(baseDate, hour), 0);
-          const endDateTime = setMinutes(setHours(baseDate, hour + 1), 0);
+      const startDateTime = setMinutes(setHours(baseDate, hour), 0);
+      const endDateTime = setMinutes(setHours(baseDate, hour + 1), 0);
 
-          const formattedStartTime = startDateTime.toISOString();
-          const formattedEndTime = endDateTime.toISOString();
+      const formattedStartTime = startDateTime.toISOString();
+      const formattedEndTime = endDateTime.toISOString();
 
-          console.log("DEBUG: handleCellClick - startDateTime:", startDateTime, "endDateTime:", endDateTime);
-          console.log("DEBUG: handleCellClick - formattedStartTime:", formattedStartTime, "formattedEndTime:", formattedEndTime);
-          console.log("DEBUG: handleCellClick - court.name:", court?.name, "court.price:", court?.price);
+      setBookingDetailsToConfirm({
+        courtId,
+        startDateTime,
+        endDateTime,
+        formattedStartTime,
+        formattedEndTime,
+        courtName: court?.name,
+        price: court?.price,
+      });
+      setShowConfirmModal(true);
 
-          // En lugar de reservar directamente, mostrar el modal de confirmación
-          setBookingDetailsToConfirm({
-            courtId,
-            startDateTime,
-            endDateTime,
-            formattedStartTime,
-            formattedEndTime,
-            courtName: court?.name, // Pasar el nombre de la cancha para el modal (usar optional chaining)
-            price: court?.price, // Pasar el precio para el modal (usar optional chaining)
-          });
-          setShowConfirmModal(true);
-
-          console.log("DEBUG: handleCellClick - bookingDetailsToConfirm:", {
-            courtId,
-            startDateTime,
-            endDateTime,
-            formattedStartTime,
-            formattedEndTime,
-            courtName: court?.name,
-            price: court?.price,
-          });
-
-      } catch (err) {
-          setBookingError("Error al preparar la reserva. Inténtalo de nuevo.");
-          console.error('Error preparing booking:', err.response ? err.response.data : err.message);
-      } finally {
-          setIsBooking(false);
-      }
+    } catch (err) {
+      setBookingError("Error al preparar la reserva. Inténtalo de nuevo.");
+      console.error('Error preparing booking:', err.response ? err.response.data : err.message);
+    } finally {
+      setIsBooking(false);
+    }
   };
 
-  // Nueva función para confirmar la reserva después de la aprobación del usuario
+  // Función para confirmar la reserva
   const confirmBooking = async () => {
     if (!bookingDetailsToConfirm) return;
 
     setIsBooking(true);
     setBookingError(null);
     setBookingSuccess(false);
-    setShowConfirmModal(false); // Cerrar el modal
+    setShowConfirmModal(false);
 
     try {
       await createBookingUseCase.execute(
@@ -176,53 +147,49 @@ function CourtDetailPage() {
         bookingDetailsToConfirm.formattedEndTime
       );
       setBookingSuccess(true);
-      fetchWeeklyAvailability(); // Refrescar la disponibilidad
+      fetchWeeklyAvailability();
     } catch (err) {
-      setBookingError("Error al crear la reserva. Inténtalo de nuevo.");
+      console.log("DEBUG: Error en confirmBooking:", err); // Añadir log para depuración
+      console.log("DEBUG: err.response:", err.response);
+      console.log("DEBUG: err.response.status:", err.response ? err.response.status : 'N/A');
+      console.log("DEBUG: err.message:", err.message); // Log del mensaje de error
+
+      // Manejo de errores de autenticación
+      // Verificamos si es un error 401 de Axios o si el mensaje de error indica falta de autenticación
+      if ((err.response && err.response.status === 401) || (err.message === "No se pudo crear la reserva.")) {
+        setBookingError(null); // Limpiar el mensaje de error de reserva
+        setShowLoginModal(true); // Mostrar el modal de inicio de sesión
+      } else {
+        setBookingError("Error al crear la reserva. Inténtalo de nuevo.");
+      }
       console.error('Error creating booking:', err.response ? err.response.data : err.message);
     } finally {
       setIsBooking(false);
-      setBookingDetailsToConfirm(null); // Limpiar detalles de confirmación
+      setBookingDetailsToConfirm(null);
     }
   };
 
   const cancelConfirmation = () => {
     setShowConfirmModal(false);
     setBookingDetailsToConfirm(null);
-    setIsBooking(false); // Resetear el estado de booking
+    setIsBooking(false);
   };
 
+  // Función para cerrar el modal de login y redirigir
+  const handleCloseLoginModal = () => {
+    setShowLoginModal(false);
+    navigate('/login'); // Redirigir al usuario a la página de login
+  };
 
   // Días de la semana y horas para el calendario
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-  // Generar rangos de horas de 6:00 AM a 11:00 PM
   const hoursOfDay = Array.from({ length: 18 }, (_, i) => {
-      const startHour24 = i + 6; // Hora de inicio en formato 24 horas (6 a 23)
-      const endHour24 = startHour24 + 1; // Hora de fin en formato 24 horas (7 a 24)
-
-      // Crear objetos Date temporales para formatear las horas
-      const tempStartDate = setMinutes(setHours(new Date(), startHour24), 0);
-      const tempEndDate = setMinutes(setHours(new Date(), endHour24), 0);
-
-      // Formatear a formato de 12 horas (ej: "6:00 AM - 7:00 AM")
-      return `${format(tempStartDate, 'h:mm a')} - ${format(tempEndDate, 'h:mm a')}`;
+    const startHour24 = i + 6;
+    const endHour24 = startHour24 + 1;
+    const tempStartDate = setMinutes(setHours(new Date(), startHour24), 0);
+    const tempEndDate = setMinutes(setHours(new Date(), endHour24), 0);
+    return `${format(tempStartDate, 'h:mm a')} - ${format(tempEndDate, 'h:mm a')}`;
   });
-
-
-  if (loading) {
-    return <Spinner />; // <div className="home-content">Cargando detalles de la cancha...</div>;
-  }
-
-  if (error) {
-    return <div className="home-content" style={{ color: 'red' }}>Error al cargar detalles de la cancha: {error.message}</div>;
-  }
-
-  if (!court) {
-      return <div className="home-content">No se encontró la cancha.</div>;
-  }
-
-  const today = new Date();
-  const monday = startOfWeek(today, { weekStartsOn: 1 });
 
   const handlePreviousWeek = () => {
     setCurrentWeekStartDate(addDays(currentWeekStartDate, -7));
@@ -232,96 +199,251 @@ function CourtDetailPage() {
     setCurrentWeekStartDate(addDays(currentWeekStartDate, 7));
   };
 
-  // Funciones para el modal de imagen expandida
   const openModal = (image) => {
-    setSelectedImage(image.image); // Asumiendo que image.image es la URL de la imagen
+    setSelectedImage(image.image);
   };
 
   const closeModal = () => {
     setSelectedImage(null);
   };
 
+  if (loading) {
+    return (
+      <div className="court-detail-loading">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="court-detail-error">
+        <div className="error-content">
+          <h2>¡Oops! Algo salió mal</h2>
+          <p>Error al cargar detalles de la cancha: {error.message}</p>
+          <button className="retry-button" onClick={fetchCourtDetails}>
+            Intentar de nuevo
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!court) {
+    return (
+      <div className="court-detail-not-found">
+        <div className="not-found-content">
+          <h2>Cancha no encontrada</h2>
+          <p>Lo sentimos, no pudimos encontrar la cancha que buscas.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="home-content"> {/* Usar clase de estilo para el contenido */}
-      <h1>Detalle de la Cancha: {court.name}</h1>
+    <div className="court-detail-container">
+      
+      
+      {/* Header de la cancha */}
+       
 
-      <p>Precio por hora: ${court.price}</p>
-      {court.description && <p>{court.description}</p>}
-      {court.characteristics && <p>Características: {court.characteristics}</p>}
-
-      {/* Mostrar imágenes si existen */}
-      {court.images && court.images.length > 0 && (
-        <div className="gallery gallery-detail" style={{ marginTop: '1rem' }}> {/* Usar clases de estilo de galería y detalle */}
-          {court.images.map(image => (
-            <div key={image.id} className="image-container" onClick={() => openModal(image)}> {/* Añadir onClick */}
-              {/* Construir la URL completa de la imagen: URL base del servidor + URL relativa de la imagen */}
-              {/* Eliminar '/api' de la URL base si está presente */}
-              {(() => {
-                
-                return <img src={image.image} alt={`Imagen de ${court.name}`} className="image-preview" />;
-                
-              })()}
-               <div className="dark-overlay"></div> {/* Overlay */}
+      <div className="availability-section">
+        <div className="availability-header">
+          <div className="test">
+            <div className="header-left">
+              <div className="header-icon">
+                {/* Icono de cancha, puedes usar un icono de Lucide React si es necesario */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>
+              </div>
+              <div className="header-text">
+                <h1 className="header-title">{court.name}</h1>
+                <p className="header-subtitle">Detalles y disponibilidad de la cancha</p>
+              </div>
             </div>
-          ))}
+            <div className="x">
+              <div className="court-price-badge">
+                <span className="price-label">Precio por hora</span>
+                <span className="price-value">${court.price}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>     
+
+      {/* Información de la cancha */}
+      <div className="court-info-section">
+        {court.description && (
+          <div className="court-description">
+            <h3>Descripción</h3>
+            <p>{court.description}</p>
+          </div>
+        )}
+        
+        {court.characteristics && (
+          <div className="court-characteristics">
+            <h3>Características</h3>
+            <p>{court.characteristics}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Galería de imágenes */}
+      {court.images && court.images.length > 0 && (
+        <div className="court-gallery-section">
+          <div className='sub-content-imagen'>
+            <h3>Galería</h3>
+          <div className="court-image-gallery">
+            {court.images.map(image => (
+              <div 
+                key={image.id} 
+                className="gallery-image-container" 
+                onClick={() => openModal(image)}
+              >
+                <img 
+                  src={image.image} 
+                  alt={`Imagen de ${court.name}`} 
+                  className="gallery-image" 
+                />
+                <div className="image-overlay">
+                  <span className="view-icon">👁</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          </div>
+          
         </div>
       )}
 
-      {/* Sección de Disponibilidad y Reserva (Calendario Semanal) */}
-      <div>
-        <button onClick={handlePreviousWeek}>Semana Anterior</button>
-        <button onClick={handleNextWeek}>Semana Siguiente</button>
+      {/* Sección de disponibilidad */}
+      <div className="availability-section">
+        <div className="availability-header">
+          <h3>Disponibilidad y Reservas</h3>
+          <div className="week-navigation">
+            <button 
+              className="nav-button nav-prev" 
+              onClick={handlePreviousWeek}
+              aria-label="Semana anterior"
+            >
+              ← Anterior
+            </button>
+            <span className="current-week">
+              {format(currentWeekStartDate, 'dd/MM/yyyy')} - {format(addDays(currentWeekStartDate, 6), 'dd/MM/yyyy')}
+            </span>
+            <button 
+              className="nav-button nav-next" 
+              onClick={handleNextWeek}
+              aria-label="Semana siguiente"
+            >
+              Siguiente →
+            </button>
+          </div>
+        </div>
+
+        <div className="calendar-container">
+          <WeeklyAvailabilityCalendar
+            weeklyAvailability={weeklyAvailability}
+            loadingWeeklyAvailability={loadingWeeklyAvailability}
+            weeklyAvailabilityError={weeklyAvailabilityError}
+            onTimeSlotClick={handleCellClick}
+            daysOfWeek={daysOfWeek}
+            hoursOfDay={hoursOfDay}
+            monday={currentWeekStartDate}
+          />
+        </div>
       </div>
-      <WeeklyAvailabilityCalendar
-        weeklyAvailability={weeklyAvailability}
-        loadingWeeklyAvailability={loadingWeeklyAvailability}
-        weeklyAvailabilityError={weeklyAvailabilityError}
-        onTimeSlotClick={handleCellClick} // Pasar la función de manejo de clic
-        daysOfWeek={daysOfWeek}
-        hoursOfDay={hoursOfDay}
-        monday={currentWeekStartDate} // Pasar la fecha de inicio de la semana actual
-      />
 
-
-      
-
-      {/* Mostrar mensajes de éxito o error de la reserva */}
+      {/* Mensajes de estado */}
       {bookingError && (
-          <div style={{ color: 'red', marginTop: '1rem' }}>{bookingError}</div>
+        <div className="booking-message booking-error">
+          <span className="message-icon">⚠️</span>
+          <span>{bookingError}</span>
+        </div>
       )}
 
       {bookingSuccess && (
-          <div style={{ color: 'green', marginTop: '1rem', fontWeight: 'bold' }}>¡Reserva creada con éxito</div>
+        <div className="booking-message booking-success">
+          <span className="message-icon">✅</span>
+          <span>¡Reserva creada con éxito!</span>
+        </div>
       )}
 
-
-      {/* Modal para mostrar la imagen expandida */}
+      {/* Modal de imagen expandida */}
       {selectedImage && (
-        <div className="modal-overlay" onClick={closeModal}> {/* Overlay oscuro para cerrar el modal */}
-          <div className="mod" onClick={(e) => e.stopPropagation()}> {/* Contenido del modal, detener propagación del clic */}
-            <img src={selectedImage} alt="Imagen expandida" className="modal-image" /> {/* Imagen expandida */}
-            <button className="modal-close-btn" onClick={closeModal}>✕</button> {/* Botón de cerrar */}
+        <div className="image-modal-overlay" onClick={closeModal}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedImage} alt="Imagen expandida" className="modal-expanded-image" />
+            <button className="modal-close-button" onClick={closeModal}>
+              ✕
+            </button>
           </div>
         </div>
       )}
 
-      {/* Modal de Confirmación de Reserva */}
+      {/* Modal de confirmación de reserva */}
       {showConfirmModal && bookingDetailsToConfirm && (
-        <div className="modal-overlay">
-          <div className="modal-contentx"> {/* Usar la misma clase de estilo que otros modales */}
-            <h2 className='modal-title'>Confirmar Reserva</h2>
-            <p>¿Estás seguro de que deseas reservar la cancha:</p>
-            <p><strong>Cancha:</strong> {bookingDetailsToConfirm.courtName}</p>
-            <p><strong>Fecha:</strong> {format(bookingDetailsToConfirm.startDateTime, 'dd/MM/yyyy')}</p>
-            <p><strong>Hora:</strong> {format(bookingDetailsToConfirm.startDateTime, 'h:mm a')} - {format(bookingDetailsToConfirm.endDateTime, 'h:mm a')}</p>
-            <p><strong>Precio:</strong> ${bookingDetailsToConfirm.price}</p>
+        <div className="booking-modal-overlay">
+          <div className="booking-modal-content">
+            <div className="modal-headerx">
+              <h2 className="modal-title">Confirmar Reserva</h2>
+            </div>
+            
+            <div className="modal-body">
+              <p className="confirmation-question">¿Estás seguro de que deseas reservar esta cancha?</p>
+              
+              <div className="booking-details">
+                <div className="detail-item">
+                  <span className="detail-label">Cancha:</span>
+                  <span className="detail-value">{bookingDetailsToConfirm.courtName}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Fecha:</span>
+                  <span className="detail-value">{format(bookingDetailsToConfirm.startDateTime, 'dd/MM/yyyy')}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Hora:</span>
+                  <span className="detail-value">
+                    {format(bookingDetailsToConfirm.startDateTime, 'h:mm a')} - {format(bookingDetailsToConfirm.endDateTime, 'h:mm a')}
+                  </span>
+                </div>
+                <div className="detail-item price-item">
+                  <span className="detail-label">Precio:</span>
+                  <span className="detail-value price-highlight">${bookingDetailsToConfirm.price}</span>
+                </div>
+              </div>
+            </div>
+            
             <div className="modal-actions">
-              <button onClick={confirmBooking} className="action-button button-confirm" disabled={isBooking}>Confirmar</button>
-              <button onClick={cancelConfirmation} className="action-button button-cancel">Cancelar</button>
+              <button 
+                onClick={confirmBooking} 
+                className="action-button confirm-button" 
+                disabled={isBooking}
+              >
+                {isBooking ? 'Procesando...' : 'Confirmar Reserva'}
+              </button>
+              <button 
+                onClick={cancelConfirmation} 
+                className="action-button cancel-button"
+              >
+                Cancelar
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Nuevo Modal para solicitar inicio de sesión */}
+      <Modal
+        show={showLoginModal}
+        onClose={handleCloseLoginModal}
+        title="Acceso Requerido"
+      >
+        <p>Para reservar una cancha, debes estar registrado e iniciar sesión.</p>
+        <button onClick={handleCloseLoginModal} className="modal-button">
+          Ir a Iniciar Sesión
+        </button>
+      </Modal>
     </div>
   );
 }

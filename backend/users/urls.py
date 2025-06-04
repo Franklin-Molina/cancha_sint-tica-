@@ -17,6 +17,7 @@ router.register(r'manage-admins', AdminManagementViewSet, basename='manage-admin
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
+   
     path('login/', LoginView.as_view(), name='token_obtain_pair'), # Cambiado a LoginView
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('google/', GoogleLogin.as_view(), name='google_login'),
