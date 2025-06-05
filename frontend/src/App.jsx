@@ -55,7 +55,7 @@ function App() {
           }
         />
         <Route
-          path="/auth"
+          path="/login"
           element={
             <Layout>
               <AuthPage />
