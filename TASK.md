@@ -4,6 +4,7 @@
 
 ## Tareas Pendientes
 
+- [x] Refactorizar `frontend/src/presentation/pages/WeeklyAvailabilityCalendar.jsx` para aplicar Clean Architecture (09/06/2025)
 - [x] Aplicar Clean Architecture en el frontend
 - [x] Corregir error de doble autenticación con tokens JWT (05/07/2025)
 - [x] Aplicar Clean Architecture en el backend (11/05/2025)
@@ -15,5 +16,3 @@
 - [x] Implementar nueva estructura de roles (adminglobal, admin, cliente) (11/05/2025)
   - [x] Backend: Actualizar modelo User, crear grupo "Gestores de Cancha", actualizar lógica de creación de usuarios, crear vistas y URLs para gestión de admins por adminglobal. (11/05/2025)
   - [x] Frontend: Crear dashboard para adminglobal (listar, crear, suspender, reactivar, eliminar admins). (11/05/2025)
-
-

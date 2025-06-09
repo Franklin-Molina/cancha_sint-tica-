@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { format, addDays } from 'date-fns';
-import { Calendar, Clock, User, Plus, X, Check, Icon } from 'lucide-react';
-import { soccerBall } from '@lucide/lab';
+import { Calendar, Clock, User, X } from 'lucide-react';
+import { useWeeklyAvailabilityCalendar } from '../hooks/useWeeklyAvailabilityCalendar';
 import '../../styles/WeeklyAvailabilityCalendar.css';
 
 
@@ -14,42 +14,13 @@ function WeeklyAvailabilityCalendar({
   hoursOfDay,
   monday
 }) {
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const [viewMode, setViewMode] = useState('week');
-
-  // Calcular estadísticas
-  const calculateStats = () => {
-    if (!weeklyAvailability) return { totalSlots: 0, availableSlots: 0, occupiedSlots: 0 };
-
-    let totalSlots = 0;
-    let availableSlots = 0;
-    let occupiedSlots = 0;
-
-    Object.values(weeklyAvailability).forEach(dayAvailability => {
-      Object.values(dayAvailability).forEach(slot => {
-        totalSlots++;
-        if (slot === true) availableSlots++;
-        if (slot === false) occupiedSlots++;
-      });
-    });
-
-    return { totalSlots, availableSlots, occupiedSlots };
-  };
-
-  const stats = calculateStats();
-  const availabilityPercentage = stats.totalSlots > 0 ? Math.round((stats.availableSlots / stats.totalSlots) * 100) : 0;
+  const { stats, availabilityPercentage, getSlotIcon } = useWeeklyAvailabilityCalendar(weeklyAvailability);
 
   const handleTimeSlotClick = (formattedDate, hourNumber, isAvailable) => {
     if (isAvailable && onTimeSlotClick) {
       onTimeSlotClick(formattedDate, hourNumber);
     }
   };
-
-const getSlotIcon = (isAvailable, isDefined) => {
-  if (isAvailable) return <Check className="slot-icon" />;
-  if (isDefined && !isAvailable) return <Icon iconNode={soccerBall} className="slot-icon" />; 
-  return <Plus className="slot-icon slot-icon-hover" />;
-};
 
   if (loadingWeeklyAvailability) {
     return (
@@ -86,45 +57,7 @@ const getSlotIcon = (isAvailable, isDefined) => {
 
   return (
     <div className="weekly-availability-container">
-      {/* Header */}
-     {/*  <div className="header-card">
-        <div className="header-content">
-          <div className="header-left">
-            <div className="header-icon">
-              <Calendar className="icon" />
-            </div>
-            <div className="header-text">
-              <h1 className="header-title">Disponibilidad Semanal</h1>
-              <p className="header-subtitle">Gestiona tu horario disponible</p>
-            </div>
-          </div>
-
-          <div className="header-right">
-            <button
-              onClick={() => setViewMode(viewMode === 'week' ? 'day' : 'week')}
-              className="view-toggle-btn"
-            >
-              {viewMode === 'week' ? 'Vista Día' : 'Vista Semana'}
-            </button>
-
-            <div className="legend">
-              <div className="legend-item">
-                <div className="legend-color available"></div>
-                <span>Disponible</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color occupied"></div>
-                <span>Ocupado</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color free"></div>
-                <span>Libre</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
+      {/* Header */}     
       {/* Main Calendar */}
       <div className="calendar-card">
         {/* Days Header */}

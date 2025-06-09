@@ -79,7 +79,7 @@
 }
 
 .detail-value {
-    color: #333;
+    color: red;
     flex-grow: 1; /* Permitir que el valor ocupe el espacio restante */
 }
 
