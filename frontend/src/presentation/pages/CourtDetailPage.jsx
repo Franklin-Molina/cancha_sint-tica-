@@ -8,6 +8,8 @@ import Modal from '../components/common/Modal'; // Importar el componente Modal
 import { format, startOfWeek, addDays, setHours, setMinutes } from 'date-fns';
 import useButtonDisable from '../hooks/useButtonDisable.js';
 import WeeklyAvailabilityCalendar from '../pages/WeeklyAvailabilityCalendar.jsx';
+import { Check, Icon } from 'lucide-react';
+import { soccerBall } from '@lucide/lab';
 
 // Importar los casos de uso y la implementación del repositorio
 import { useRepositories } from '../context/RepositoryContext';
@@ -75,7 +77,7 @@ function CourtDetailPage() {
     console.log("DEBUG Frontend: fetchWeeklyAvailability llamada.");
     setLoadingWeeklyAvailability(true);
     setWeeklyAvailabilityError(null);
-    
+
     const sunday = addDays(currentWeekStartDate, 6);
     const endOfSunday = setMinutes(setHours(sunday, 23), 59);
 
@@ -242,10 +244,10 @@ function CourtDetailPage() {
 
   return (
     <div className="court-detail-container">
-      
-      
+
+
       {/* Header de la cancha */}
-       
+
 
       <div className="availability-section">
         <div className="availability-header">
@@ -257,10 +259,9 @@ function CourtDetailPage() {
               </div>
               <div className="header-text">
                 <h1 className="header-title">{court.name}</h1>
-                <p className="header-subtitle">Detalles y disponibilidad de la cancha</p>
               </div>
             </div>
-            <div className="x">
+            <div className="container-price">
               <div className="court-price-badge">
                 <span className="price-label">Precio por hora</span>
                 <span className="price-value">${court.price}</span>
@@ -269,7 +270,7 @@ function CourtDetailPage() {
 
           </div>
         </div>
-      </div>     
+      </div>
 
       {/* Información de la cancha */}
       <div className="court-info-section">
@@ -279,7 +280,7 @@ function CourtDetailPage() {
             <p>{court.description}</p>
           </div>
         )}
-        
+
         {court.characteristics && (
           <div className="court-characteristics">
             <h3>Características</h3>
@@ -287,59 +288,96 @@ function CourtDetailPage() {
           </div>
         )}
       </div>
+      {/* Stats Cards */}
+     {/*  <div className="stats-container">
+        <div className="stat-card">
+          <div className="stat-content">
+            <div className="stat-text">
+              <p className="stat-label">Slots Disponibles</p>
+            </div>
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-content">
+            <div className="stat-text">
+              <p className="stat-label">Disponibilidad</p>
+            </div>
+          </div>
+        </div>
+      </div> */}
 
       {/* Galería de imágenes */}
       {court.images && court.images.length > 0 && (
         <div className="court-gallery-section">
           <div className='sub-content-imagen'>
             <h3>Galería</h3>
-          <div className="court-image-gallery">
-            {court.images.map(image => (
-              <div 
-                key={image.id} 
-                className="gallery-image-container" 
-                onClick={() => openModal(image)}
-              >
-                <img 
-                  src={image.image} 
-                  alt={`Imagen de ${court.name}`} 
-                  className="gallery-image" 
-                />
-                <div className="image-overlay">
-                  <span className="view-icon">👁</span>
+            <div className="court-image-gallery">
+              {court.images.map(image => (
+                <div
+                  key={image.id}
+                  className="gallery-image-container"
+                  onClick={() => openModal(image)}
+                >
+                  <img
+                    src={image.image}
+                    alt={`Imagen de ${court.name}`}
+                    className="gallery-image"
+                  />
+                  <div className="image-overlay">
+                    <span className="view-icon">👁</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-          </div>
-          
+
         </div>
       )}
 
-      {/* Sección de disponibilidad */}
-      <div className="availability-section">
-        <div className="availability-header">
-          <h3>Disponibilidad y Reservas</h3>
-          <div className="week-navigation">
-            <button 
-              className="nav-button nav-prev" 
-              onClick={handlePreviousWeek}
-              aria-label="Semana anterior"
-            >
-              ← Anterior
-            </button>
-            <span className="current-week">
-              {format(currentWeekStartDate, 'dd/MM/yyyy')} - {format(addDays(currentWeekStartDate, 6), 'dd/MM/yyyy')}
-            </span>
-            <button 
-              className="nav-button nav-next" 
-              onClick={handleNextWeek}
-              aria-label="Semana siguiente"
-            >
-              Siguiente →
-            </button>
+      {/* Test button*/}
+      <div class="availability-container-b">
+        <div class="availability-header-moder">
+          <div class="header-content-b">
+            <div class="header-title-b">
+              <div class="header-icon">📅</div>
+              <div class="header-text">
+                <h1>Reservas</h1>
+                <p>Gestiona tu horario disponible</p>
+              </div>
+            </div>
+            <div class="week-navigation-b">
+              <button class="nav-button-b" onClick={handlePreviousWeek}
+                aria-label="Semana anterior">
+                ← Anterior
+              </button>
+              <span className="current-week-b">
+                {format(currentWeekStartDate, 'dd/MM/yyyy')} - {format(addDays(currentWeekStartDate, 6), 'dd/MM/yyyy')}
+              </span>
+
+              <button class="nav-button-b"
+                onClick={handleNextWeek}
+                aria-label="Semana siguiente">
+                Siguiente →
+              </button>
+            </div>
+            <div class="legend">
+              <div class="legend-item legend-disponible">                             
+                  <Check className="icon-check" />                           
+                <span>Disponible</span>
+              </div>
+              <div class="legend-item legend-ocupado">
+                <Icon iconNode={soccerBall} className="iconsoccer" />
+                <span>Ocupado</span>
+              </div>
+
+            </div>
           </div>
         </div>
+
+
+      </div>
+      {/* Sección de disponibilidad */}
+      <div className="availability-section">
 
         <div className="calendar-container">
           <WeeklyAvailabilityCalendar
@@ -386,12 +424,12 @@ function CourtDetailPage() {
         <div className="booking-modal-overlay">
           <div className="booking-modal-content">
             <div className="modal-headerx">
-              <h2 className="modal-title">Confirmar Reserva</h2>
+              <h2 className="modal-title">Confirmar reservación </h2>
             </div>
-            
+
             <div className="modal-body">
               <p className="confirmation-question">¿Estás seguro de que deseas reservar esta cancha?</p>
-              
+
               <div className="booking-details">
                 <div className="detail-item">
                   <span className="detail-label">Cancha:</span>
@@ -413,17 +451,17 @@ function CourtDetailPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="modal-actions">
-              <button 
-                onClick={confirmBooking} 
-                className="action-button confirm-button" 
+              <button
+                onClick={confirmBooking}
+                className="action-button confirm-button"
                 disabled={isBooking}
               >
                 {isBooking ? 'Procesando...' : 'Confirmar Reserva'}
               </button>
-              <button 
-                onClick={cancelConfirmation} 
+              <button
+                onClick={cancelConfirmation}
                 className="action-button cancel-button"
               >
                 Cancelar

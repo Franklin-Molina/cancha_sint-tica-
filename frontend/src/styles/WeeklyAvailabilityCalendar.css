@@ -221,6 +221,7 @@
   background: #fee2e2;
   border-color: #ef4444;
   cursor: not-allowed;
+  color: red;
 }
 
 .slot-cell.free {
@@ -580,6 +581,14 @@
     margin: 0.5rem;
     padding: 1.5rem;
   }
+
+  .stat-card { 
+  width: 100%; 
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
 }
 
 @media (min-width: 769px) {

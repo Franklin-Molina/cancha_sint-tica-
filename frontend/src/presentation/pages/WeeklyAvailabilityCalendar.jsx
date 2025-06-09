@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { format, addDays } from 'date-fns';
-import { Calendar, Clock, User, Plus, X, Check } from 'lucide-react';
+import { Calendar, Clock, User, Plus, X, Check, Icon } from 'lucide-react';
+import { soccerBall } from '@lucide/lab';
 import '../../styles/WeeklyAvailabilityCalendar.css';
+
 
 function WeeklyAvailabilityCalendar({
   weeklyAvailability,
@@ -43,11 +45,11 @@ function WeeklyAvailabilityCalendar({
     }
   };
 
-  const getSlotIcon = (isAvailable, isDefined) => {
-    if (isAvailable) return <Check className="slot-icon" />;
-    if (isDefined && !isAvailable) return <User className="slot-icon" />;
-    return <Plus className="slot-icon slot-icon-hover" />;
-  };
+const getSlotIcon = (isAvailable, isDefined) => {
+  if (isAvailable) return <Check className="slot-icon" />;
+  if (isDefined && !isAvailable) return <Icon iconNode={soccerBall} className="slot-icon" />; 
+  return <Plus className="slot-icon slot-icon-hover" />;
+};
 
   if (loadingWeeklyAvailability) {
     return (
@@ -85,7 +87,7 @@ function WeeklyAvailabilityCalendar({
   return (
     <div className="weekly-availability-container">
       {/* Header */}
-      <div className="header-card">
+     {/*  <div className="header-card">
         <div className="header-content">
           <div className="header-left">
             <div className="header-icon">
@@ -121,7 +123,7 @@ function WeeklyAvailabilityCalendar({
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Calendar */}
       <div className="calendar-card">
@@ -226,6 +228,7 @@ function WeeklyAvailabilityCalendar({
             </div>
             <div className="stat-icon occupied-stat">
               <User className="icon" />
+           
             </div>
           </div>
         </div>

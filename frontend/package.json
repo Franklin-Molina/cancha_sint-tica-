@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.27.1",
+    "@lucide/lab": "^0.1.2",
     "@react-oauth/google": "^0.12.1",
     "axios": "^1.9.0",
     "braces": "^3.0.3",

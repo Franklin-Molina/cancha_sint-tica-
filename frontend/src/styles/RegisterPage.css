@@ -92,8 +92,8 @@
   align-items: center;
   /* min-height: 100vh; /* Centra verticalmente en el viewport */ 
   box-sizing: border-box; /* Incluye padding y borde en el tamaño total */
-  padding-top: 35px; /* Ajustar para centrar verticalmente considerando el header */
-  min-height: calc(100vh - 60px); /* Asegura que el contenedor ocupe el espacio restante */
+
+  margin: 2rem;
 }
 
 
