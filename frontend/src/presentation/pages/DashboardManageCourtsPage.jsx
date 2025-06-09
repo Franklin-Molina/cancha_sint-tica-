@@ -175,9 +175,15 @@ function DashboardManageCourtsPage() {
         <CourtActionsModal
           court={selectedCourt}
           onClose={handleCloseModal}
-          setCourts={setCourts}
           onDeleteRequest={handleDeleteRequest}
-          onModifyRequest={handleModifyRequest} // Pasar la nueva prop
+          onModifyRequest={handleModifyRequest}
+          onToggleActiveStatus={async (courtId, isActive) => {
+            if (isActive) {
+              await handleReactivateCourtClick(courtId);
+            } else {
+              await handleSuspendCourtClick(courtId);
+            }
+          }}
         />
       )}
 

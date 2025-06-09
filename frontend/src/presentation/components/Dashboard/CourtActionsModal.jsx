@@ -3,51 +3,11 @@ import '../../../styles/DashboardCanchaTable.css';
 import useButtonDisable from '../../hooks/useButtonDisable.js'; // Importar el hook personalizado
  
 
-function CourtActionsModal({ court, onClose, setCourts, onDeleteRequest, onModifyRequest }) {
-  return (
-    <div className="modal-details">
-      
-      <div className="modal-contentx">
-        <div className='closs-button'> 
-          <button className="close-button" onClick={onClose }>&times;</button>
-        </div>       
-        <h2 className="modal-title">Acciones para {court.name}</h2>
-        <div className="modal-actions">
-          <button onClick={() => onDeleteRequest(court)} className="action-button button-delete">Eliminar</button>
-          <button onClick={() => onModifyRequest(court)} className="action-button button-modify">Modificar</button>
-          <button onClick={() => handleActivarDesactivar(court.id)} className="action-button button-activate">
-            {court.is_active ? 'Desactivar' : 'Activar'}
-          </button>
-        </div>       
-      </div>
-    </div>
-  );
-
-  // La lógica de modificar se manejará en la página principal
-  // function handleModificar(courtId) {
-  //   console.log(`Modificar cancha ${courtId}`);
-  //   // TODO: Implementar la lógica para modificar la cancha
-  //   // TODO: Navegar a la página de modificación de la cancha
-  // }
-
+function CourtActionsModal({ court, onClose, onDeleteRequest, onModifyRequest, onToggleActiveStatus }) {
   // Usar el hook para la acción de activar/desactivar
   const [isActivatingDeactivating, handleActivarDesactivarClick] = useButtonDisable(async () => {
-    console.log(`${court.is_active ? 'Desactivar' : 'Activar'} cancha ${court.id}`);
-    try {
-      const { ApiCourtRepository } = await import('../../../infrastructure/repositories/api-court-repository');
-      const courtRepository = new ApiCourtRepository();
-      await courtRepository.updateCourtStatus(court.id, !court.is_active);
-      setCourts(prevCourts =>
-        prevCourts.map(c =>
-          c.id === court.id ? { ...c, is_active: !c.is_active } : c
-        )
-      );
-      onClose();
-    } catch (error) {
-      console.error(`Error al activar/desactivar la cancha ${court.id}:`, error);
-      // TODO: Mostrar un mensaje de error al usuario
-      throw error; // Re-lanzar el error para que el hook lo capture
-    }
+    await onToggleActiveStatus(court.id, !court.is_active);
+    onClose(); // Cerrar el modal después de la acción
   });
 
   // Usar el hook para la acción de eliminar
@@ -62,10 +22,9 @@ function CourtActionsModal({ court, onClose, setCourts, onDeleteRequest, onModif
 
   return (
     <div className="modal-details">
-      
       <div className="modal-contentx">
         <div className='closs-button'> 
-          <button className="close-button" onClick={onClose }>&times;</button>
+          <button className="close-button" onClick={onClose}>&times;</button>
         </div>       
         <h2 className="modal-title">Acciones para {court.name}</h2>
         <div className="modal-actions">

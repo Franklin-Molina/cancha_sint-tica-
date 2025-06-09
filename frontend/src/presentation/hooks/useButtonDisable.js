@@ -33,6 +33,7 @@ const useButtonDisable = (action) => {
       // el botón puede permanecer deshabilitado. Si se necesita re-habilitar
       // en ciertos escenarios (ej. un modal que se cierra), se puede añadir lógica aquí.
       // Para el propósito de "solo un click", lo mantenemos deshabilitado.
+      setIsDisabled(false); // Re-habilitar el botón después de que la acción se complete
     }
   }, [isDisabled, action]);
 
