@@ -104,8 +104,35 @@ class CourtDetail(views.APIView):
             # Envolver la llamada asíncrona con async_to_sync
             instance = async_to_sync(court_repository.get_by_id)(pk)
             if not instance:
-                 return Response(status=status.HTTP_404_NOT_FOUND)
-        except Exception as e: # Añadir la cláusula except faltante
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            
+            serializer = CourtSerializer(instance, data=request.data, partial=True, context={'request': request})
+            if serializer.is_valid():
+                court_data = serializer.validated_data
+                images_data = request.FILES.getlist('images') # Manejar imágenes si se envían
+
+                #print(f"DEBUG: PATCH request.data: {request.data}") # DEBUG
+                #print(f"DEBUG: PATCH validated_data (court_data): {court_data}") # DEBUG
+
+                court = async_to_sync(update_court_use_case.execute)(court_id=pk, court_data=court_data, images_data=images_data)
+                response_serializer = CourtSerializer(court, context={'request': request})
+                return Response(response_serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f"DEBUG: Error en CourtDetail PATCH: {e}") # DEBUG
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, pk, *args, **kwargs):
+        court_repository = DjangoCourtRepository()
+        delete_court_use_case = DeleteCourtUseCase(court_repository)
+
+        try:
+            # Envolver la llamada asíncrona con async_to_sync
+            success = async_to_sync(delete_court_use_case.execute)(court_id=pk)
+            if success:
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
