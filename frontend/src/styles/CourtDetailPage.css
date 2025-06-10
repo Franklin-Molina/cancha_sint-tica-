@@ -256,7 +256,7 @@
   font-weight: 700;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--primary-color);
+  border-bottom: 2px solid red;
   display: flex;
   align-items: center;
   gap: 0.5rem;

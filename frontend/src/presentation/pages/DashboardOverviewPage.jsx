@@ -4,7 +4,7 @@ import React from 'react';
 function DashboardOverviewPage() {
   return (
     <> {/* Usar Fragmento para no añadir un div extra si no es necesario */}
-      <h1 className="dashboard-page-title">Dashboard</h1> {/* Usar clase de estilo */}
+    {/*   <h1 className="dashboard-page-title">Dashboard</h1>  */}{/* Usar clase de estilo */}
 
       {/* Stats */}
       <div className="stats-row">

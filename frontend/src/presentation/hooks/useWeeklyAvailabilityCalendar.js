@@ -39,10 +39,10 @@ export function useWeeklyAvailabilityCalendar(weeklyAvailability) {
    * @param {boolean} isDefined - Indica si el slot tiene un estado definido (disponible u ocupado).
    * @returns {JSX.Element} El componente de icono correspondiente.
    */
-  const getSlotIcon = (isAvailable, isDefined) => {
-    if (isAvailable) return <Check className="slot-icon" />;
-    if (isDefined && !isAvailable) return <Icon iconNode={soccerBall} className="slot-icon" />;
-    return <Plus className="slot-icon slot-icon-hover" />;
+  const getSlotIconName = (isAvailable, isDefined) => {
+    if (isAvailable) return 'check';
+    if (isDefined && !isAvailable) return 'soccerBall';
+    return 'plus';
   };
 
   const availabilityPercentage = calculateStats.totalSlots > 0 ? Math.round((calculateStats.availableSlots / calculateStats.totalSlots) * 100) : 0;
@@ -50,6 +50,6 @@ export function useWeeklyAvailabilityCalendar(weeklyAvailability) {
   return {
     stats: calculateStats,
     availabilityPercentage,
-    getSlotIcon
+    getSlotIconName
   };
 }

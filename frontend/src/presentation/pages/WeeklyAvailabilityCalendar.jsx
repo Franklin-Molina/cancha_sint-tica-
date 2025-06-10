@@ -1,9 +1,9 @@
 import React from 'react';
 import { format, addDays } from 'date-fns';
-import { Calendar, Clock, User, X } from 'lucide-react';
-import { useWeeklyAvailabilityCalendar } from '../hooks/useWeeklyAvailabilityCalendar';
+import { Check, Icon, Plus, Calendar, Clock, User, X } from 'lucide-react'; // Importar todos los iconos necesarios
+import { soccerBall } from '@lucide/lab'; // Importar el icono de soccerBall
+import { useWeeklyAvailabilityCalendar } from '../hooks/useWeeklyAvailabilityCalendar.js'; // Importar el hook
 import '../../styles/WeeklyAvailabilityCalendar.css';
-
 
 function WeeklyAvailabilityCalendar({
   weeklyAvailability,
@@ -12,13 +12,28 @@ function WeeklyAvailabilityCalendar({
   onTimeSlotClick,
   daysOfWeek,
   hoursOfDay,
-  monday
+  monday,
+  selectedSlot // Asegúrate de que selectedSlot se pase como prop si se usa
 }) {
-  const { stats, availabilityPercentage, getSlotIcon } = useWeeklyAvailabilityCalendar(weeklyAvailability);
+  const { stats, availabilityPercentage, getSlotIconName } = useWeeklyAvailabilityCalendar(weeklyAvailability);
 
   const handleTimeSlotClick = (formattedDate, hourNumber, isAvailable) => {
     if (isAvailable && onTimeSlotClick) {
       onTimeSlotClick(formattedDate, hourNumber);
+    }
+  };
+
+  // Función para renderizar el icono basado en el nombre devuelto por el hook
+  const renderIconComponent = (iconName, className) => {
+    switch (iconName) {
+      case 'check':
+        return <Check className={className} />;
+      case 'soccerBall':
+        return <Icon iconNode={soccerBall} className={className} />;
+      case 'plus':
+        return <Plus className={className} />;
+      default:
+        return null;
     }
   };
 
@@ -27,7 +42,6 @@ function WeeklyAvailabilityCalendar({
       <div className="weekly-availability-container">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-        {/*   <p>Cargando disponibilidad semanal...</p> */}
         </div>
       </div>
     );
@@ -57,7 +71,7 @@ function WeeklyAvailabilityCalendar({
 
   return (
     <div className="weekly-availability-container">
-      {/* Header */}     
+      {/* Header */}
       {/* Main Calendar */}
       <div className="calendar-card">
         {/* Days Header */}
@@ -117,7 +131,7 @@ function WeeklyAvailabilityCalendar({
                       onClick={() => handleTimeSlotClick(formattedDate, hourNumber, isAvailable)}
                       data-tooltip={`${day} ${hourRange}`}
                     >
-                      {getSlotIcon(isAvailable, isDefined)}
+                      {renderIconComponent(getSlotIconName(isAvailable, isDefined), "slot-icon")}
                     </div>
                   );
                 })}
@@ -161,7 +175,7 @@ function WeeklyAvailabilityCalendar({
             </div>
             <div className="stat-icon occupied-stat">
               <User className="icon" />
-           
+
             </div>
           </div>
         </div>
