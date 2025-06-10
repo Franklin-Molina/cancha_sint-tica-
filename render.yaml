@@ -4,8 +4,8 @@ services:
     name: cancha-sintetica-frontend
     env: docker
     rootDir: frontend/
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: npm start
+    buildCommand: npm install; npm run build
+    startCommand: serve -s build
     port: 3000
     envVars:
       - key: VITE_API_URL
