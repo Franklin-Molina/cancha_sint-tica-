@@ -1,0 +1,12 @@
+# Archivo de configuración para Render
+services:
+  - type: web
+    name: cancha-sintetica-frontend
+    env: docker
+    rootDir: frontend/
+    buildCommand: npm install; npm run build
+    startCommand: serve -s build
+    port: 3000
+    envVars:
+      - key: VITE_API_URL
+        value: "https://your-backend-url.onrender.com" # Reemplazar con la URL real de tu backend en Render
