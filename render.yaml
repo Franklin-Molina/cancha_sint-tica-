@@ -14,6 +14,7 @@ services:
     env: docker
     rootDir: backend/
     port: 8000
+    startCommand: gunicorn --bind 0.0.0.0:8000 --chdir backend cancha.wsgi:application
     envVars:
       - key: SECRET_KEY
         generateValue: true # Render puede generar una clave segura
