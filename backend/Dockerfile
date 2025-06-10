@@ -2,14 +2,14 @@
 FROM python:3.11-slim
 
 # Establecer el directorio de trabajo en el contenedor
-WORKDIR /app/backend
+WORKDIR /app
 
 # Copiar los archivos de requisitos e instalar dependencias
-COPY backend/requirements.txt ./
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el resto del código de la aplicación
-COPY backend/. ./
+COPY . .
 
 # Recolectar archivos estáticos y ejecutar migraciones
 RUN python manage.py collectstatic --noinput
