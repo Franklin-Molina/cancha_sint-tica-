@@ -6,7 +6,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "serve": "vite preview",
-    "start": "serve -s build"
+    "start": "npx serve -s build"
   },
   "dependencies": {
     "@babel/runtime": "^7.27.1",
@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.4.1",
+    "serve": "^14.2.3",
     "postcss": "^8.5.3",
     "vite": "^6.3.5"
   },
