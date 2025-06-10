@@ -4,7 +4,7 @@ services:
     name: cancha-sintetica-frontend
     env: docker
     rootDir: frontend/
-    buildCommand: npm install; npm run build
+    buildCommand: cd frontend && npm install && npm run build
     startCommand: serve -s build
     port: 3000
     envVars:
