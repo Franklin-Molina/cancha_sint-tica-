@@ -3,6 +3,7 @@ services:
   - type: web
     name: cancha-sintetica-frontend
     env: docker
+    rootDir: frontend/
     port: 3000
     envVars:
       - key: VITE_API_URL
