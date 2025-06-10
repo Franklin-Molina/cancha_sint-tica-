@@ -5,13 +5,14 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Copiar los archivos package.json y package-lock.json (si existe)
-COPY package*.json ./
+# Nota: Ahora que el Dockerfile está en la raíz, necesitamos especificar la ruta al frontend
+COPY frontend/package*.json ./
 
 # Instalar las dependencias
 RUN npm install
 
 # Copiar el resto del código de la aplicación
-COPY . .
+COPY frontend/. .
 
 # Construir la aplicación para producción
 RUN npm run build
