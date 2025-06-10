@@ -6,7 +6,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "serve": "vite preview",
-    "start": "npx serve -s build"
+    "start": "npx serve -s dist"
   },
   "dependencies": {
     "@babel/runtime": "^7.27.1",
