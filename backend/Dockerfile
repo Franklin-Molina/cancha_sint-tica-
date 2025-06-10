@@ -19,4 +19,4 @@ RUN python manage.py migrate
 EXPOSE 8000
 
 # Comando para ejecutar la aplicación Django con Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "cancha.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "wsgi"]

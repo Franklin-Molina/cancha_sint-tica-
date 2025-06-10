@@ -7,7 +7,7 @@ services:
     port: 3000
     envVars:
       - key: VITE_API_URL
-        value: "https://backend.onrender.com" # Reemplazar con la URL real de tu backend en Render
+        value: "https://backend-5e3p.onrender.com/" # Reemplazar con la URL real de tu backend en Render
 
   - type: web
     name: cancha-sintetica-backend
@@ -20,6 +20,6 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: ".onrender.com" # O la URL específica de tu backend en Render
+        value: "https://backend-5e3p.onrender.com/" # O la URL específica de tu backend en Render
       - key: DATABASE_URL
         value: "postgresql://postgres:databasec123@db.mwceyqtmliuinairkoex.supabase.co:5432/postgres" # Reemplazar con la URL de conexión real de Supabase
