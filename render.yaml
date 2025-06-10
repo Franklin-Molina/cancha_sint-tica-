@@ -8,3 +8,18 @@ services:
     envVars:
       - key: VITE_API_URL
         value: "https://your-backend-url.onrender.com" # Reemplazar con la URL real de tu backend en Render
+
+  - type: web
+    name: cancha-sintetica-backend
+    env: docker
+    rootDir: backend/
+    port: 8000
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true # Render puede generar una clave segura
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com" # O la URL específica de tu backend en Render
+      - key: DATABASE_URL
+        value: "postgresql://databasec:databasec123@db.mwceyqtmliuinairkoex.supabase.co:5432/postgres" # Reemplazar con la URL de conexión real de Supabase

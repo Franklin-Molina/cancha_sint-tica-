@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import os # Añadir import os
+import os
+import dj_database_url # Importar dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t(%bi!=6dsyhd=5#kug=+^)0k981pis_4rg4=aq)9a-di2^0l8'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-t(%bi!=6dsyhd=5#kug=+^)0k981pis_4rg4=aq)9a-di2^0l8')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.100.10']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,192.168.100.10').split(',')
 
 
 # Application definition
@@ -158,14 +159,10 @@ SOCIALACCOUNT_PROVIDERS = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cancha',
-        'USER': 'postgres',
-        'PASSWORD': '123456',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', 'postgresql://postgres:123456@localhost:5432/cancha'),
+        conn_max_age=600
+    )
 }
 
 
@@ -261,19 +258,10 @@ SIMPLE_JWT = {
 }
 
 # Configuración de CORS para permitir solicitudes desde el frontend durante el desarrollo
-CORS_ALLOW_ALL_ORIGINS = True # Deshabilitar para especificar orígenes permitidos
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000", # Permitir solicitudes desde el frontend de React
-    "http://192.168.100.10:5173",
-
-]
+CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'True').lower() == 'true' # Usar variable de entorno
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://192.168.100.10:5173').split(',')
 
 CORS_ALLOW_CREDENTIALS = True # Permitir que las solicitudes incluyan credenciales
 
 # Configuración de CSRF para confiar en el origen del frontend
-CSRF_TRUSTED_ORIGINS = [
- 
-    "http://localhost:5173",
-    "http://192.168.100.10:5173",
-    #   "http://localhost:3000",
-]
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://192.168.100.10:5173').split(',')
