@@ -15,8 +15,15 @@ export class ApiCourtRepository extends ICourtRepository {
   async getCourts() {
     try {
       const response = await api.get('/api/courts/'); // Llamada a la API usando la instancia configurada
-      // Mapear los datos de la respuesta a entidades Court del Dominio
-      return response.data.map(courtData => new Court(courtData));
+      // Asegurarse de que response.data sea un array antes de mapear
+      if (Array.isArray(response.data)) {
+        return response.data.map(courtData => new Court(courtData));
+      } else if (response.data && Array.isArray(response.data.results)) { // Para paginación
+        return response.data.results.map(courtData => new Court(courtData));
+      } else {
+        console.warn('API response for /api/courts/ is not an array or paginated object:', response.data);
+        return []; // Devolver un array vacío para evitar el error .map is not a function
+      }
     } catch (error) {
       console.error('Error fetching courts from API:', error);
       throw error; // Relanzar el error para que la capa superior lo maneje
