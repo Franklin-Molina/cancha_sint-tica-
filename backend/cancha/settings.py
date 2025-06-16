@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url # Importar dj_database_url
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,8 +28,8 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 #ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,192.168.100.10').split(',') Local
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'backend-5e3p.onrender.com,localhost,127.0.0.1,192.168.100.10').split(',')
-
+#ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'backend-5e3p.onrender.com,localhost,127.0.0.1,192.168.100.10').split(',')
+print (ALLOWED_HOSTS)
 
 # Application definition
 
@@ -167,25 +166,6 @@ DATABASES = {
     )
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
 # Configuración de Password Hashers
 # Se prioriza Argon2, con fallback a los otros para contraseñas existentes.
 PASSWORD_HASHERS = [
@@ -195,7 +175,6 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
     'django.contrib.auth.hashers.ScryptPasswordHasher',
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -208,9 +187,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-import os # Importar os
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -219,7 +195,6 @@ STATIC_URL = 'static/'
 # Configuración para archivos multimedia (imágenes subidas por usuarios)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Directorio donde se guardarán los archivos subidos
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -253,17 +228,21 @@ LOGGING = {
     },
 }
 
-
 # Configuración de Simple JWT para usar username como campo de autenticación
 SIMPLE_JWT = {
     "USERNAME_FIELD": "username",
 }
 
 # Configuración de CORS para permitir solicitudes desde el frontend durante el desarrollo
-CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'True').lower() == 'true' # Usar variable de entorno
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://192.168.100.10:5173').split(',')
-
 CORS_ALLOW_CREDENTIALS = True # Permitir que las solicitudes incluyan credenciales
+CSRF_COOKIE_SECURE = True  # Solo enviar cookies CSRF por HTTPS
+SESSION_COOKIE_SECURE = True  # Solo enviar cookies de sesión por HTTPS
+SECURE_SSL_REDIRECT = not DEBUG  # Redirigir todo a HTTPS si no estás en debug
+
 
 # Configuración de CSRF para confiar en el origen del frontend
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://192.168.100.10:5173').split(',')
+#CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://192.168.100.10:5173').split(',')
+ALLOWED_HOSTS = ['backend-5e3p.onrender.com', 'localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://cancha-sint-tica.onrender.com']
+CORS_ALLOWED_ORIGINS = ['https://cancha-sint-tica.onrender.com']
+CORS_ALLOW_ALL_ORIGINS = False
