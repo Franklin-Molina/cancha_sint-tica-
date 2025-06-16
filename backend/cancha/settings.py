@@ -29,7 +29,7 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 #ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,192.168.100.10').split(',') Local
 
 #ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'backend-5e3p.onrender.com,localhost,127.0.0.1,192.168.100.10').split(',')
-print (ALLOWED_HOSTS)
+
 
 # Application definition
 
